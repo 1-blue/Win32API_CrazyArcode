@@ -1,0 +1,2 @@
+C:\Users\user\Desktop\Win32API_CrazyArcode\Debug\Win32API_CrazyArcode.exe
+C:\Users\user\Desktop\Win32API_CrazyArcode\Debug\Win32API_CrazyArcode.pdb

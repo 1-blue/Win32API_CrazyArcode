@@ -1,0 +1,45 @@
+*.idb
+*.ilk
+*.pdb
+*.obj
+*.ipch
+*.suo
+*.db
+*.log
+*.tlog
+*.exe
+*.opendb
+
+# 전제 조건
+* .d
+
+# 컴파일 된 객체 파일
+* .slo
+* .lo
+* .o
+* .obj
+
+# 미리 컴파일 된 헤더
+* .gch
+* .pch
+
+# 컴파일 된 동적 라이브러리
+* .so
+* .dylib
+* .dll
+
+# Fortran 모듈 파일
+* .mod
+* .smod
+
+# 컴파일 된 정적 라이브러리
+* .lai
+* .la
+* .a
+* .lib
+
+# 실행 파일
+* .exe
+* .out
+* .app
+
