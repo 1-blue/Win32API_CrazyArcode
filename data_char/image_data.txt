@@ -1,3 +1,4 @@
 index,url
 0 image_char\bazzi.bmp
 1 image_char\dao.bmp
+2 image_char\dizni\dizniUp.bmp

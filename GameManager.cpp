@@ -7,8 +7,9 @@ GameManager::GameManager(HWND hWnd)
 {
 	this->hWnd = hWnd;
 	this->hdc = GetDC(hWnd);
-	objectManager = new ObjectManager();
-	imageManager = new ImageManager();
+	objectManager->LoadCharacterData();
+	memDC = CreateCompatibleDC(hdc);
+	memDCBack = CreateCompatibleDC(hdc);
 }
 
 GameManager::~GameManager()
@@ -16,35 +17,51 @@ GameManager::~GameManager()
 	delete objectManager;
 	delete imageManager;
 
+	DeleteDC(memDC);
+	DeleteDC(memDCBack);
 	ReleaseDC(hWnd, hdc);
 }
 
 void GameManager::Init()
 {
-	imageManager->LoadData();
-	objectManager->LoadCharacterData();
-	memDC = CreateCompatibleDC(hdc);
-	memDCBack = CreateCompatibleDC(hdc);
+	objectManager = new ObjectManager();
+	imageManager = new ImageManager();
 
-	player = dynamic_cast<Character*>(objectManager->Test());
-	player->SetPosition({ 0,0 });
-	player->SetSize({ 500,500 });
 }
 
 void GameManager::Run()
 {
+	Input();
+	Update();
 	Render();
+}
+
+void GameManager::Input()
+{
+
+
+
+}
+
+void GameManager::Update()
+{
+
+
+
 }
 
 void GameManager::Render()
 {
-	hBitMap = CreateCompatibleBitmap(hdc, 500, 500);
-	hBitMap = player->GetHBitmap();
-	oldHBitMap = (HBITMAP)SelectObject(memDCBack, hBitMap);
-	
-	player->Render(memDCBack, memDC);
+	SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
 
-	BitBlt(hdc, 0, 0, 500, 500, memDCBack, 0, 0, SRCCOPY);
+	objectManager->Render(hdc, memDCBack, memDC);
 
-	DeleteObject(oldHBitMap);
+	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
+}
+
+void GameManager::LoadBitmapData()
+{
+	imageManager->LoadData();
+	objectManager->LoadDefaultData(imageManager->GetBitmap());
+
 }

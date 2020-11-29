@@ -1,27 +1,40 @@
 ﻿#pragma once
 #include <fstream>
+#include <list>
+#include <vector>
 #include "DataStruct.h"
 
+using namespace std;
+
 class Obj;
+class StaticObject;
 class ObjectManager
 {
+
+public:
+	void Render(HDC hdc, HDC backdc, HDC mdc);
+	
 public:
 	ObjectManager();
 	~ObjectManager();
 
 private:
-	vector<Obj*> characterDataVector;
-	vector<Obj*> monsterDataVector;
-	vector<Obj*> blockDataVector;	//아이템, 불러올떄, 기본세팅정보들,?? 저장할거
-	vector<Obj*> itemDataVector;	
-	list<Obj*> objectList;	//실제 게임 플레이 중 생성될 오브젝트 (플레이어, 몬스터, 블록)
 
+	//vector<Obj*> characterDataVector;	//캐릭터들 저장
+	//vector<Obj*> monsterDataVector;		//몬스터들 저장
+	//vector<Obj*> blockDataVector;		//블럭들 저장
+	//vector<Obj*> itemDataVector;		//아이템들 저장
+	vector<Obj*> objectVector;	//모든 비트맵 저장
+
+	list<Obj*> blockObjectList;		//블록
+	list<Obj*> playerObjectList;	//플레이어
 private:
 	list<HBITMAP> hbmpList;
 
 public:
 	ifstream fin;
-	vector<string> imageVector;
+	vector<string> imagePathVector;
+	vector<pDefaultBitmap> bitmapVector;
 
 public:
 	void GetImageDataList(list<HBITMAP>* imageDataList);
@@ -30,5 +43,5 @@ public:
 	void LoadBlockData();
 	void LoadItemData();
 
-	Obj* Test();
+	void LoadDefaultData(const vector<pDefaultBitmap>& bitmapVector);
 };

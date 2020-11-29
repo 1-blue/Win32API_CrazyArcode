@@ -8,6 +8,7 @@ private:
 
 public:
 	DynamicObject();
+	DynamicObject(const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
 	virtual ~DynamicObject();
 
 };

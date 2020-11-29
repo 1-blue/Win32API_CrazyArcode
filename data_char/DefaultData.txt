@@ -1,0 +1,11 @@
+background		image\Default\background.bmp			0	0 0
+characterImage		image\Default\characterPick.bmp			0	40 120
+characterPickImage		image\Default\characterPickImage.bmp		0	510 180
+characterRandomPick	image\Default\characterRandomPick.bmp		0	40 120
+characterRandomPickImage	image\Default\characterRandomPickImage.bmp	0	680 180
+exit			image\Default\exit.bmp				0	760 575
+level			image\Default\level.bmp				0	500 500
+map			image\Default\map.bmp				0	490 350
+mapPick			image\Default\mapPick.bmp			0	650 430
+mouse			image\Default\mouse.bmp				0	500 500
+start			image\Default\start.bmp				0	530 510

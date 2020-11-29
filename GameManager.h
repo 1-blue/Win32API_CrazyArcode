@@ -6,7 +6,10 @@ class ObjectManager;
 class Character;
 class GameManager
 {
-public:
+private:
+	const int WND_WIDTH = 800;
+	const int WND_HEIGHT = 600;
+
 	HWND hWnd;
 	HDC hdc;
 	HDC memDC;
@@ -15,15 +18,17 @@ public:
 	HBITMAP oldHBitMap;
 	ObjectManager* objectManager;
 	ImageManager* imageManager;
-
-	Character* player;
 public:
 	GameManager(HWND hWnd);
 	~GameManager();
 	void Init();
 	void Run();
+	void Input();
+	void Update();
 	void Render();
 
+public:
+	void LoadBitmapData();
 
 };
 

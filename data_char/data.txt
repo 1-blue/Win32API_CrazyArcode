@@ -1,3 +1,4 @@
 name,bNum,maxBNum,bLength,maxBLength,speed,maxSpeed,image_char
 bazzi 1 6 1 7 3 9 0
 dao 1 10 1 7 3 7 1
+dizni 2 7 1 9 4 8

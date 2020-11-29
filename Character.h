@@ -19,7 +19,6 @@ class Character : public DynamicObject
 private:
 	CHARTERDATA data;
 public:
-	Character();
 	Character(CHARTERDATA data);
 	~Character();
 };

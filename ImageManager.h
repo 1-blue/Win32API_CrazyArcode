@@ -1,18 +1,24 @@
 ﻿#pragma once
-#include <Windows.h>
+#pragma comment(lib, "Msimg32.lib")
 #include <list>
+#include <vector>
+#include <fstream>
+#include <algorithm>
+#include "DataStruct.h"
 
 using namespace std;
 
 class ImageManager
 {
 private:
-	list<HBITMAP> hbmpList;
+	ifstream fin;
+	vector<pDefaultBitmap> defaultBitmap;
 
 public:
+	ImageManager();
+	~ImageManager();
 	void LoadData();
-	list<HBITMAP>* GetData();
-
+	const vector<pDefaultBitmap>& GetBitmap() const;
 
 };
 

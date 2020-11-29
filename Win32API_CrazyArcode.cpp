@@ -1,6 +1,8 @@
 ﻿// Win32API_CrazyArcode.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
+#include <cstdio>
+
 #include "framework.h"
 #include "Win32API_CrazyArcode.h"
 #include "GameManager.h"
@@ -11,6 +13,7 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 HWND hWnd;
+RECT windowSize{ 0, 0, 1200, 800 };
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -45,6 +48,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONGLONG tick = GetTickCount64();
     GameManager gameManager(hWnd);
     gameManager.Init();
+    gameManager.LoadBitmapData();
 
     // 기본 메시지 루프입니다:
     while (true)
@@ -59,7 +63,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-        if (GetTickCount64() > tick + 33)
+        if (GetTickCount64() > tick + 300)
         {
             tick = GetTickCount64();
             gameManager.Run();
@@ -83,7 +87,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WIN32APICRAZYARCODE));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WIN32APICRAZYARCODE);
+    wcex.lpszMenuName   = NULL;     //MAKEINTRESOURCEW(IDC_WIN32APICRAZYARCODE);.. 메뉴창삭제
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -94,13 +98,16 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-   hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_SYSMENU,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
       return FALSE;
    }
+
+   //윈도우 크기결정
+   AdjustWindowRect(&windowSize, WS_OVERLAPPEDWINDOW, false);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
@@ -110,8 +117,26 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    static POINT p{ 0,0 };
+    char str[100];
+
     switch (message)
     {
+    case WM_GETMINMAXINFO:
+        //일단 사이즈가 안맞을수도있음.. 그 타이틀바크기를 포함하는것같아서
+        //사이즈 나중에 수정필요함
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.x = 815;
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = 638;
+        ((MINMAXINFO*)lParam)->ptMaxTrackSize.x = 815;
+        ((MINMAXINFO*)lParam)->ptMaxTrackSize.y = 638;
+        break;
+
+    case WM_MOUSEMOVE:
+        //p.x = LOWORD(lParam);
+        //p.y = HIWORD(lParam);
+        //InvalidateRect(hWnd, NULL, true);
+        break;
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -133,7 +158,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+            
+            sprintf_s(str, "x : %d, y : %d", p.x, p.y);
+            
+            TextOut(hdc, 100, 10, str, strlen(str));
+
             EndPaint(hWnd, &ps);
         }
         break;

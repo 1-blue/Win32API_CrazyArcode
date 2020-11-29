@@ -1,7 +1,10 @@
 ﻿#include "StaticObject.h"
-#include "Obj.h"
 
 StaticObject::StaticObject()
+{
+}
+
+StaticObject::StaticObject(const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap) : Obj(pos, size, hBitmap)
 {
 }
 
