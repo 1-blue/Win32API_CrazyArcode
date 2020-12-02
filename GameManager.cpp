@@ -38,9 +38,7 @@ void GameManager::Run()
 
 void GameManager::Input()
 {
-
-
-
+	objectManager->Input();
 }
 
 void GameManager::Update()

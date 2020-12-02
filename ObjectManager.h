@@ -12,6 +12,7 @@ class ObjectManager
 {
 
 public:
+	void Input();
 	void Render(HDC hdc, HDC backdc, HDC mdc);
 	
 public:
@@ -33,7 +34,6 @@ private:
 
 public:
 	ifstream fin;
-	vector<string> imagePathVector;
 	vector<pDefaultBitmap> bitmapVector;
 
 public:

@@ -4,7 +4,7 @@ DynamicObject::DynamicObject()
 {
 }
 
-DynamicObject::DynamicObject(const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap) : Obj(pos, size, hBitmap)
+DynamicObject::DynamicObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int number, int interval, HBITMAP hBitmap) : Obj(name, pos, size, kinds, number, interval, hBitmap)
 {
 }
 

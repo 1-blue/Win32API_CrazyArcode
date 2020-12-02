@@ -4,15 +4,39 @@ Obj::Obj()
 {
 }
 
-Obj::Obj(const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
+Obj::Obj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int number, int interval, HBITMAP hBitmap)
 {
+	this->name = name;
 	this->pos = pos;
 	this->size = size;
+	this->kinds = kinds;
+	this->imageNumber = number;
+	this->interval = interval;
 	this->hBitmap = hBitmap;
 }
 
 Obj::~Obj()
 {
+}
+
+void Obj::Input()
+{
+
+
+
+}
+
+void Obj::Render(HDC hDC, HDC memDc)
+{
+	SelectObject(memDc, hBitmap);
+
+	TransparentBlt(hDC,
+		pos.x, pos.y,				//출력될 이미지 시작좌표
+		size.width, size.height,	//출력될 이미지크기
+		memDc,
+		0, 0,						//이미지에서 출력할 시작위치
+		size.width, size.height,	//이미지에서 출력할 이미지의 크기
+		RGB(255, 0, 255));
 }
 
 void Obj::SetPosition(ObjectData::POSITION pos)
@@ -23,22 +47,6 @@ void Obj::SetPosition(ObjectData::POSITION pos)
 void Obj::SetSize(ObjectData::SIZE size)
 {
 	this->size = size;
-}
-void Obj::Render(HDC hDC, HDC memDc)
-{
-	SelectObject(memDc, hBitmap);
-
-	TransparentBlt(hDC, pos.x, pos.y, size.width, size.height, memDc, 0, 0, size.width, size.height, RGB(255, 0, 255));
-}
-
-void Obj::Rendert(HDC hDC, HDC memDc)
-{
-	SelectObject(memDc, hBitmap);
-
-	//TransparentBlt(hDC, pos.x, pos.y, size.width, size.height, memDc, 0, 0, size.width, size.height, RGB(255, 0, 255));
-	//TransparentBlt(hDC, pos.x, pos.y, size.width, size.height / imageNumber, memDc, 0, imageAnimNum *56, size.width, size.height / imageNumber, RGB(255, 0, 255));
-
-	TransparentBlt(hDC, pos.x, pos.y, size.width, size.height/2, memDc, 0, 56, size.width, size.height/2, RGB(255, 0, 255));
 }
 
 void Obj::SetHBitmap(HBITMAP hBitmap)

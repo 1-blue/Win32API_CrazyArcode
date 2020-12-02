@@ -1,4 +1,5 @@
-﻿// Win32API_CrazyArcode.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿
+// Win32API_CrazyArcode.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
 #include <cstdio>
@@ -85,7 +86,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WIN32APICRAZYARCODE));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
+    wcex.hCursor        = LoadCursor(hInstance, MAKEINTRESOURCE(IDI_ICON2));
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = NULL;     //MAKEINTRESOURCEW(IDC_WIN32APICRAZYARCODE);.. 메뉴창삭제
     wcex.lpszClassName  = szWindowClass;
@@ -117,8 +118,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static POINT p{ 0,0 };
-    char str[100];
+    //HCURSOR cursor = (HCURSOR)LoadImage(NULL, "image\\Default\\cursor.bmp", IMAGE_BITMAP, 33, 36, LR_LOADFROMFILE);
 
     switch (message)
     {
@@ -131,11 +131,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         ((MINMAXINFO*)lParam)->ptMaxTrackSize.y = 638;
         break;
 
-    case WM_MOUSEMOVE:
-        //p.x = LOWORD(lParam);
-        //p.y = HIWORD(lParam);
-        //InvalidateRect(hWnd, NULL, true);
+    case WM_CREATE:
+        //SetCursor(LoadCursorA(NULL, MAKEINTRESOURCE(IDB_BITMAP1)));
         break;
+
+   // case WM_SETCURSOR:
+        //SetCursor(cursor);
+        //break;
 
     case WM_COMMAND:
         {
@@ -158,10 +160,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            
-            sprintf_s(str, "x : %d, y : %d", p.x, p.y);
-            
-            TextOut(hdc, 100, 10, str, strlen(str));
+          
 
             EndPaint(hWnd, &ps);
         }
