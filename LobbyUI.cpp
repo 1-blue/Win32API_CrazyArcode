@@ -1,22 +1,23 @@
-﻿#include "WaitingUI.h"
+﻿#include "LobbyUI.h"
 
 extern HWND hWnd;		//이거 마우스위치알아낼때 필요해서 임시로사용
-int WaitingUI::redImageNumber = 0;
-int WaitingUI::blueImageNumber = 0;
-int WaitingUI::mapImageNumber = 0;
+int LobbyUI::redImageNumber = 0;
+int LobbyUI::blueImageNumber = 0;
+int LobbyUI::mapImageNumber = 0;
+bool LobbyUI::isStart = false;
 
-WaitingUI::WaitingUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int number, int interval, HBITMAP hBitmap)
-	: StaticObject(name, pos, size, kinds, number, interval, hBitmap)
+LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int imageNumber, int interval, HBITMAP hBitmap)
+	: DynamicObject(name, pos, size, kinds, imageNumber, interval, hBitmap)
 {
 
 }
 
-WaitingUI::~WaitingUI()
+LobbyUI::~LobbyUI()
 {
-	StaticObject::~StaticObject();
+	DynamicObject::~DynamicObject();
 }
 
-void WaitingUI::Input()
+void LobbyUI::Input()
 {
 	if (imageNumber <= 1)	//이미지수가 2개이상일때 (이미지 변화할 애들만 변화시키위해)
 		return;
@@ -43,9 +44,7 @@ void WaitingUI::Input()
 
 			if ("start" == name)
 			{
-				//redImageNumber, blueImageNumber, mapImageNumber값들을 게임시작시 데이터로 사용
-				//맵그리기
-				//캐릭터생성
+				isStart = true;
 			}
 		}
 		if (GetAsyncKeyState(MK_RBUTTON) & 0x8000)
@@ -64,7 +63,7 @@ void WaitingUI::Input()
 	}
 }
 
-void WaitingUI::Update()
+void LobbyUI::Update()
 {
 	if ("redCharacter" == name)
 		printImageNumber = redImageNumber;
@@ -74,7 +73,7 @@ void WaitingUI::Update()
 		printImageNumber = mapImageNumber;
 }
 
-void WaitingUI::Render(HDC hDC, HDC memDc)
+void LobbyUI::Render(HDC hDC, HDC memDc)
 {
 	SelectObject(memDc, hBitmap);
 
@@ -111,4 +110,9 @@ void WaitingUI::Render(HDC hDC, HDC memDc)
 			RGB(255, 0, 255));
 		break;
 	}
+}
+
+bool LobbyUI::IsStart()
+{
+	return isStart;
 }

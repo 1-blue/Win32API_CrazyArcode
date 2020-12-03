@@ -27,20 +27,10 @@ void GameManager::Init()
 {
 	objectManager = new ObjectManager(&stage);
 	imageManager = new ImageManager();
-
-	//objectManager->LoadCharacterData();
 }
 
 void GameManager::Run()
 {
-	if (GetAsyncKeyState(VK_SPACE))
-	{
-		if(stage == 0)
-			stage = 1;
-		else if (stage == 1)
-			stage = 0;
-	}
-	//테스트용으로 만든거
 	Input();
 	Update();
 	Render();

@@ -4,14 +4,11 @@ Obj::Obj()
 {
 }
 
-Obj::Obj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int number, int interval, HBITMAP hBitmap)
+Obj::Obj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
 {
 	this->name = name;
 	this->pos = pos;
 	this->size = size;
-	this->kinds = kinds;
-	this->imageNumber = number;
-	this->interval = interval;
 	this->hBitmap = hBitmap;
 }
 

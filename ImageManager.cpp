@@ -7,9 +7,9 @@ ImageManager::ImageManager()
 
 ImageManager::~ImageManager()
 {
-	for (auto bitmap : defaultBitmap)
+	for (auto bitmap : lobbyBitmap)
 		delete bitmap;
-	defaultBitmap.clear();
+	lobbyBitmap.clear();
 
 	for (auto bitmap : InGameImageInfo)
 		delete bitmap;
@@ -18,11 +18,11 @@ ImageManager::~ImageManager()
 
 void ImageManager::LoadImageData()
 {
-	LoadDafaultData();
+	LoadLobbyData();
 	LoadInGameImageData();
 }
 
-void ImageManager::LoadDafaultData()
+void ImageManager::LoadLobbyData()
 {
 	//여기서 default데이터 이름과 path 저장
 	fin.open("data_char\\DefaultData.txt");
@@ -35,7 +35,7 @@ void ImageManager::LoadDafaultData()
 		for (int i = 0; i < SSSS; i++)
 			fin >> str[i];
 
-		defaultBitmap.emplace_back(new ImageData{
+		lobbyBitmap.emplace_back(new ImageData{
 			str[0],			//이름저장
 			(HBITMAP)LoadImage(NULL, str[1].c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION),	//비트맵저장
 			stoi(str[2]),	//Object종류구분
@@ -77,7 +77,7 @@ void ImageManager::LoadInGameImageData()
 
 const vector<pImageData>& ImageManager::GetBitmap() const
 {
-	return defaultBitmap;
+	return lobbyBitmap;
 }
 
 const vector<pImageData>& ImageManager::GetInGameImageData()

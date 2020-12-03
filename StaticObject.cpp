@@ -1,15 +1,15 @@
 ﻿#include "StaticObject.h"
 
-StaticObject::StaticObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
+StaticObject::StaticObject()
+{
+}
+
+StaticObject::StaticObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap) : Obj(name, pos, size, hBitmap)
 {
 	this->name = name;
 	this->pos = pos;
 	this->size = size;
 	this->hBitmap = hBitmap;
-}
-
-StaticObject::StaticObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int number, int interval, HBITMAP hBitmap) : Obj(name, pos, size, kinds, number, interval, hBitmap)
-{
 }
 
 StaticObject::~StaticObject()

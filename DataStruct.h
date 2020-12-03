@@ -69,3 +69,19 @@ namespace CharacterSelect
 		RANDOM
 	};
 }
+
+namespace MapSelect
+{
+	enum
+	{
+		MAP1,
+		MAP2
+	};
+}
+
+typedef struct
+{
+	int redCharacterNumber;
+	int blueCharacterNumber;
+	int mapNumber;
+}SelectData, * pSelectData;

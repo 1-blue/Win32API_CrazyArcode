@@ -3,13 +3,10 @@
 
 class StaticObject : public Obj
 {
-private:
-
 
 public:
+	StaticObject();
 	StaticObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
-
-	StaticObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int number, int interval, HBITMAP hBitmap);
 	~StaticObject();
 	virtual void Input();
 	virtual void Update();

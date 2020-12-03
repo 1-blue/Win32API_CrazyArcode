@@ -1,7 +1,8 @@
 ﻿#include "ObjectManager.h"
 #include "Obj.h"
 #include "Character.h"
-#include "WaitingUI.h"
+#include "LobbyUI.h"
+#include "StaticObject.h"
 
 ObjectManager::ObjectManager(int *stage)
 {
@@ -10,32 +11,31 @@ ObjectManager::ObjectManager(int *stage)
 
 ObjectManager::~ObjectManager()
 {
-	for (auto objs : defaultDataVector)
+	for (auto objs : LobbyDataVector)
 		delete objs;
-	defaultDataVector.clear();
+	LobbyDataVector.clear();
 }
 
 void ObjectManager::Input()
 {
 	if (*stage == GameStage::LOBBY)
 	{
-		for (auto it = defaultDataVector.begin(); it != defaultDataVector.end(); it++)
-			(*it)->Input();
+		for (const auto& lobby : LobbyDataVector)
+			lobby->Input();
 	}
 	else if (*stage == GameStage::INGAME)
 	{
 		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 			(*it)->Input();
 	}
-	
 }
 
 void ObjectManager::Update()
 {
 	if (*stage == GameStage::LOBBY)
 	{
-		for (auto it = defaultDataVector.begin(); it != defaultDataVector.end(); it++)
-			(*it)->Update();
+		for (const auto& lobby : LobbyDataVector)
+			lobby->Update();
 	}
 	else if (*stage == GameStage::INGAME)
 	{
@@ -48,8 +48,19 @@ void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 {
 	if (*stage == GameStage::LOBBY)
 	{
-		for (auto it = defaultDataVector.begin(); it != defaultDataVector.end(); it++)
-			(*it)->Render(memDCBack, memDC);
+		for (const auto& lobby : LobbyDataVector)
+			lobby->Render(memDCBack, memDC);
+
+		//여기넣을건 아닌것같긴한데 일단넣음
+		//시작버튼누르면 시작
+		if (LobbyUI::IsStart())
+		{
+			*stage = GameStage::INGAME;
+			selectData.redCharacterNumber = LobbyUI::redImageNumber;
+			selectData.blueCharacterNumber = LobbyUI::blueImageNumber;
+			selectData.mapNumber = LobbyUI::mapImageNumber;
+		}
+
 	}
 	else if (*stage == GameStage::INGAME)
 	{
@@ -63,13 +74,13 @@ void ObjectManager::LoadDefaultData(const vector<pImageData>& bitmapVector)
 	BITMAP bitMap;
 	this->bitmapVector = bitmapVector;
 
-	for (auto iterator : bitmapVector)
+	for (const auto iterator : bitmapVector)
 	{
 		if (iterator->objType == 0)
 		{
 			GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
 
-			defaultDataVector.emplace_back(new WaitingUI(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
+			LobbyDataVector.emplace_back(new LobbyUI(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
 		}
 	}
 }
@@ -78,7 +89,7 @@ void ObjectManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
 {
 	BITMAP bitMap;
 
-	for (auto iterator : bitmapVector)
+	for (const auto iterator : bitmapVector)
 	{
 		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
 		if (iterator->objType == 0)

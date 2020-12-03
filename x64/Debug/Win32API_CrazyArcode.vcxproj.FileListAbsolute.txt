@@ -4,3 +4,5 @@ C:\Users\DBlab\Desktop\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.exe
 C:\Users\DBlab\Desktop\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.pdb
 C:\Users\parks\Desktop\GitHub\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.exe
 C:\Users\parks\Desktop\GitHub\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.pdb
+C:\Users\user\Desktop\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.exe
+C:\Users\user\Desktop\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.pdb

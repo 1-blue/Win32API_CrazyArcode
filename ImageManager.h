@@ -12,7 +12,7 @@ class ImageManager
 {
 private:
 	ifstream fin;
-	vector<pImageData> defaultBitmap;
+	vector<pImageData> lobbyBitmap;
 	vector<pImageData> InGameImageInfo;
 
 public:
@@ -20,7 +20,7 @@ public:
 	~ImageManager();
 
 	void LoadImageData();
-	void LoadDafaultData();
+	void LoadLobbyData();
 	void LoadInGameImageData();
 	const vector<pImageData>& GetBitmap() const;
 	const vector<pImageData>& GetInGameImageData();

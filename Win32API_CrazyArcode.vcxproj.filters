@@ -51,7 +51,7 @@
     <ClInclude Include="Obj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="WaitingUI.h">
+    <ClInclude Include="LobbyUI.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,7 +80,7 @@
     <ClCompile Include="Obj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="WaitingUI.cpp">
+    <ClCompile Include="LobbyUI.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
