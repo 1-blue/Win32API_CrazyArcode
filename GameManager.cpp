@@ -9,6 +9,8 @@ GameManager::GameManager(HWND hWnd)
 	this->hdc = GetDC(hWnd);
 	memDC = CreateCompatibleDC(hdc);
 	memDCBack = CreateCompatibleDC(hdc);
+
+	stage = GameStage::LOBBY;
 }
 
 GameManager::~GameManager()
@@ -23,7 +25,7 @@ GameManager::~GameManager()
 
 void GameManager::Init()
 {
-	objectManager = new ObjectManager();
+	objectManager = new ObjectManager(&stage);
 	imageManager = new ImageManager();
 
 	//objectManager->LoadCharacterData();
@@ -31,6 +33,14 @@ void GameManager::Init()
 
 void GameManager::Run()
 {
+	if (GetAsyncKeyState(VK_SPACE))
+	{
+		if(stage == 0)
+			stage = 1;
+		else if (stage == 1)
+			stage = 0;
+	}
+	//테스트용으로 만든거
 	Input();
 	Update();
 	Render();
@@ -48,16 +58,19 @@ void GameManager::Update()
 
 void GameManager::Render()
 {
-	SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
+	if (oldHBitMap != NULL)
+		DeleteObject(oldHBitMap);
+
+	oldHBitMap = (HBITMAP)SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
 
 	objectManager->Render(hdc, memDCBack, memDC);
 
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
 }
 
-void GameManager::LoadDefaultData()
+void GameManager::LoadImageData()
 {
-	imageManager->LoadDafaultData();
+	imageManager->LoadImageData();
 	objectManager->LoadDefaultData(imageManager->GetBitmap());
-
+	objectManager->LoadInGameImageData(imageManager->GetInGameImageData());
 }

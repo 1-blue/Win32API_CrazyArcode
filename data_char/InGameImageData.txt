@@ -1,0 +1,4 @@
+이름			path						Object종류	출력위치		가로세로구분	이미지수	이미지간격
+
+background		image\InGame\BackGround.bmp			0		0 0		0		1	0
+exit			image\InGame\exit.bmp				1		100 100		2		2	70

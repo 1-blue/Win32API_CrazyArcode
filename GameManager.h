@@ -14,10 +14,11 @@ private:
 	HDC hdc;
 	HDC memDC;
 	HDC memDCBack;
-	HBITMAP hBitMap{ NULL };
 	HBITMAP oldHBitMap{ NULL };
 	ObjectManager* objectManager{ NULL };
 	ImageManager* imageManager{ NULL };
+
+	int stage;
 public:
 	GameManager(HWND hWnd);
 	~GameManager();
@@ -28,7 +29,7 @@ public:
 	void Render();
 
 public:
-	void LoadDefaultData();
+	void LoadImageData();
 
 };
 

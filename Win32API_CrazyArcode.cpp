@@ -48,7 +48,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONGLONG tick = GetTickCount64();
     GameManager gameManager(hWnd);
     gameManager.Init();
-    gameManager.LoadDefaultData();
+    gameManager.LoadImageData();
 
     // 기본 메시지 루프입니다:
     while (true)
@@ -63,7 +63,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-        if (GetTickCount64() > tick + 300)
+        if (GetTickCount64() > tick + 33)
         {
             tick = GetTickCount64();
             gameManager.Run();
@@ -135,7 +135,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_SETCURSOR:          //마우스가 윈도우창나갔다가 들어올때 생성되는 메시지
-        SetCursor(cursor);
+        //SetCursor(cursor);
         break;
 
     case WM_COMMAND:

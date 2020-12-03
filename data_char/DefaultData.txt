@@ -1,12 +1,12 @@
-이름			path						Object종류	출력위치	종류	이미지수	이미지간격
+이름			path						Object종류	출력위치		가로세로구분	이미지수	이미지간격
 
-background		image\Default\background.bmp			0		0 0	0	1	0
-redCharacter		image\Default\redCharacter.bmp			0		40 120	2	3	60
-blueCharacter		image\Default\blueCharacter.bmp			0		140 120	2	3	60
-bazziPickImage		image\Default\bazziPickImage.bmp			0		510 180	2	2	43
-dizniPickImage		image\Default\dizniPickImage.bmp			0		610 180	2	2	43
-RandomPickImage		image\Default\RandomPickImage.bmp		0		710 180	1	2	65
-exit			image\Default\exit.bmp				0		760 575	2	2 	24
-map			image\Default\map.bmp				0		490 350	2	2 	124
-mapPick			image\Default\mapPick.bmp			0		650 430	2	2	46
-start			image\Default\start.bmp				0		530 495	2	2	56
+background		image\Default\background.bmp			0		0 0		0		1	0
+redCharacter		image\Default\redCharacter.bmp			0		40 120		2		3	60
+blueCharacter		image\Default\blueCharacter.bmp			0		140 120		2		3	60
+bazziPickImage		image\Default\bazziPickImage.bmp			0		510 180		2		2	43
+dizniPickImage		image\Default\dizniPickImage.bmp			0		610 180		2		2	43
+RandomPickImage		image\Default\RandomPickImage.bmp		0		710 180		1		2	65
+exit			image\Default\exit.bmp				0		760 575		2		2 	24
+map			image\Default\map.bmp				0		490 350		2		2 	124
+mapPick			image\Default\mapPick.bmp			0		650 430		2		2	46
+start			image\Default\start.bmp				0		530 495		2		2	56

@@ -26,7 +26,7 @@ typedef struct
 	int number;			//이미지수
 	int interval;		//간격
 
-}DefaultData, * pDefaultData;
+}ImageData, * pImageData;
 
 namespace ObjectData
 {
@@ -51,12 +51,20 @@ namespace ObjectData
 		VERTICAL
 	};
 }
+namespace GameStage
+{
+	enum
+	{
+		LOBBY,
+		INGAME
+	};
+}
 
 namespace CharacterSelect
 {
 	enum
 	{
-		DAZZI,
+		BAZZI,
 		DIZNI,
 		RANDOM
 	};

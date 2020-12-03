@@ -3,58 +3,62 @@
 #include "Character.h"
 #include "WaitingUI.h"
 
-ObjectManager::ObjectManager()
+ObjectManager::ObjectManager(int *stage)
 {
-
+	this->stage = stage;
 }
 
 ObjectManager::~ObjectManager()
 {
-	for (auto objs : objectVector)
+	for (auto objs : defaultDataVector)
 		delete objs;
-	objectVector.clear();
-
-	/*
-	for (auto monster : monsterDataVector)
-		delete monster;
-	monsterDataVector.clear();
-
-	for (auto block : blockDataVector)
-		delete block;
-	blockDataVector.clear();
-
-	for (auto item : itemDataVector)
-		delete item;
-	itemDataVector.clear();
-
-	for (auto object : objectList)
-		delete object;
-	objectList.clear();
-
-	for (auto hbmp : hbmpList)
-		delete hbmp;
-	hbmpList.clear();*/
+	defaultDataVector.clear();
 }
 
 void ObjectManager::Input()
 {
-	for (auto it = objectVector.begin(); it != objectVector.end(); it++)
-		(*it)->Input();
+	if (*stage == GameStage::LOBBY)
+	{
+		for (auto it = defaultDataVector.begin(); it != defaultDataVector.end(); it++)
+			(*it)->Input();
+	}
+	else if (*stage == GameStage::INGAME)
+	{
+		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
+			(*it)->Input();
+	}
+	
 }
 
 void ObjectManager::Update()
 {
-	for (auto it = objectVector.begin(); it != objectVector.end(); it++)
-		(*it)->Update();
+	if (*stage == GameStage::LOBBY)
+	{
+		for (auto it = defaultDataVector.begin(); it != defaultDataVector.end(); it++)
+			(*it)->Update();
+	}
+	else if (*stage == GameStage::INGAME)
+	{
+		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
+			(*it)->Update();
+	}
 }
 
 void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 {
-	for (auto it = objectVector.begin(); it != objectVector.end(); it++)
-		(*it)->Render(memDCBack, memDC);
+	if (*stage == GameStage::LOBBY)
+	{
+		for (auto it = defaultDataVector.begin(); it != defaultDataVector.end(); it++)
+			(*it)->Render(memDCBack, memDC);
+	}
+	else if (*stage == GameStage::INGAME)
+	{
+		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
+			(*it)->Render(memDCBack, memDC);
+	}
 }
 
-void ObjectManager::LoadDefaultData(const vector<pDefaultData>& bitmapVector)
+void ObjectManager::LoadDefaultData(const vector<pImageData>& bitmapVector)
 {
 	BITMAP bitMap;
 	this->bitmapVector = bitmapVector;
@@ -65,29 +69,26 @@ void ObjectManager::LoadDefaultData(const vector<pDefaultData>& bitmapVector)
 		{
 			GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
 
-			objectVector.emplace_back(new WaitingUI(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
 			defaultDataVector.emplace_back(new WaitingUI(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
 		}
+	}
+}
+
+void ObjectManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
+{
+	BITMAP bitMap;
+
+	for (auto iterator : bitmapVector)
+	{
+		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
+		if (iterator->objType == 0)
+			inGameSceneDataVector.emplace_back(new StaticObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->hBitmap));
+		else 
+			inGameSceneDataVector.emplace_back(new DynamicObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
 	}
 }
 
 void ObjectManager::GetImageDataList(list<HBITMAP>* imageDataList)
 {
 	hbmpList = *imageDataList;
-}
-
-void ObjectManager::LoadCharacterData()
-{
-}
-
-void ObjectManager::LoadMonsterData()
-{
-}
-
-void ObjectManager::LoadBlockData()
-{
-}
-
-void ObjectManager::LoadItemData()
-{
 }

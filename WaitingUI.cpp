@@ -33,7 +33,7 @@ void WaitingUI::Input()
 		if (GetAsyncKeyState(MK_LBUTTON) & 0x8000)	//0x8000없으면 클릭하고 마우스올려도 이미지 변화됨
 		{
 			if ("bazziPickImage" == name)
-				redImageNumber = CharacterSelect::DAZZI;
+				redImageNumber = CharacterSelect::BAZZI;
 			if ("dizniPickImage" == name)
 				redImageNumber = CharacterSelect::DIZNI;
 			if ("RandomPickImage" == name)
@@ -51,7 +51,7 @@ void WaitingUI::Input()
 		if (GetAsyncKeyState(MK_RBUTTON) & 0x8000)
 		{
 			if ("bazziPickImage" == name)
-				blueImageNumber = CharacterSelect::DAZZI;
+				blueImageNumber = CharacterSelect::BAZZI;
 			if ("dizniPickImage" == name)
 				blueImageNumber = CharacterSelect::DIZNI;
 			if ("RandomPickImage" == name)
