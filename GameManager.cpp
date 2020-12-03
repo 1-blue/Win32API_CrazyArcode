@@ -7,7 +7,6 @@ GameManager::GameManager(HWND hWnd)
 {
 	this->hWnd = hWnd;
 	this->hdc = GetDC(hWnd);
-	objectManager->LoadCharacterData();
 	memDC = CreateCompatibleDC(hdc);
 	memDCBack = CreateCompatibleDC(hdc);
 }
@@ -27,6 +26,7 @@ void GameManager::Init()
 	objectManager = new ObjectManager();
 	imageManager = new ImageManager();
 
+	//objectManager->LoadCharacterData();
 }
 
 void GameManager::Run()
@@ -43,9 +43,7 @@ void GameManager::Input()
 
 void GameManager::Update()
 {
-
-
-
+	objectManager->Update();
 }
 
 void GameManager::Render()
@@ -57,9 +55,9 @@ void GameManager::Render()
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
 }
 
-void GameManager::LoadBitmapData()
+void GameManager::LoadDefaultData()
 {
-	imageManager->LoadData();
+	imageManager->LoadDafaultData();
 	objectManager->LoadDefaultData(imageManager->GetBitmap());
 
 }

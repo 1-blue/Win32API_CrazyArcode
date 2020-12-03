@@ -14,7 +14,6 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 HWND hWnd;
-RECT windowSize{ 0, 0, 1200, 800 };
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -49,7 +48,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ULONGLONG tick = GetTickCount64();
     GameManager gameManager(hWnd);
     gameManager.Init();
-    gameManager.LoadBitmapData();
+    gameManager.LoadDefaultData();
 
     // 기본 메시지 루프입니다:
     while (true)
@@ -107,9 +106,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
-   //윈도우 크기결정
-   AdjustWindowRect(&windowSize, WS_OVERLAPPEDWINDOW, false);
-
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
@@ -118,26 +114,29 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    //HCURSOR cursor = (HCURSOR)LoadImage(NULL, "image\\Default\\cursor.bmp", IMAGE_BITMAP, 33, 36, LR_LOADFROMFILE);
+    static RECT clientRect{ 0, 0, 800, 600 };
+    static HCURSOR cursor = (HCURSOR)LoadImage(NULL, "image\\Default\\cursor.cur", IMAGE_CURSOR, 33, 36, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 
     switch (message)
     {
-    case WM_GETMINMAXINFO:
-        //일단 사이즈가 안맞을수도있음.. 그 타이틀바크기를 포함하는것같아서
-        //사이즈 나중에 수정필요함
-        ((MINMAXINFO*)lParam)->ptMinTrackSize.x = 815;
-        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = 638;
-        ((MINMAXINFO*)lParam)->ptMaxTrackSize.x = 815;
-        ((MINMAXINFO*)lParam)->ptMaxTrackSize.y = 638;
-        break;
-
     case WM_CREATE:
-        //SetCursor(LoadCursorA(NULL, MAKEINTRESOURCE(IDB_BITMAP1)));
+        //윈도우 크기결정
+        AdjustWindowRect(&clientRect, WS_OVERLAPPEDWINDOW, false);
+        MoveWindow(hWnd, 400, 100, clientRect.right - clientRect.left, clientRect.bottom - clientRect.top, true);
+        //커서 이미지 변경
+        SetCursor(cursor);
         break;
 
-   // case WM_SETCURSOR:
-        //SetCursor(cursor);
-        //break;
+    case WM_GETMINMAXINFO:      //윈도우크기변경시 생성되는 메시지
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.x = clientRect.right - clientRect.left;
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = clientRect.bottom - clientRect.top;
+        ((MINMAXINFO*)lParam)->ptMaxTrackSize.x = clientRect.right - clientRect.left;
+        ((MINMAXINFO*)lParam)->ptMaxTrackSize.y = clientRect.bottom - clientRect.top;
+        break;
+
+    case WM_SETCURSOR:          //마우스가 윈도우창나갔다가 들어올때 생성되는 메시지
+        SetCursor(cursor);
+        break;
 
     case WM_COMMAND:
         {

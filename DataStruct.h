@@ -1,8 +1,19 @@
 ﻿#pragma once
-#include <string>
 #include <Windows.h>
+#include <string>
 
 using namespace std;
+
+constexpr auto SSSS = 8;	
+constexpr auto CURSOR_WIDTH		= 33;
+constexpr auto CURSOR_HEIGHT	= 36;
+
+//사용이유 : 이미지로 마우스 선택하면 클릭위치가 이미지 좌측하단이라 맞춰주기위함
+//마우스 위치가져오는것은 여러군데 사용할거고 사용할때마다 적는것보단 적어야할코드가 어느정도 정해져있어서 매크로로 만들고 사용
+#define GET_CURSOR_POSITION(point) \
+GetCursorPos(&point);\
+ScreenToClient(hWnd, &point);\
+point.y -= CURSOR_HEIGHT;
 
 typedef struct
 {
@@ -15,9 +26,7 @@ typedef struct
 	int number;			//이미지수
 	int interval;		//간격
 
-}DefaultBitmap, * pDefaultBitmap;
-
-#define SSSS 8
+}DefaultData, * pDefaultData;
 
 namespace ObjectData
 {
@@ -40,5 +49,15 @@ namespace ObjectData
 		NONE,
 		HORIZONTAL,
 		VERTICAL
+	};
+}
+
+namespace CharacterSelect
+{
+	enum
+	{
+		DAZZI,
+		DIZNI,
+		RANDOM
 	};
 }

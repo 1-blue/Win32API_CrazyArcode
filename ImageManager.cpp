@@ -12,7 +12,7 @@ ImageManager::~ImageManager()
 	defaultBitmap.clear();
 }
 
-void ImageManager::LoadData()
+void ImageManager::LoadDafaultData()
 {
 	//여기서 default데이터 이름과 path 저장
 	fin.open("data_char\\DefaultData.txt");
@@ -25,7 +25,7 @@ void ImageManager::LoadData()
 		for (int i = 0; i < SSSS; i++)
 			fin >> str[i];
 
-		defaultBitmap.emplace_back(new DefaultBitmap{
+		defaultBitmap.emplace_back(new DefaultData{
 			str[0],			//이름저장
 			(HBITMAP)LoadImage(NULL, str[1].c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION),	//비트맵저장
 			stoi(str[2]),	//Object종류구분
@@ -38,7 +38,7 @@ void ImageManager::LoadData()
 	}
 }
 
-const vector<pDefaultBitmap>& ImageManager::GetBitmap() const
+const vector<pDefaultData>& ImageManager::GetBitmap() const
 {
 	return defaultBitmap;
 }

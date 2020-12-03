@@ -51,6 +51,9 @@
     <ClInclude Include="Obj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="WaitingUI.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Win32API_CrazyArcode.cpp">
@@ -75,6 +78,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Obj.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="WaitingUI.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

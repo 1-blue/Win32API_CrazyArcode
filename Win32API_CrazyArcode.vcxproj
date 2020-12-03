@@ -150,6 +150,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WaitingUI.h" />
     <ClInclude Include="Win32API_CrazyArcode.h" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClCompile Include="Obj.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="StaticObject.cpp" />
+    <ClCompile Include="WaitingUI.cpp" />
     <ClCompile Include="Win32API_CrazyArcode.cpp" />
   </ItemGroup>
   <ItemGroup>

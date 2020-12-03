@@ -12,13 +12,13 @@ class ImageManager
 {
 private:
 	ifstream fin;
-	vector<pDefaultBitmap> defaultBitmap;
+	vector<pDefaultData> defaultBitmap;
 
 public:
 	ImageManager();
 	~ImageManager();
-	void LoadData();
-	const vector<pDefaultBitmap>& GetBitmap() const;
+	void LoadDafaultData();
+	const vector<pDefaultData>& GetBitmap() const;
 
 };
 
