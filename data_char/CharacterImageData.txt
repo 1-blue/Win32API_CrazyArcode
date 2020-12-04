@@ -1,0 +1,8 @@
+이름		path				Object종류	출력포지션	가로이미지수	세로이미지수	// 간격 : 가로/가로이미지수, 세로/세로이미지수로 계산
+
+RedBazzi		image\InGame\RedBazzi.bmp	1		100 600		4		8
+RedDizni		image\InGame\RedDizni.bmp	1		100 600		4		8
+BlueBazzi		image\InGame\BlueBazzi.bmp	1		500 600		4		8
+BlueDizni		image\InGame\BlueDizni.bmp	1		500 600		4		8
+Trapped		image\InGame\Trapped.bmp	1		0 0		16		2
+Die		image\InGame\Die.bmp		1		0 0		16		2

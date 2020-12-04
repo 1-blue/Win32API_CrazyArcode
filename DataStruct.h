@@ -28,6 +28,20 @@ typedef struct
 
 }ImageData, * pImageData;
 
+typedef struct
+{
+	string name;		//이미지명
+	HBITMAP hBitmap;	//출력할 비트맵
+	int objType;		//오브젝트타입
+	int x;				//임시 출력 x포지션
+	int y;				//임시 출력 y포지션
+	int hNumber;		//가로이미지수
+	int vNumber;		//세로이미지수
+	int hInterval;		//가로간격
+	int vInterval;		//세로간격
+
+}ImageData2, * pImageData2;
+
 namespace ObjectData
 {
 	typedef struct Position

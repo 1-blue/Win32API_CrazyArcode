@@ -13,7 +13,7 @@ public:
 	static bool isStart;
 
 public:
-	LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int number, int interval, HBITMAP hBitmap);
+	LobbyUI(ImageData2 test);
 	~LobbyUI();
 	virtual void Input();
 	virtual void Update();

@@ -6,8 +6,7 @@ int LobbyUI::blueImageNumber = 0;
 int LobbyUI::mapImageNumber = 0;
 bool LobbyUI::isStart = false;
 
-LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int kinds, int imageNumber, int interval, HBITMAP hBitmap)
-	: DynamicObject(name, pos, size, kinds, imageNumber, interval, hBitmap)
+LobbyUI::LobbyUI(ImageData2 test) : DynamicObject(test)
 {
 
 }

@@ -18,8 +18,17 @@ class Character : public DynamicObject
 {
 private:
 	CHARTERDATA data;
+
+	int x{ 0 };
+	int y{ 0 };
+
 public:
 	Character(CHARTERDATA data);
+	Character(ImageData2 test);
 	~Character();
+
+	virtual void Input();
+	virtual void Update();
+	virtual void Render(HDC hDC, HDC memDc);
 };
 
