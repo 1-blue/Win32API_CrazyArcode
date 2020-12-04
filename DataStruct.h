@@ -1,10 +1,12 @@
 ﻿#pragma once
 #include <Windows.h>
 #include <string>
+#include <vector>
 
 using namespace std;
 
-constexpr auto ImageDataLength = 7;
+constexpr auto IMAGE_DATA_LENGTH = 7;
+constexpr auto STATS_DATA_LENGTH = 7;
 constexpr auto CURSOR_WIDTH = 33;
 constexpr auto CURSOR_HEIGHT = 36;
 
@@ -25,6 +27,17 @@ typedef struct
 	int hNumber;		//가로이미지수
 	int vNumber;		//세로이미지수
 }ImageData, * pImageData;
+
+//캐릭터데이터
+typedef struct
+{
+	int bNum;
+	int bLength;
+	int speed;
+	int bNumMax;
+	int bLengthMax;
+	int speedMax;
+}CharacterStatsData, * pCharacterStatsData;
 
 namespace ObjectData
 {
@@ -60,13 +73,23 @@ namespace GameStage
 
 namespace CharacterSelect
 {
-	enum
+	enum CharacterSelect
 	{
 		BAZZI,
 		DIZNI,
 		RANDOM
 	};
 }
+
+namespace CharacterColor
+{
+	enum
+	{
+		RED,
+		BLUE
+	};
+}
+
 
 namespace Diraction
 {

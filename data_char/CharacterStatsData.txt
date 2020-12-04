@@ -1,0 +1,4 @@
+name	bNum	maxBNum	bLength	maxBLength	speed	maxSpeed
+
+bazzi 	1 	6 		1 	7 		3 	9 
+dizni 	2 	7 		1 	9 		4 	8

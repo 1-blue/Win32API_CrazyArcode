@@ -1,8 +1,8 @@
 ﻿#include "GameManager.h"
 #include "ObjectManager.h"
 #include "ImageManager.h"
-#include "Character.h"
 #include "MessageQueue.h"
+#include "LobbyUI.h"
 
 GameManager::GameManager(HWND hWnd)
 {
@@ -22,6 +22,10 @@ GameManager::~GameManager()
 	DeleteDC(memDC);
 	DeleteDC(memDCBack);
 	ReleaseDC(hWnd, hdc);
+
+	for (auto objs : LobbyDataVector)
+		delete objs;
+	LobbyDataVector.clear();
 }
 
 void GameManager::Init()
@@ -33,19 +37,31 @@ void GameManager::Init()
 void GameManager::Run()
 {
 	Input();
-	MessageQueue::RunEventQueue();
+	//MessageQueue::RunEventQueue();
 	Update();
 	Render();
 }
 
 void GameManager::Input()
 {
-	objectManager->Input();
+	if (stage == GameStage::LOBBY)
+	{
+		for (const auto& lobby : LobbyDataVector)
+			lobby->Input();
+	}
+	else if (stage == GameStage::INGAME)
+		objectManager->Input();
 }
 
 void GameManager::Update()
 {
-	objectManager->Update();
+	if (stage == GameStage::LOBBY)
+	{
+		for (const auto& lobby : LobbyDataVector)
+			lobby->Update();
+	}
+	else if(stage == GameStage::INGAME)
+		objectManager->Update();
 }
 
 void GameManager::Render()
@@ -55,22 +71,50 @@ void GameManager::Render()
 
 	oldHBitMap = (HBITMAP)SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
 
-	objectManager->Render(hdc, memDCBack, memDC);
+	if (stage == GameStage::LOBBY)
+	{
+		for (const auto& lobby : LobbyDataVector)
+			lobby->Render(memDCBack, memDC);
+	}
+	else if (stage == GameStage::INGAME)
+		objectManager->Render(hdc, memDCBack, memDC);
 
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
 
-	//이것도 여기아닌데 일단 넣음
-	if ((stage == GameStage::INGAME) && x == true)
+	//게임시작버튼누르면
+	if (LobbyUI::IsStart() && isFirst)
 	{
-		objectManager->LoadRedCharacterImageData(imageManager->GetRedCharacterImageData(ObjectManager::selectData));
-		objectManager->LoadBlueCharacterImageData(imageManager->GetBlueCharacterImageData(ObjectManager::selectData));
-		x = false;
+		selectData.redCharacterNumber = LobbyUI::redImageNumber;
+		selectData.blueCharacterNumber = LobbyUI::blueImageNumber;
+		selectData.mapNumber = LobbyUI::mapImageNumber;
+		objectManager->LoadRedCharacterImageData(imageManager->GetRedCharacterImageData(selectData));
+		objectManager->LoadBlueCharacterImageData(imageManager->GetBlueCharacterImageData(selectData));
+		objectManager->LoadRedCharacterStatsData(imageManager->GetRedCharacterStatsData(selectData));
+		objectManager->LoadBlueCharacterStatsData(imageManager->GetBlueCharacterStatsData(selectData));
+		isFirst = false;
+		stage = GameStage::INGAME;
 	}
 }
 
 void GameManager::LoadImageData()
 {
 	imageManager->LoadImageData();
-	objectManager->LoadLobbyData(imageManager->GetLobbyImageData());
+	this->LoadLobbyData(imageManager->GetLobbyImageData());
 	objectManager->LoadInGameImageData(imageManager->GetInGameImageData());
+}
+
+void GameManager::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
+{
+	BITMAP bitMap;
+
+	for (const auto iterator : lobbyDataVector)
+	{
+		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
+
+		LobbyDataVector.emplace_back(new LobbyUI(iterator->name,
+			{ iterator->x,iterator->y },
+			{ bitMap.bmWidth ,bitMap.bmHeight },
+			iterator->hNumber, iterator->vNumber,
+			iterator->hBitmap));
+	}
 }

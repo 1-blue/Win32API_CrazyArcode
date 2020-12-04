@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include <Windows.h>
+#include "DataStruct.h"
 
 class ImageManager;
 class ObjectManager;
-class Character;
+class LobbyUI;
 class GameManager
 {
 private:
@@ -18,9 +18,9 @@ private:
 	ObjectManager* objectManager{ NULL };
 	ImageManager* imageManager{ NULL };
 	int stage;
-
-	//임시적으로추가
-	bool x{ true };
+	bool isFirst{ true };
+	SelectData selectData{ 0 ,0, 0 };		//요거에 선택한 캐릭터들, 맵번호 넣음
+	vector<LobbyUI*> LobbyDataVector;
 
 public:
 	GameManager(HWND hWnd);
@@ -33,6 +33,7 @@ public:
 
 public:
 	void LoadImageData();
+	void LoadLobbyData(const vector<pImageData>& lobbyDataVector);
 
 };
 

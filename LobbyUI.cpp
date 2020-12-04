@@ -7,14 +7,20 @@ int LobbyUI::mapImageNumber = 0;
 bool LobbyUI::isStart = false;
 
 LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap)
-	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
-
+	this->name = name;
+	this->pos = pos;
+	this->size = size;
+	this->hNumber = hNumber;
+	this->vNumber = vNumber;
+	this->hBitmap = hBitmap;
+	this->imageWidth = size.width / hNumber;
+	this->imageHeight = size.height / vNumber;
 }
 
 LobbyUI::~LobbyUI()
 {
-	DynamicObject::~DynamicObject();
+
 }
 
 void LobbyUI::Input()
@@ -75,9 +81,6 @@ void LobbyUI::Update()
 
 void LobbyUI::Render(HDC hDC, HDC memDc)
 {
-	int imageWidth = size.width / hNumber;
-	int imageHeight = size.height / vNumber;
-
 	SelectObject(memDc, hBitmap);
 
 	if (hNumber >= 2)
