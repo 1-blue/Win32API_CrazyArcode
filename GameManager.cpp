@@ -56,18 +56,11 @@ void GameManager::Render()
 	objectManager->Render(hdc, memDCBack, memDC);
 
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
-
-	//잠시추가
-	if (*(objectManager->GetStage()) == GameStage::INGAME)
-	{
-		objectManager->LoadRedCharacterData(imageManager->GetRedCharacterImage(ObjectManager::selectData));
-		objectManager->LoadBlueCharacterData(imageManager->GetBlueCharacterImage(ObjectManager::selectData));
-	}
 }
 
 void GameManager::LoadImageData()
 {
 	imageManager->LoadImageData();
-	objectManager->LoadLobbyData(imageManager->GetBitmap());
+	objectManager->LoadLobbyData(imageManager->GetLobbyImageData());
 	objectManager->LoadInGameImageData(imageManager->GetInGameImageData());
 }

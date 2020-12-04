@@ -4,8 +4,6 @@
 #include "LobbyUI.h"
 #include "StaticObject.h"
 
-SelectData ObjectManager::selectData{ 0 ,0, 0 };
-
 ObjectManager::ObjectManager(int *stage)
 {
 	this->stage = stage;
@@ -29,8 +27,6 @@ void ObjectManager::Input()
 	{
 		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 			(*it)->Input();
-
-		redCharacterData->Input();
 	}
 }
 
@@ -63,9 +59,6 @@ void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 			selectData.redCharacterNumber = LobbyUI::redImageNumber;
 			selectData.blueCharacterNumber = LobbyUI::blueImageNumber;
 			selectData.mapNumber = LobbyUI::mapImageNumber;
-
-			//selectData를 이용해서 GetRedCharacterImage()호출해서 값을얻어야하는데
-
 		}
 
 	}
@@ -73,19 +66,23 @@ void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 	{
 		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 			(*it)->Render(memDCBack, memDC);
-
-		redCharacterData->Render(memDCBack, memDC);;
 	}
 }
 
-void ObjectManager::LoadLobbyData(const vector<ImageData2>& bitmapVector)
+void ObjectManager::LoadLobbyData(const vector<pImageData2>& lobbyDataVector)
 {
 	BITMAP bitMap;
 
-	for (const auto iterator : bitmapVector)
+	for (const auto iterator : lobbyDataVector)
 	{
-		GetObject(iterator.hBitmap, sizeof(BITMAP), &bitMap);
-		LobbyDataVector.emplace_back(new LobbyUI(iterator));
+		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
+
+		LobbyDataVector.emplace_back(new LobbyUI(iterator->name,
+			{ iterator->x,iterator->y },
+			{ bitMap.bmWidth ,bitMap.bmHeight },
+			iterator->hNumber, iterator->vNumber,
+			bitMap.bmWidth / iterator->vNumber, bitMap.bmHeight / iterator->hNumber,
+			iterator->hBitmap));
 	}
 }
 
@@ -99,23 +96,8 @@ void ObjectManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
 		if (iterator->objType == 0)
 			inGameSceneDataVector.emplace_back(new StaticObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->hBitmap));
 		//else 
-			//inGameSceneDataVector.emplace_back(new DynamicObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
+		//	inGameSceneDataVector.emplace_back(new DynamicObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
 	}
-}
-
-void ObjectManager::LoadRedCharacterData(const ImageData2& redData)
-{
-	redCharacterData = new Character(redData);
-}
-
-void ObjectManager::LoadBlueCharacterData(const ImageData2& blueData)
-{
-	blueCharacterData = new Character(blueData);
-}
-
-int* ObjectManager::GetStage()
-{
-	return stage;
 }
 
 void ObjectManager::GetImageDataList(list<HBITMAP>* imageDataList)

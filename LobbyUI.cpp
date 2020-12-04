@@ -6,7 +6,8 @@ int LobbyUI::blueImageNumber = 0;
 int LobbyUI::mapImageNumber = 0;
 bool LobbyUI::isStart = false;
 
-LobbyUI::LobbyUI(ImageData2 test) : DynamicObject(test)
+LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, int hInterval, int vInterval, HBITMAP hBitmap)
+	: DynamicObject(name, pos, size, hNumber, vNumber, hInterval, vInterval, hBitmap)
 {
 
 }
@@ -18,14 +19,14 @@ LobbyUI::~LobbyUI()
 
 void LobbyUI::Input()
 {
-	if (imageNumber <= 1)	//이미지수가 2개이상일때 (이미지 변화할 애들만 변화시키위해)
+	if ((hNumber * vNumber) <= 1)	//이미지수가 2개이상일때 (이미지 변화할 애들만 변화시키위해)
 		return;
 
 	GET_CURSOR_POSITION(cursorPos);
 
-	//커서가 이미지위로올라오면 이미지변화.. 여기도 원래는 switch~case사용해서 구별해야함
+	//커서가 이미지위로올라오면 이미지변화
 	if ((cursorPos.x >= pos.x && cursorPos.x <= pos.x + size.width)
-		&& (cursorPos.y >= pos.y && cursorPos.y <= pos.y + size.height / imageNumber))
+		&& (cursorPos.y >= pos.y && cursorPos.y <= pos.y + size.height / vNumber))
 	{
 		printImageNumber = 1;
 
@@ -74,40 +75,40 @@ void LobbyUI::Update()
 
 void LobbyUI::Render(HDC hDC, HDC memDc)
 {
+	int imageWidth = size.width / hNumber;
+	int imageHeight = size.height / vNumber;
+
 	SelectObject(memDc, hBitmap);
 
-	//이미지를 자를방향을 구분해서 출력
-	switch (kinds)
+	if (hNumber >= 2)
 	{
-	case ObjectData::HORIZONTAL:
 		TransparentBlt(hDC,
-			pos.x, pos.y,									//출력될 이미지 시작좌표
-			size.width / imageNumber, size.height,			//출력될 이미지크기
+			pos.x, pos.y,						//출력될 이미지 시작좌표
+			imageWidth, imageHeight,			//출력될 이미지크기
 			memDc,
-			size.width / imageNumber * printImageNumber, 0,	//이미지에서 출력할 시작위치
-			size.width / imageNumber, size.height,			//이미지에서 출력할 이미지의 크기
+			printImageNumber * imageWidth, 0,	//이미지에서 출력할 시작위치
+			imageWidth, imageHeight,			//이미지에서 출력할 이미지의 크기
 			RGB(255, 0, 255));
-		break;
-
-	case ObjectData::VERTICAL:
+	}
+	else if (vNumber >= 2)
+	{
 		TransparentBlt(hDC,
-			pos.x, pos.y,										//출력될 이미지 시작좌표
-			size.width, size.height / imageNumber,				//출력될 이미지크기
+			pos.x, pos.y,							//출력될 이미지 시작좌표
+			imageWidth, imageHeight,				//출력될 이미지크기
 			memDc,
-			0, size.height / imageNumber * printImageNumber,	//이미지에서 출력할 시작위치
-			size.width, size.height / imageNumber,				//이미지에서 출력할 이미지의 크기
+			0, printImageNumber * imageHeight,		//이미지에서 출력할 시작위치
+			imageWidth, imageHeight,				//이미지에서 출력할 이미지의 크기
 			RGB(255, 0, 255));
-		break;
-
-	default:
+	}
+	else
+	{
 		TransparentBlt(hDC,
-			pos.x, pos.y,				//출력될 이미지 시작좌표
-			size.width, size.height,	//출력될 이미지크기
+			pos.x, pos.y,					//출력될 이미지 시작좌표
+			imageWidth, imageHeight,		//출력될 이미지크기
 			memDc,
-			0, 0,						//이미지에서 출력할 시작위치
-			size.width, size.height,	//이미지에서 출력할 이미지의 크기
+			0, 0,							//이미지에서 출력할 시작위치
+			imageWidth, imageHeight,		//이미지에서 출력할 이미지의 크기
 			RGB(255, 0, 255));
-		break;
 	}
 }
 

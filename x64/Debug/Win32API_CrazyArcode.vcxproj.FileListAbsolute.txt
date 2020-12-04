@@ -6,3 +6,5 @@ C:\Users\parks\Desktop\GitHub\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcod
 C:\Users\parks\Desktop\GitHub\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.pdb
 C:\Users\user\Desktop\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.exe
 C:\Users\user\Desktop\Win32API_CrazyArcode\x64\Debug\Win32API_CrazyArcode.pdb
+C:\Users\user\Desktop\Win32API_CrazyArcode-master\x64\Debug\Win32API_CrazyArcode.exe
+C:\Users\user\Desktop\Win32API_CrazyArcode-master\x64\Debug\Win32API_CrazyArcode.pdb

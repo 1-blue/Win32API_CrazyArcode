@@ -4,9 +4,13 @@ DynamicObject::DynamicObject()
 {
 }
 
-DynamicObject::DynamicObject(ImageData2 test) : Obj(test.name, { test.x, test.y }, {test.vInterval, test.hInterval}, test.hBitmap)
+DynamicObject::DynamicObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, int hInterval, int vInterval, HBITMAP hBitmap)
+								: Obj(name, pos, size, hBitmap)
 {
-	this->test = test;
+	this->hNumber = hNumber;
+	this->vNumber = vNumber;
+	this->hInterval = hInterval;
+	this->vInterval = vInterval;
 }
 
 DynamicObject::~DynamicObject()
