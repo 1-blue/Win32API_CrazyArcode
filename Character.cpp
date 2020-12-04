@@ -7,7 +7,7 @@ Character::Character(CHARTERDATA data)
 }
 
 Character::Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, int hInterval, int vInterval, HBITMAP hBitmap)
-					: DynamicObject(name, pos, size, hNumber, vNumber, hInterval, vInterval, hBitmap)
+					: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
 }
 
@@ -18,6 +18,7 @@ Character::~Character()
 
 void Character::Input()
 {
+	//너무 비효율적, 캐릭터마다 본인의 색 저장할 변수가지며, 2p 플레이 여부 변수, 2p플레이 중이면 1p~2p구분 변수 추가해서 그걸로 움직이게 만드는게 좋을듯
 	//red character move
 	if (GetAsyncKeyState(VK_UP) && (name == "RedBazzi" || name == "RedDizni"))
 	{

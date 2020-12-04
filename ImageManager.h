@@ -12,24 +12,21 @@ class ImageManager
 {
 private:
 	ifstream fin;
-	vector<pImageData2> lobbyBitmap;
+	vector<pImageData> lobbyBitmap;
 	vector<pImageData> InGameImageInfo;
-	vector<pImageData2> characterData;
+	vector<pImageData> characterData;
 
 public:
 	ImageManager();
 	~ImageManager();
 
 	void LoadImageData();
-	void LoadLobbyData();
-	void LoadInGameImageData();
-	void LoadCharacterImageData();
+	void LoadTextImageData(const string path, vector<pImageData>& data);
 
-
-	const vector<pImageData2>& GetLobbyImageData() const;
-	const vector<pImageData>& GetInGameImageData();
-	const pImageData2 GetRedCharacterImageData(SelectData selectData) const;
-	const pImageData2 GetBlueCharacterImageData(SelectData selectData) const;
+	const vector<pImageData>& GetLobbyImageData() const;
+	const vector<pImageData>& GetInGameImageData() const;
+	const pImageData GetRedCharacterImageData(SelectData selectData) const;
+	const pImageData GetBlueCharacterImageData(SelectData selectData) const;
 
 };
 

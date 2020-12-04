@@ -2,6 +2,7 @@
 #include "ObjectManager.h"
 #include "ImageManager.h"
 #include "Character.h"
+#include "MessageQueue.h"
 
 GameManager::GameManager(HWND hWnd)
 {
@@ -32,6 +33,7 @@ void GameManager::Init()
 void GameManager::Run()
 {
 	Input();
+	MessageQueue::RunEventQueue();
 	Update();
 	Render();
 }
@@ -58,7 +60,7 @@ void GameManager::Render()
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
 
 	//이것도 여기아닌데 일단 넣음
-	if ((*(objectManager->GetStage()) == GameStage::INGAME) && x == true)
+	if ((stage == GameStage::INGAME) && x == true)
 	{
 		objectManager->LoadRedCharacterImageData(imageManager->GetRedCharacterImageData(ObjectManager::selectData));
 		objectManager->LoadBlueCharacterImageData(imageManager->GetBlueCharacterImageData(ObjectManager::selectData));

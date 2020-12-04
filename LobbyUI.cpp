@@ -6,8 +6,8 @@ int LobbyUI::blueImageNumber = 0;
 int LobbyUI::mapImageNumber = 0;
 bool LobbyUI::isStart = false;
 
-LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, int hInterval, int vInterval, HBITMAP hBitmap)
-	: DynamicObject(name, pos, size, hNumber, vNumber, hInterval, vInterval, hBitmap)
+LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap)
+	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
 
 }
@@ -28,7 +28,7 @@ void LobbyUI::Input()
 	if ((cursorPos.x >= pos.x && cursorPos.x <= pos.x + size.width)
 		&& (cursorPos.y >= pos.y && cursorPos.y <= pos.y + size.height / vNumber))
 	{
-		printImageNumber = 1;
+		imageNumber = 1;
 
 		//버튼클릭하면
 		if (GetAsyncKeyState(MK_LBUTTON) & 0x8000)	//0x8000없으면 클릭하고 마우스올려도 이미지 변화됨
@@ -59,18 +59,18 @@ void LobbyUI::Input()
 	}
 	else
 	{
-		printImageNumber = 0;
+		imageNumber = 0;
 	}
 }
 
 void LobbyUI::Update()
 {
 	if ("redCharacter" == name)
-		printImageNumber = redImageNumber;
+		imageNumber = redImageNumber;
 	if ("blueCharacter" == name)
-		printImageNumber = blueImageNumber;
+		imageNumber = blueImageNumber;
 	if ("map" == name)
-		printImageNumber = mapImageNumber;
+		imageNumber = mapImageNumber;
 }
 
 void LobbyUI::Render(HDC hDC, HDC memDc)
@@ -86,7 +86,7 @@ void LobbyUI::Render(HDC hDC, HDC memDc)
 			pos.x, pos.y,						//출력될 이미지 시작좌표
 			imageWidth, imageHeight,			//출력될 이미지크기
 			memDc,
-			printImageNumber * imageWidth, 0,	//이미지에서 출력할 시작위치
+			imageNumber * imageWidth, 0,	//이미지에서 출력할 시작위치
 			imageWidth, imageHeight,			//이미지에서 출력할 이미지의 크기
 			RGB(255, 0, 255));
 	}
@@ -96,7 +96,7 @@ void LobbyUI::Render(HDC hDC, HDC memDc)
 			pos.x, pos.y,							//출력될 이미지 시작좌표
 			imageWidth, imageHeight,				//출력될 이미지크기
 			memDc,
-			0, printImageNumber * imageHeight,		//이미지에서 출력할 시작위치
+			0, imageNumber * imageHeight,		//이미지에서 출력할 시작위치
 			imageWidth, imageHeight,				//이미지에서 출력할 이미지의 크기
 			RGB(255, 0, 255));
 	}

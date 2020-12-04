@@ -4,7 +4,7 @@
 
 using namespace std;
 
-constexpr auto SSSS = 8;
+constexpr auto ImageDataLength = 7;
 constexpr auto CURSOR_WIDTH = 33;
 constexpr auto CURSOR_HEIGHT = 36;
 
@@ -22,25 +22,9 @@ typedef struct
 	int objType;		//오브젝트타입
 	int x;				//임시 출력 x포지션
 	int y;				//임시 출력 y포지션
-	int kinds;			//단일, 가로. 세로 구분
-	int number;			//이미지수
-	int interval;		//간격
-
-}ImageData, * pImageData;
-
-typedef struct
-{
-	string name;		//이미지명
-	HBITMAP hBitmap;	//출력할 비트맵
-	int objType;		//오브젝트타입
-	int x;				//임시 출력 x포지션
-	int y;				//임시 출력 y포지션
 	int hNumber;		//가로이미지수
 	int vNumber;		//세로이미지수
-	int hInterval;		//가로간격
-	int vInterval;		//세로간격
-
-}ImageData2, * pImageData2;
+}ImageData, * pImageData;
 
 namespace ObjectData
 {

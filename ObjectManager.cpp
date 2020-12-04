@@ -16,6 +16,14 @@ ObjectManager::~ObjectManager()
 	for (auto objs : LobbyDataVector)
 		delete objs;
 	LobbyDataVector.clear();
+
+	for (auto objs : inGameSceneDataVector)
+		delete objs;
+	inGameSceneDataVector.clear();
+
+	for (auto objs : CharacterDataVector)
+		delete objs;
+	CharacterDataVector.clear();
 }
 
 void ObjectManager::Input()
@@ -61,7 +69,7 @@ void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 
 		//여기넣을건 아닌것같긴한데 일단넣음
 		//시작버튼누르면 시작
-		if (LobbyUI::IsStart())
+		if (LobbyUI::IsStart())	//게임매니저로 옮기자, lobbyUI도 굳이 dynamic object를 상속해서 만들 필요가 없다고 생각함,
 		{
 			*stage = GameStage::INGAME;
 			selectData.redCharacterNumber = LobbyUI::redImageNumber;
@@ -79,7 +87,7 @@ void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 	}
 }
 
-void ObjectManager::LoadLobbyData(const vector<pImageData2>& lobbyDataVector)
+void ObjectManager::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
 {
 	BITMAP bitMap;
 
@@ -91,7 +99,6 @@ void ObjectManager::LoadLobbyData(const vector<pImageData2>& lobbyDataVector)
 			{ iterator->x,iterator->y },
 			{ bitMap.bmWidth ,bitMap.bmHeight },
 			iterator->hNumber, iterator->vNumber,
-			bitMap.bmWidth / iterator->vNumber, bitMap.bmHeight / iterator->hNumber,
 			iterator->hBitmap));
 	}
 }
@@ -103,14 +110,14 @@ void ObjectManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
 	for (const auto iterator : bitmapVector)
 	{
 		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
-		if (iterator->objType == 0)
+		if (iterator->objType == 0)	//static
 			inGameSceneDataVector.emplace_back(new StaticObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->hBitmap));
-		//else 
-		//	inGameSceneDataVector.emplace_back(new DynamicObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight }, iterator->kinds, iterator->number, iterator->interval, iterator->hBitmap));
+		else						//dynamic
+			inGameSceneDataVector.emplace_back(new DynamicObject(iterator->name, { iterator->x,iterator->y }, { bitMap.bmWidth ,bitMap.bmHeight },  iterator->hNumber, iterator->vNumber, iterator->hBitmap));
 	}
 }
 
-void ObjectManager::LoadRedCharacterImageData(pImageData2 characterImage)
+void ObjectManager::LoadRedCharacterImageData(pImageData characterImage)
 {
 	BITMAP bitMap;
 	GetObject(characterImage->hBitmap, sizeof(BITMAP), &bitMap);
@@ -123,7 +130,7 @@ void ObjectManager::LoadRedCharacterImageData(pImageData2 characterImage)
 		characterImage->hBitmap));
 }
 
-void ObjectManager::LoadBlueCharacterImageData(pImageData2 characterImage)
+void ObjectManager::LoadBlueCharacterImageData(pImageData characterImage)
 {
 	BITMAP bitMap;
 	GetObject(characterImage->hBitmap, sizeof(BITMAP), &bitMap);
@@ -134,14 +141,4 @@ void ObjectManager::LoadBlueCharacterImageData(pImageData2 characterImage)
 		characterImage->hNumber, characterImage->vNumber,
 		bitMap.bmWidth / characterImage->vNumber, bitMap.bmHeight / characterImage->hNumber,
 		characterImage->hBitmap));
-}
-
-void ObjectManager::GetImageDataList(list<HBITMAP>* imageDataList)
-{
-	hbmpList = *imageDataList;
-}
-
-int* ObjectManager::GetStage() const
-{
-	return stage;
 }
