@@ -4,6 +4,8 @@
 #include "LobbyUI.h"
 #include "StaticObject.h"
 
+SelectData ObjectManager::selectData{ 0, 0, 0 };
+
 ObjectManager::ObjectManager(int *stage)
 {
 	this->stage = stage;
@@ -27,6 +29,9 @@ void ObjectManager::Input()
 	{
 		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 			(*it)->Input();
+
+		for (const auto& character : CharacterDataVector)
+			character->Input();
 	}
 }
 
@@ -41,6 +46,9 @@ void ObjectManager::Update()
 	{
 		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 			(*it)->Update();
+
+		for (const auto& character : CharacterDataVector)
+			character->Update();
 	}
 }
 
@@ -60,12 +68,14 @@ void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 			selectData.blueCharacterNumber = LobbyUI::blueImageNumber;
 			selectData.mapNumber = LobbyUI::mapImageNumber;
 		}
-
 	}
 	else if (*stage == GameStage::INGAME)
 	{
 		for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 			(*it)->Render(memDCBack, memDC);
+
+		for (const auto& character : CharacterDataVector)
+			character->Render(memDCBack, memDC);
 	}
 }
 
@@ -100,7 +110,38 @@ void ObjectManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
 	}
 }
 
+void ObjectManager::LoadRedCharacterImageData(pImageData2 characterImage)
+{
+	BITMAP bitMap;
+	GetObject(characterImage->hBitmap, sizeof(BITMAP), &bitMap);
+
+	CharacterDataVector.emplace_back(new Character(characterImage->name,
+		{ characterImage->x,characterImage->y },
+		{ bitMap.bmWidth ,bitMap.bmHeight },
+		characterImage->hNumber, characterImage->vNumber,
+		bitMap.bmWidth / characterImage->vNumber, bitMap.bmHeight / characterImage->hNumber,
+		characterImage->hBitmap));
+}
+
+void ObjectManager::LoadBlueCharacterImageData(pImageData2 characterImage)
+{
+	BITMAP bitMap;
+	GetObject(characterImage->hBitmap, sizeof(BITMAP), &bitMap);
+
+	CharacterDataVector.emplace_back( new Character(characterImage->name,
+		{ characterImage->x,characterImage->y },
+		{ bitMap.bmWidth ,bitMap.bmHeight },
+		characterImage->hNumber, characterImage->vNumber,
+		bitMap.bmWidth / characterImage->vNumber, bitMap.bmHeight / characterImage->hNumber,
+		characterImage->hBitmap));
+}
+
 void ObjectManager::GetImageDataList(list<HBITMAP>* imageDataList)
 {
 	hbmpList = *imageDataList;
+}
+
+int* ObjectManager::GetStage() const
+{
+	return stage;
 }

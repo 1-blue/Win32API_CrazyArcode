@@ -17,8 +17,11 @@ private:
 	HBITMAP oldHBitMap{ NULL };
 	ObjectManager* objectManager{ NULL };
 	ImageManager* imageManager{ NULL };
-
 	int stage;
+
+	//임시적으로추가
+	bool x{ true };
+
 public:
 	GameManager(HWND hWnd);
 	~GameManager();

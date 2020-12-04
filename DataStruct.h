@@ -84,6 +84,17 @@ namespace CharacterSelect
 	};
 }
 
+namespace Diraction
+{
+	enum
+	{
+		TOP,
+		RIGHT,
+		BOTTOM,
+		LEFT
+	};
+}
+
 namespace MapSelect
 {
 	enum

@@ -14,6 +14,7 @@ private:
 	ifstream fin;
 	vector<pImageData2> lobbyBitmap;
 	vector<pImageData> InGameImageInfo;
+	vector<pImageData2> characterData;
 
 public:
 	ImageManager();
@@ -22,7 +23,13 @@ public:
 	void LoadImageData();
 	void LoadLobbyData();
 	void LoadInGameImageData();
+	void LoadCharacterImageData();
+
+
 	const vector<pImageData2>& GetLobbyImageData() const;
 	const vector<pImageData>& GetInGameImageData();
+	const pImageData2 GetRedCharacterImageData(SelectData selectData) const;
+	const pImageData2 GetBlueCharacterImageData(SelectData selectData) const;
+
 };
 

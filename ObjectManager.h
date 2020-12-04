@@ -15,12 +15,15 @@ private:
 
 	vector<Obj*> LobbyDataVector;		//WaitingUI객체의 포인터를 저장할 벡터 (LOBBY object data)
 	vector<Obj*> inGameSceneDataVector;	//INGAME Scene Data
+	vector<Obj*> CharacterDataVector;	//INGAME Scene Data
 
 	list<HBITMAP> hbmpList;
-
-	SelectData selectData;		//요거에 선택한 캐릭터들, 맵번호 넣었음.. 이걸로 게임시작할때 캐릭터불러오는데 사용하면됨
-
 	int* stage;
+
+public:
+
+	static SelectData selectData;		//요거에 선택한 캐릭터들, 맵번호 넣었음.. 이걸로 게임시작할때 캐릭터불러오는데 사용하면됨
+
 public:
 	ObjectManager(int *stage);
 	~ObjectManager();
@@ -31,5 +34,8 @@ public:
 public:
 	void LoadLobbyData(const vector<pImageData2>& lobbyDataVector);
 	void LoadInGameImageData(const vector<pImageData>& bitmapVector);
+	void LoadRedCharacterImageData(pImageData2 characterImage);
+	void LoadBlueCharacterImageData(pImageData2 characterImage);
 	void GetImageDataList(list<HBITMAP>* imageDataList);
+	int* GetStage() const;
 };
