@@ -16,8 +16,6 @@ private:
 	vector<pImageData> lobbyBitmap;
 	vector<pImageData> InGameImageInfo;
 	vector<pImageData> characterImageData;
-
-	//잠시추가
 	vector<CharacterStatsData> characterStatsData;
 
 public:
@@ -30,10 +28,10 @@ public:
 
 	const vector<pImageData>& GetLobbyImageData() const;
 	const vector<pImageData>& GetInGameImageData() const;
-	const pImageData GetRedCharacterImageData(SelectData selectData) const;
-	const pImageData GetBlueCharacterImageData(SelectData selectData) const;
-	const CharacterStatsData GetRedCharacterStatsData(SelectData selectData) const;
-	const CharacterStatsData GetBlueCharacterStatsData(SelectData selectData) const;
+	const pImageData GetRedCharacterImageData(const SelectData& selectData) const;
+	const pImageData GetBlueCharacterImageData(const SelectData& selectData) const;
+	const CharacterStatsData GetRedCharacterStatsData(const SelectData& selectData) const;
+	const CharacterStatsData GetBlueCharacterStatsData(const SelectData& selectData) const;
 
 };
 

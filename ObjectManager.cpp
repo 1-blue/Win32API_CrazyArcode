@@ -1,8 +1,12 @@
 ﻿#include "ObjectManager.h"
 #include "Obj.h"
 #include "Character.h"
-#include "LobbyUI.h"
 #include "StaticObject.h"
+
+//추가
+#include "Blank.h"
+#include "Block.h"
+#include "Wall.h"
 
 ObjectManager::ObjectManager(int *stage)
 {
@@ -95,4 +99,32 @@ void ObjectManager::LoadRedCharacterStatsData(CharacterStatsData characterStats)
 void ObjectManager::LoadBlueCharacterStatsData(CharacterStatsData characterStats)
 {
 	dynamic_cast<Character*>(CharacterDataVector[1])->SetStats(characterStats);
+}
+
+void ObjectManager::LoadStaticObjectData(const MapData& mapData)
+{
+	//나중에 생성자로 각종 정보들 넘겨주기
+
+	for (int h = 0; h < 13; h++)		//일단 맵세로길이
+	{
+		for (int w = 0; w < 15; w++)	//맵가로길이
+		{
+			switch (mapData.data[h][w])
+			{
+			case Objects::BLANK:
+				//공백생성
+				mapObjectVector.emplace_back(new Blank());
+				break;
+			case Objects::BLOCK:
+				//블록생성
+				mapObjectVector.emplace_back(new Block());
+				break;
+			case Objects::WALL:
+				//벽생성
+				mapObjectVector.emplace_back(new Wall());
+				break;
+			}
+		}
+	}
+	int x = 10;
 }

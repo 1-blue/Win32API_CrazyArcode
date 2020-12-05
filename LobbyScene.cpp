@@ -1,12 +1,12 @@
-﻿#include "LobbyUI.h"
+﻿#include "LobbyScene.h"
 
 extern HWND hWnd;		//이거 마우스위치알아낼때 필요해서 임시로사용
-int LobbyUI::redImageNumber = 0;
-int LobbyUI::blueImageNumber = 0;
-int LobbyUI::mapImageNumber = 0;
-bool LobbyUI::isStart = false;
+int LobbyScene::redImageNumber = 0;
+int LobbyScene::blueImageNumber = 0;
+int LobbyScene::mapImageNumber = 0;
+bool LobbyScene::isStart = false;
 
-LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap)
+LobbyScene::LobbyScene(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap)
 {
 	this->name = name;
 	this->pos = pos;
@@ -18,12 +18,12 @@ LobbyUI::LobbyUI(const string name, const ObjectData::POSITION pos, const Object
 	this->imageHeight = size.height / vNumber;
 }
 
-LobbyUI::~LobbyUI()
+LobbyScene::~LobbyScene()
 {
 
 }
 
-void LobbyUI::Input()
+void LobbyScene::Input()
 {
 	if ((hNumber * vNumber) <= 1)	//이미지수가 2개이상일때 (이미지 변화할 애들만 변화시키위해)
 		return;
@@ -69,7 +69,7 @@ void LobbyUI::Input()
 	}
 }
 
-void LobbyUI::Update()
+void LobbyScene::Update()
 {
 	if ("redCharacter" == name)
 		imageNumber = redImageNumber;
@@ -79,7 +79,7 @@ void LobbyUI::Update()
 		imageNumber = mapImageNumber;
 }
 
-void LobbyUI::Render(HDC hDC, HDC memDc)
+void LobbyScene::Render(HDC hDC, HDC memDc)
 {
 	SelectObject(memDc, hBitmap);
 
@@ -115,7 +115,7 @@ void LobbyUI::Render(HDC hDC, HDC memDc)
 	}
 }
 
-bool LobbyUI::IsStart()
+bool LobbyScene::IsStart()
 {
 	return isStart;
 }

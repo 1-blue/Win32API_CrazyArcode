@@ -87,7 +87,7 @@ const vector<pImageData>& ImageManager::GetInGameImageData() const
 	return InGameImageInfo;
 }
 
-const pImageData ImageManager::GetRedCharacterImageData(SelectData selectData) const
+const pImageData ImageManager::GetRedCharacterImageData(const SelectData& selectData) const
 {
 	pImageData character = NULL;
 	srand((unsigned int)GetTickCount64());
@@ -111,7 +111,7 @@ const pImageData ImageManager::GetRedCharacterImageData(SelectData selectData) c
 	return character;
 }
 
-const pImageData ImageManager::GetBlueCharacterImageData(SelectData selectData) const
+const pImageData ImageManager::GetBlueCharacterImageData(const SelectData& selectData) const
 {
 	pImageData character = NULL;
 	srand((unsigned int)GetTickCount64());
@@ -135,7 +135,7 @@ const pImageData ImageManager::GetBlueCharacterImageData(SelectData selectData) 
 	return character;
 }
 
-const CharacterStatsData ImageManager::GetRedCharacterStatsData(SelectData selectData) const
+const CharacterStatsData ImageManager::GetRedCharacterStatsData(const SelectData& selectData) const
 {
 	CharacterStatsData temp{ NULL };
 
@@ -153,7 +153,7 @@ const CharacterStatsData ImageManager::GetRedCharacterStatsData(SelectData selec
 	return temp;
 }
 
-const CharacterStatsData ImageManager::GetBlueCharacterStatsData(SelectData selectData) const
+const CharacterStatsData ImageManager::GetBlueCharacterStatsData(const SelectData& selectData) const
 {
 	CharacterStatsData temp{ NULL };
 

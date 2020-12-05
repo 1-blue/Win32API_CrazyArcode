@@ -1,10 +1,11 @@
-﻿#include "GameManager.h"
+﻿#include "SceneMananger.h"
 #include "ObjectManager.h"
 #include "ImageManager.h"
+#include "MapManager.h"
 #include "MessageQueue.h"
-#include "LobbyUI.h"
+#include "LobbyScene.h"
 
-GameManager::GameManager(HWND hWnd)
+SceneMananger::SceneMananger(HWND hWnd)
 {
 	this->hWnd = hWnd;
 	this->hdc = GetDC(hWnd);
@@ -14,7 +15,7 @@ GameManager::GameManager(HWND hWnd)
 	stage = GameStage::LOBBY;
 }
 
-GameManager::~GameManager()
+SceneMananger::~SceneMananger()
 {
 	delete objectManager;
 	delete imageManager;
@@ -23,18 +24,19 @@ GameManager::~GameManager()
 	DeleteDC(memDCBack);
 	ReleaseDC(hWnd, hdc);
 
-	for (auto objs : LobbyDataVector)
-		delete objs;
-	LobbyDataVector.clear();
+	for (auto& lobby : lobbyScene)
+		delete lobby;
+	lobbyScene.clear();
 }
 
-void GameManager::Init()
+void SceneMananger::Init()
 {
 	objectManager = new ObjectManager(&stage);
 	imageManager = new ImageManager();
+	mapManager = new MapManager();
 }
 
-void GameManager::Run()
+void SceneMananger::Run()
 {
 	Input();
 	//MessageQueue::RunEventQueue();
@@ -42,29 +44,33 @@ void GameManager::Run()
 	Render();
 }
 
-void GameManager::Input()
+void SceneMananger::Input()
 {
 	if (stage == GameStage::LOBBY)
 	{
-		for (const auto& lobby : LobbyDataVector)
+		for (const auto& lobby : lobbyScene)
 			lobby->Input();
 	}
 	else if (stage == GameStage::INGAME)
+	{
 		objectManager->Input();
+	}
 }
 
-void GameManager::Update()
+void SceneMananger::Update()
 {
 	if (stage == GameStage::LOBBY)
 	{
-		for (const auto& lobby : LobbyDataVector)
+		for (const auto& lobby : lobbyScene)
 			lobby->Update();
 	}
-	else if(stage == GameStage::INGAME)
+	else if (stage == GameStage::INGAME)
+	{
 		objectManager->Update();
+	}
 }
 
-void GameManager::Render()
+void SceneMananger::Render()
 {
 	if (oldHBitMap != NULL)
 		DeleteObject(oldHBitMap);
@@ -73,37 +79,40 @@ void GameManager::Render()
 
 	if (stage == GameStage::LOBBY)
 	{
-		for (const auto& lobby : LobbyDataVector)
+		for (const auto& lobby : lobbyScene)
 			lobby->Render(memDCBack, memDC);
 	}
 	else if (stage == GameStage::INGAME)
+	{
 		objectManager->Render(hdc, memDCBack, memDC);
+	}
 
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
 
 	//게임시작버튼누르면
-	if (LobbyUI::IsStart() && isFirst)
+	if (LobbyScene::IsStart() && isFirst)
 	{
-		selectData.redCharacterNumber = LobbyUI::redImageNumber;
-		selectData.blueCharacterNumber = LobbyUI::blueImageNumber;
-		selectData.mapNumber = LobbyUI::mapImageNumber;
+		selectData.redCharacterNumber = LobbyScene::redImageNumber;
+		selectData.blueCharacterNumber = LobbyScene::blueImageNumber;
+		selectData.mapNumber = LobbyScene::mapImageNumber;
 		objectManager->LoadRedCharacterImageData(imageManager->GetRedCharacterImageData(selectData));
 		objectManager->LoadBlueCharacterImageData(imageManager->GetBlueCharacterImageData(selectData));
 		objectManager->LoadRedCharacterStatsData(imageManager->GetRedCharacterStatsData(selectData));
 		objectManager->LoadBlueCharacterStatsData(imageManager->GetBlueCharacterStatsData(selectData));
+		objectManager->LoadStaticObjectData(mapManager->LoadMap(selectData));
 		isFirst = false;
 		stage = GameStage::INGAME;
 	}
 }
 
-void GameManager::LoadImageData()
+void SceneMananger::LoadImageData()
 {
 	imageManager->LoadImageData();
 	this->LoadLobbyData(imageManager->GetLobbyImageData());
 	objectManager->LoadInGameImageData(imageManager->GetInGameImageData());
 }
 
-void GameManager::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
+void SceneMananger::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
 {
 	BITMAP bitMap;
 
@@ -111,10 +120,15 @@ void GameManager::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
 	{
 		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
 
-		LobbyDataVector.emplace_back(new LobbyUI(iterator->name,
+		lobbyScene.emplace_back(new LobbyScene(iterator->name,
 			{ iterator->x,iterator->y },
 			{ bitMap.bmWidth ,bitMap.bmHeight },
 			iterator->hNumber, iterator->vNumber,
 			iterator->hBitmap));
 	}
+}
+
+void SceneMananger::LoadMapData()
+{
+	mapManager->LoadTextMapData();
 }

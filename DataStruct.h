@@ -117,3 +117,26 @@ typedef struct
 	int blueCharacterNumber;
 	int mapNumber;
 }SelectData, * pSelectData;
+
+//맵관련
+typedef struct
+{
+	string name;
+	string path;
+	int data[20][20];
+}MapData, * pMapData;
+
+typedef struct
+{
+	int mapWidth[255][255];
+}Map, *pMap;
+
+namespace Objects
+{
+	enum
+	{
+		BLANK,
+		BLOCK,
+		WALL
+	};
+}

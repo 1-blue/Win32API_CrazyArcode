@@ -1,0 +1,4 @@
+name	path
+
+map1	image\InGame\Map1.txt
+map2	image\InGame\Map2.txt

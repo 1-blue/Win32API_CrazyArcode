@@ -39,7 +39,7 @@ void Character::Input()
 			pos.x += 5;
 		}
 	}
-	else if (CharacterColor::BLUE == color)	//blue character move
+	if (CharacterColor::BLUE == color)	//blue character move
 	{
 		if (GetAsyncKeyState('W'))
 		{
@@ -62,14 +62,10 @@ void Character::Input()
 			pos.x += 5;
 		}
 	}
-
 }
 
 void Character::Update()
 {
-	int imageWidth = size.width / hNumber;
-	int imageHeight = size.height / vNumber;
-
 	switch (dir)
 	{
 	case Diraction::LEFT:
@@ -104,9 +100,6 @@ void Character::Update()
 
 void Character::Render(HDC hDC, HDC memDc)
 {
-	int imageWidth = size.width / hNumber;
-	int imageHeight = size.height / vNumber;
-
 	SelectObject(memDc, hBitmap);
 
 	TransparentBlt(hDC,
@@ -118,7 +111,7 @@ void Character::Render(HDC hDC, HDC memDc)
 		RGB(255, 0, 255));
 }
 
-void Character::SetStats(CharacterStatsData data)
+void Character::SetStats(CharacterStatsData characterStats)
 {
-	this->data = data;
+	this->characterStats = characterStats;
 }

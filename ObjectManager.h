@@ -11,9 +11,9 @@ class StaticObject;
 class ObjectManager
 {
 private:
-	ifstream fin;
 	vector<Obj*> inGameSceneDataVector;	//INGAME Scene Data
 	vector<Obj*> CharacterDataVector;	//CHARACTER Data
+	vector<Obj*> mapObjectVector;	//CHARACTER Data
 	int* stage;
 
 public:
@@ -31,5 +31,7 @@ public:
 	void LoadBlueCharacterImageData(pImageData characterImage);
 	void LoadRedCharacterStatsData(CharacterStatsData characterStats);
 	void LoadBlueCharacterStatsData(CharacterStatsData characterStats);
+	//추가
+	void LoadStaticObjectData(const MapData& mapData);
 
 };

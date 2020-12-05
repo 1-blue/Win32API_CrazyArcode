@@ -1,12 +1,9 @@
 ﻿
 // Win32API_CrazyArcode.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
-
-#include <cstdio>
-
 #include "framework.h"
 #include "Win32API_CrazyArcode.h"
-#include "GameManager.h"
+#include "SceneMananger.h"
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -46,9 +43,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
     ULONGLONG tick = GetTickCount64();
-    GameManager gameManager(hWnd);
-    gameManager.Init();
-    gameManager.LoadImageData();
+    SceneMananger sceneManager(hWnd);
+    sceneManager.Init();
+    sceneManager.LoadImageData();
+    sceneManager.LoadMapData();
 
     // 기본 메시지 루프입니다:
     while (true)
@@ -66,7 +64,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         if (GetTickCount64() > tick + 33)
         {
             tick = GetTickCount64();
-            gameManager.Run();
+            sceneManager.Run();
         }
     }
 

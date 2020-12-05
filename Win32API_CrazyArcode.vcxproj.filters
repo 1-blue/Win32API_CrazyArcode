@@ -27,9 +27,6 @@
     <ClInclude Include="Win32API_CrazyArcode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -51,21 +48,33 @@
     <ClInclude Include="Obj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="LobbyUI.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="BtnObj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="MessageQueue.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SceneMananger.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Blank.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Win32API_CrazyArcode.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="GameManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ObjectManager.cpp">
@@ -86,13 +95,28 @@
     <ClCompile Include="Obj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="LobbyUI.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="BtnObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MessageQueue.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMananger.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MapManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Blank.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
