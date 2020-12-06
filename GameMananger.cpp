@@ -1,25 +1,33 @@
-﻿#include "SceneMananger.h"
-#include "ObjectManager.h"
+﻿#include "GameMananger.h"
+#include "SceneManager.h"
 #include "ImageManager.h"
 #include "MapManager.h"
 #include "MessageQueue.h"
 #include "LobbyScene.h"
 
-SceneMananger::SceneMananger(HWND hWnd)
+GameMananger::GameMananger(HWND hWnd)
 {
+	//밑 4개 없애야할것들
 	this->hWnd = hWnd;
 	this->hdc = GetDC(hWnd);
 	memDC = CreateCompatibleDC(hdc);
 	memDCBack = CreateCompatibleDC(hdc);
+	//=========================
+
+	sceneManager = new SceneManager(hWnd);
+	imageManager = new ImageManager();
+	mapManager = new MapManager();
+
 
 	stage = GameStage::LOBBY;
 }
 
-SceneMananger::~SceneMananger()
+GameMananger::~GameMananger()
 {
-	delete objectManager;
+	delete sceneManager;
 	delete imageManager;
 
+	//밑에꺼 없애야할것들
 	DeleteDC(memDC);
 	DeleteDC(memDCBack);
 	ReleaseDC(hWnd, hdc);
@@ -27,24 +35,23 @@ SceneMananger::~SceneMananger()
 	for (auto& lobby : lobbyScene)
 		delete lobby;
 	lobbyScene.clear();
+	//=====================
 }
 
-void SceneMananger::Init()
+void GameMananger::Run()
 {
-	objectManager = new ObjectManager(&stage);
-	imageManager = new ImageManager();
-	mapManager = new MapManager();
-}
-
-void SceneMananger::Run()
-{
-	Input();
+	sceneManager->Process(stage);
 	//MessageQueue::RunEventQueue();
+
+	//밑에꺼 처리해야할것들
+	Input();
 	Update();
 	Render();
+	//=============
 }
 
-void SceneMananger::Input()
+//sceneManager에서 3종세트 처리해야함,
+void GameMananger::Input()
 {
 	if (stage == GameStage::LOBBY)
 	{
@@ -53,11 +60,11 @@ void SceneMananger::Input()
 	}
 	else if (stage == GameStage::INGAME)
 	{
-		objectManager->Input();
+		sceneManager->Input();
 	}
 }
 
-void SceneMananger::Update()
+void GameMananger::Update()
 {
 	if (stage == GameStage::LOBBY)
 	{
@@ -66,11 +73,11 @@ void SceneMananger::Update()
 	}
 	else if (stage == GameStage::INGAME)
 	{
-		objectManager->Update();
+		sceneManager->Update();
 	}
 }
 
-void SceneMananger::Render()
+void GameMananger::Render()
 {
 	if (oldHBitMap != NULL)
 		DeleteObject(oldHBitMap);
@@ -84,7 +91,7 @@ void SceneMananger::Render()
 	}
 	else if (stage == GameStage::INGAME)
 	{
-		objectManager->Render(hdc, memDCBack, memDC);
+		sceneManager->Render(hdc, memDCBack, memDC);
 	}
 
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
@@ -95,24 +102,24 @@ void SceneMananger::Render()
 		selectData.redCharacterNumber = LobbyScene::redImageNumber;
 		selectData.blueCharacterNumber = LobbyScene::blueImageNumber;
 		selectData.mapNumber = LobbyScene::mapImageNumber;
-		objectManager->LoadRedCharacterImageData(imageManager->GetRedCharacterImageData(selectData));
-		objectManager->LoadBlueCharacterImageData(imageManager->GetBlueCharacterImageData(selectData));
-		objectManager->LoadRedCharacterStatsData(imageManager->GetRedCharacterStatsData(selectData));
-		objectManager->LoadBlueCharacterStatsData(imageManager->GetBlueCharacterStatsData(selectData));
-		objectManager->LoadStaticObjectData(mapManager->LoadMap(selectData));
+		sceneManager->LoadRedCharacterImageData(imageManager->GetRedCharacterImageData(selectData));
+		sceneManager->LoadBlueCharacterImageData(imageManager->GetBlueCharacterImageData(selectData));
+		sceneManager->LoadRedCharacterStatsData(imageManager->GetRedCharacterStatsData(selectData));
+		sceneManager->LoadBlueCharacterStatsData(imageManager->GetBlueCharacterStatsData(selectData));
+		sceneManager->LoadStaticObjectData(mapManager->LoadMap(selectData));
 		isFirst = false;
 		stage = GameStage::INGAME;
 	}
 }
 
-void SceneMananger::LoadImageData()
+void GameMananger::LoadImageData()
 {
 	imageManager->LoadImageData();
 	this->LoadLobbyData(imageManager->GetLobbyImageData());
-	objectManager->LoadInGameImageData(imageManager->GetInGameImageData());
+	sceneManager->LoadInGameImageData(imageManager->GetInGameImageData());
 }
 
-void SceneMananger::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
+void GameMananger::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
 {
 	BITMAP bitMap;
 
@@ -128,7 +135,7 @@ void SceneMananger::LoadLobbyData(const vector<pImageData>& lobbyDataVector)
 	}
 }
 
-void SceneMananger::LoadMapData()
+void GameMananger::LoadMapData()
 {
 	mapManager->LoadTextMapData();
 }

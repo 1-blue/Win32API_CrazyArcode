@@ -3,20 +3,22 @@
 
 class ImageManager;
 class MapManager;
-class ObjectManager;
+class SceneManager;
 class LobbyScene;
-class SceneMananger
+
+class GameMananger
 {
 private:
 	const int WND_WIDTH = 800;
 	const int WND_HEIGHT = 600;
 
+	//밑에 dc, hwnd 이런거 sceneManager로 옮기자
 	HWND hWnd;
 	HDC hdc;
 	HDC memDC;
 	HDC memDCBack;
 	HBITMAP oldHBitMap{ NULL };
-	ObjectManager* objectManager{ NULL };
+	SceneManager* sceneManager{ NULL };
 	ImageManager* imageManager{ NULL };
 	MapManager* mapManager{ NULL };
 	int stage;
@@ -25,10 +27,11 @@ private:
 	vector<LobbyScene*> lobbyScene;
 
 public:
-	SceneMananger(HWND hWnd);
-	~SceneMananger();
-	void Init();
+	GameMananger(HWND hWnd);
+	~GameMananger();
+
 	void Run();
+
 	void Input();
 	void Update();
 	void Render();

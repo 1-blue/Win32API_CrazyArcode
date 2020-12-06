@@ -1,20 +1,41 @@
-﻿#include "ObjectManager.h"
+﻿#include "SceneManager.h"
 #include "Obj.h"
 #include "Character.h"
 #include "StaticObject.h"
+#include "InGameScene.h"
+
+#include "LobbyScene2.h"
+//gameManager의 imageManager를 scene매니저에서 사용한다 -> 게임 시작 시 데이터 불러올 떄 사용하려고
+#include "ImageManager.h"
 
 //추가
 #include "Blank.h"
 #include "Block.h"
 #include "Wall.h"
 
-ObjectManager::ObjectManager(int *stage)
+SceneManager::SceneManager(HWND hWnd)
 {
-	this->stage = stage;
+	this->hWnd = hWnd;
+	this->hdc = GetDC(hWnd);
+	memDC = CreateCompatibleDC(hdc);
+	memDCBack = CreateCompatibleDC(hdc);
+	lobbyScene = new LobbyScene2();
+	inGameScene = new InGameScene();
 }
 
-ObjectManager::~ObjectManager()
+SceneManager::~SceneManager()
 {
+	DeleteDC(memDC);
+	DeleteDC(memDCBack);
+	ReleaseDC(hWnd, hdc);
+
+	delete lobbyScene;
+	delete inGameScene;
+
+
+
+
+	//이것도 없애야할것들
 	for (auto objs : inGameSceneDataVector)
 		delete objs;
 	inGameSceneDataVector.clear();
@@ -24,7 +45,24 @@ ObjectManager::~ObjectManager()
 	CharacterDataVector.clear();
 }
 
-void ObjectManager::Input()
+void SceneManager::Process(const int& stage)
+{
+	if (stage == GameStage::LOBBY)
+	{
+		lobbyScene->Process();
+	}
+	else if (stage == GameStage::INGAME)
+	{
+		inGameScene->Process();
+	}
+}
+
+void SceneManager::LoadLobbyImageData()
+{
+}
+
+//밑에꺼 버려
+void SceneManager::Input()
 {
 	for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 		(*it)->Input();
@@ -33,7 +71,7 @@ void ObjectManager::Input()
 		character->Input();
 }
 
-void ObjectManager::Update()
+void SceneManager::Update()
 {
 	for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 		(*it)->Update();
@@ -42,7 +80,7 @@ void ObjectManager::Update()
 		character->Update();
 }
 
-void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
+void SceneManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 {
 	for (auto it = inGameSceneDataVector.begin(); it != inGameSceneDataVector.end(); it++)
 		(*it)->Render(memDCBack, memDC);
@@ -51,7 +89,7 @@ void ObjectManager::Render(HDC hdc, HDC memDCBack, HDC memDC)
 		character->Render(memDCBack, memDC);
 }
 
-void ObjectManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
+void SceneManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
 {
 	BITMAP bitMap;
 
@@ -65,7 +103,7 @@ void ObjectManager::LoadInGameImageData(const vector<pImageData>& bitmapVector)
 	}
 }
 
-void ObjectManager::LoadRedCharacterImageData(pImageData characterImage)
+void SceneManager::LoadRedCharacterImageData(pImageData characterImage)
 {
 	BITMAP bitMap;
 	GetObject(characterImage->hBitmap, sizeof(BITMAP), &bitMap);
@@ -78,7 +116,7 @@ void ObjectManager::LoadRedCharacterImageData(pImageData characterImage)
 		characterImage->hBitmap));
 }
 
-void ObjectManager::LoadBlueCharacterImageData(pImageData characterImage)
+void SceneManager::LoadBlueCharacterImageData(pImageData characterImage)
 {
 	BITMAP bitMap;
 	GetObject(characterImage->hBitmap, sizeof(BITMAP), &bitMap);
@@ -91,17 +129,19 @@ void ObjectManager::LoadBlueCharacterImageData(pImageData characterImage)
 		characterImage->hBitmap));
 }
 
-void ObjectManager::LoadRedCharacterStatsData(CharacterStatsData characterStats)
+//밑에 두개 하나로 합치고 매개변수로 구분해서 사용하도록 만들자
+void SceneManager::LoadRedCharacterStatsData(CharacterStatsData characterStats)
 {
 	dynamic_cast<Character*>(CharacterDataVector[0])->SetStats(characterStats);
 }
 
-void ObjectManager::LoadBlueCharacterStatsData(CharacterStatsData characterStats)
+void SceneManager::LoadBlueCharacterStatsData(CharacterStatsData characterStats)
 {
 	dynamic_cast<Character*>(CharacterDataVector[1])->SetStats(characterStats);
 }
 
-void ObjectManager::LoadStaticObjectData(const MapData& mapData)
+//밑에 것들 inGameScene 안에서 처리하도록 만들자
+void SceneManager::LoadStaticObjectData(const MapData& mapData)
 {
 	//나중에 생성자로 각종 정보들 넘겨주기
 

@@ -3,7 +3,7 @@
 //
 #include "framework.h"
 #include "Win32API_CrazyArcode.h"
-#include "SceneMananger.h"
+#include "GameMananger.h"
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -43,8 +43,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
     ULONGLONG tick = GetTickCount64();
-    SceneMananger sceneManager(hWnd);
-    sceneManager.Init();
+    GameMananger sceneManager(hWnd);
     sceneManager.LoadImageData();
     sceneManager.LoadMapData();
 

@@ -8,24 +8,42 @@ using namespace std;
 
 class Obj;
 class StaticObject;
-class ObjectManager
+
+
+class LobbyScene2;
+class InGameScene;
+class ImageManager;
+
+class SceneManager
 {
 private:
+	HWND hWnd;
+	HDC hdc;
+	HDC memDC;
+	HDC memDCBack;
+
+	LobbyScene2* lobbyScene;
+	InGameScene* inGameScene;
+
+
+private:
+
+	//없애야할 3인방
 	vector<Obj*> inGameSceneDataVector;	//INGAME Scene Data
 	vector<Obj*> CharacterDataVector;	//CHARACTER Data
 	vector<Obj*> mapObjectVector;	//CHARACTER Data
-	int* stage;
 
 public:
+	SceneManager(HWND hWnd);
+	~SceneManager();
+	void Process(const int& stage);
 
+	void LoadLobbyImageData();
 public:
-	ObjectManager(int *stage);
-	~ObjectManager();
 	void Input();
 	void Update();
 	void Render(HDC hdc, HDC backdc, HDC mdc);
 
-public:
 	void LoadInGameImageData(const vector<pImageData>& bitmapVector);
 	void LoadRedCharacterImageData(pImageData characterImage);
 	void LoadBlueCharacterImageData(pImageData characterImage);
