@@ -160,6 +160,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Lobby.h" />
     <ClInclude Include="Wall.h" />
+    <ClInclude Include="WaterBallon.h" />
     <ClInclude Include="Win32API_CrazyArcode.h" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +181,7 @@
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="Wall.cpp" />
+    <ClCompile Include="WaterBallon.cpp" />
     <ClCompile Include="Win32API_CrazyArcode.cpp" />
   </ItemGroup>
   <ItemGroup>

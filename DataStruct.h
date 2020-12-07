@@ -143,3 +143,43 @@ namespace Objects
 		WALL
 	};
 }
+
+namespace WaterBallonKinds
+{
+	enum
+	{
+		BALLON,
+		CENTER,
+		LEFT_END,
+		LEFT_MID,
+		TOP_END,
+		TOP_MID,
+		RIGHT_END,
+		RIGHT_MID,
+		BOTTOM_END,
+		BOTTOM_MID
+	};
+}
+
+typedef struct
+{
+	bool isAttack;
+	int isColor;
+	POINT pos;
+
+}Attack, *pAttack;
+
+/*
+물풍선 이미지 저장순서
+
+풍선
+center
+left end
+left mid
+top end
+top mid
+right end
+right mid
+bottom end
+bottom mid
+*/

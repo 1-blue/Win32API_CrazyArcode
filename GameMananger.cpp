@@ -31,6 +31,7 @@ void GameMananger::Run()
 		sceneManager->LoadInGameBackGroundImage(imageManager->GetInGameBackGroundImage());
 		sceneManager->LoadCharacterData(imageManager->GetCharacterImageData(sceneManager->GetSelectData()), imageManager->GetCharacterStatsData(sceneManager->GetSelectData()));
 		sceneManager->LoadMapData(mapManager->LoadMap(sceneManager->GetSelectData()));
+		sceneManager->LoadWaterBallonData(imageManager->GetWaterBallonImageData());
 
 		isFirst = false;
 	}

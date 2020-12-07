@@ -19,6 +19,7 @@ private:
 	pImageData character[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터이미지를 넘겨줄때 사용
 	vector<CharacterStatsData> characterStatsData;
 	CharacterStatsData temp[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터 스텟을 넘겨줄때 사용
+	pImageData waterBallon{ NULL };
 
 public:
 	ImageManager();
@@ -26,6 +27,7 @@ public:
 
 	void LoadImageData();
 	void LoadTextImageData(const string path, vector<pImageData>& data);
+	void LoadTextImageData(const string path, pImageData& data);		//단일 이미지 전용
 	void LoadTextStatsData(const string path, vector<CharacterStatsData>& data);
 
 	const vector<pImageData>& GetLobbyImageData() const;
@@ -34,6 +36,8 @@ public:
 	const pImageData* GetCharacterImageData(const SelectData& selectData);
 
 	const CharacterStatsData* GetCharacterStatsData(const SelectData& selectData);
+
+	const pImageData GetWaterBallonImageData();
 
 };
 

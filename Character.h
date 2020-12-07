@@ -8,6 +8,7 @@ private:
 	int color{ -1 };				//플레이어 색깔
 	int dir{ Diraction::TOP };		//플레이어 이동방향
 	POINT printPos{ 0, 0 };			//여러개 이미지중에서 출력할 위치
+	Attack attack{ false, -1, 0, 0 };
 
 public:
 	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
@@ -16,6 +17,7 @@ public:
 	virtual void Input();
 	virtual void Update();
 	virtual void Render(HDC hDC, HDC memDc);
+	Attack& GetAttack();
 
 };
 

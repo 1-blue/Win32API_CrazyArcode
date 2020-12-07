@@ -66,10 +66,15 @@ void SceneManager::LoadInGameBackGroundImage(const vector<pImageData>& inGameDat
 void SceneManager::LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats)
 {
 	for (int i = 0; i < 2; i++)
-		inGameScene->LoadBackCharacterData(characterImage[i], characterStats[i]);
+		inGameScene->LoadCharacterData(characterImage[i], characterStats[i]);
 }
 
 void SceneManager::LoadMapData(const MapData& mapData)
 {
 	inGameScene->LoadStaticObjectData(mapData);
+}
+
+void SceneManager::LoadWaterBallonData(const pImageData waterBallon)
+{
+	inGameScene->LoadWaterBallon(waterBallon);
 }

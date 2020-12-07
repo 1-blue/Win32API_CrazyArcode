@@ -1,0 +1,3 @@
+이름			path						Object종류	출력위치		가로이미지수	세로이미지수
+
+WaterBallon		image\InGame\WaterBallon.bmp			1		0 0		8		10
