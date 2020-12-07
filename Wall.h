@@ -11,4 +11,7 @@ public:
 	Wall();
 	~Wall();
 
+	virtual void Input();
+	virtual void Update();
+	virtual void Render(HDC hDC, HDC memDc);
 };

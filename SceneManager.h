@@ -1,19 +1,10 @@
 ﻿#pragma once
 #include <fstream>
-#include <list>
-#include <vector>
 #include "DataStruct.h"
 
-using namespace std;
-
-class Obj;
-class StaticObject;
-
-
-class LobbyScene2;
+class LobbyScene;
 class InGameScene;
 class ImageManager;
-
 class SceneManager
 {
 private:
@@ -21,35 +12,24 @@ private:
 	HDC hdc;
 	HDC memDC;
 	HDC memDCBack;
+	HBITMAP oldHBitMap{ NULL };
 
-	LobbyScene2* lobbyScene;
+	LobbyScene* lobbyScene;
 	InGameScene* inGameScene;
 
-
-private:
-
-	//없애야할 3인방
-	vector<Obj*> inGameSceneDataVector;	//INGAME Scene Data
-	vector<Obj*> CharacterDataVector;	//CHARACTER Data
-	vector<Obj*> mapObjectVector;	//CHARACTER Data
+	SelectData selectData{ 0 ,0, 0 };		//요거에 선택한 캐릭터들, 맵번호 넣음
+	bool isFirst{ true };
 
 public:
 	SceneManager(HWND hWnd);
 	~SceneManager();
 	void Process(const int& stage);
 
-	void LoadLobbyImageData();
-public:
-	void Input();
-	void Update();
-	void Render(HDC hdc, HDC backdc, HDC mdc);
+	void LoadLobbyData(const vector<pImageData>& lobbyData);
 
-	void LoadInGameImageData(const vector<pImageData>& bitmapVector);
-	void LoadRedCharacterImageData(pImageData characterImage);
-	void LoadBlueCharacterImageData(pImageData characterImage);
-	void LoadRedCharacterStatsData(CharacterStatsData characterStats);
-	void LoadBlueCharacterStatsData(CharacterStatsData characterStats);
-	//추가
-	void LoadStaticObjectData(const MapData& mapData);
+	const SelectData& GetSelectData();
+	void LoadInGameBackGroundImage(const vector<pImageData>& bitmapVinGameDataector);
+	void LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats);
+	void LoadMapData(const MapData& mapData);
 
 };

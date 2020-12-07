@@ -10,15 +10,12 @@ private:
 	POINT printPos{ 0, 0 };			//여러개 이미지중에서 출력할 위치
 
 public:
-	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, int hInterval, int vInterval, HBITMAP hBitmap);
+	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
 	~Character();
 
 	virtual void Input();
 	virtual void Update();
 	virtual void Render(HDC hDC, HDC memDc);
-
-public:
-	void SetStats(CharacterStatsData characterStats);		//스텟은 요걸로 받음
 
 };
 

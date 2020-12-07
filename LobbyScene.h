@@ -1,38 +1,20 @@
 ﻿#pragma once
 #include "DataStruct.h"
 
+class Obj;
 class LobbyScene
 {
-public:
-	static int redImageNumber;
-	static int blueImageNumber;
-	static int mapImageNumber;
-	static bool isStart;
-
 private:
-	string name;
-	ObjectData::POSITION pos{ 0 ,0 };
-	ObjectData::SIZE size{ 0 ,0 };
-	HBITMAP hBitmap{ NULL };
+	int mapNumber{ 0 };	//이걸로 게임 시작 시 게임 맵 데이터 , 그 외 데이터 불러올 떄 쓸거임
+	//색, 플레이어 수, 캐릭터 정보 등등 추가하고 싶지만 이 게임에서 필요로 하지 않으니 안쓸거
 
-	int hNumber{ 0 };		//가로이미지수
-	int vNumber{ 0 };		//세로이미지수
-	POINT cursorPos{ 0,0 };	//현재 마우스위치값저장할변수
-	int imageNumber{ 0 };	//연속된 이미지중에 출력할 이미지 번호
+	vector<Obj*> lobbyObjectVector;	//INGAME Scene Data
 
-	int imageWidth{ 0 };	//이미지 하나의 가로 길이
-	int imageHeight{ 0 };	//이미지 하나의 세로 길이
-
-	int printhNumber{ 0 };	//출력될 이미지 가로 번호
-	int printvNumber{ 0 };	//출력될 이미지 세로 번호
+	SelectData selectData{ 0 ,0, 0 };		//요거에 선택한 캐릭터들, 맵번호 넣음
 
 public:
-	LobbyScene(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);
-	~LobbyScene();
-	virtual void Input();
-	virtual void Update();
-	virtual void Render(HDC hDC, HDC memDc);
-	static bool IsStart();
-
+	void LoadData(const vector<pImageData>& lobbyData);
+	void Process(HDC memDCBack, HDC memDC);
+	void SaveSelectData();
+	const SelectData& GetSelectData() const;
 };
-

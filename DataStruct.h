@@ -1,14 +1,18 @@
 ﻿#pragma once
 #include <Windows.h>
 #include <string>
+#include <list>
 #include <vector>
 
 using namespace std;
 
+constexpr auto WND_WIDTH = 800;
+constexpr auto WND_HEIGHT = 600;
 constexpr auto IMAGE_DATA_LENGTH = 7;
 constexpr auto STATS_DATA_LENGTH = 7;
 constexpr auto CURSOR_WIDTH = 33;
 constexpr auto CURSOR_HEIGHT = 36;
+constexpr auto PLAYER_NUMBER = 2;
 
 //사용이유 : 이미지로 마우스 선택하면 클릭위치가 이미지 좌측하단이라 맞춰주기위함
 //마우스 위치가져오는것은 여러군데 사용할거고 사용할때마다 적는것보단 적어야할코드가 어느정도 정해져있어서 매크로로 만들고 사용
@@ -26,7 +30,7 @@ typedef struct
 	int y;				//임시 출력 y포지션
 	int hNumber;		//가로이미지수
 	int vNumber;		//세로이미지수
-}ImageData, * pImageData;
+}ImageData, *pImageData;
 
 //캐릭터데이터
 typedef struct
@@ -118,12 +122,11 @@ typedef struct
 	int mapNumber;
 }SelectData, * pSelectData;
 
-//맵관련
 typedef struct
 {
 	string name;
 	string path;
-	int data[20][20];
+	int data[13][15];
 }MapData, * pMapData;
 
 typedef struct

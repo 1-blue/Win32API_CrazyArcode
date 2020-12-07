@@ -22,6 +22,7 @@ ImageManager::~ImageManager()
 
 void ImageManager::LoadImageData()
 {
+	//이 텍스트파일 path들도 하나의 텍스트파일에 모아서 읽어서 쓸까??
 	LoadTextImageData("data_char\\LobbyImageData.txt", lobbyBitmap);
 	LoadTextImageData("data_char\\InGameImageData.txt", InGameImageInfo);
 	LoadTextImageData("data_char\\CharacterImageData.txt", characterImageData);
@@ -82,89 +83,69 @@ const vector<pImageData>& ImageManager::GetLobbyImageData() const
 	return lobbyBitmap;
 }
 
-const vector<pImageData>& ImageManager::GetInGameImageData() const
+const vector<pImageData>& ImageManager::GetInGameBackGroundImage() const
 {
 	return InGameImageInfo;
 }
 
-const pImageData ImageManager::GetRedCharacterImageData(const SelectData& selectData) const
+const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectData)
 {
-	pImageData character = NULL;
 	srand((unsigned int)GetTickCount64());
 	int idx = rand() % 2;
 
 	switch (selectData.redCharacterNumber)
 	{
 	case CharacterSelect::BAZZI:
-		character = characterImageData[0];
+		character[0] = characterImageData[0];
 		break;
 
 	case CharacterSelect::DIZNI:
-		character = characterImageData[1];
+		character[0] = characterImageData[1];
 		break;
 
 	default:
-		character = characterImageData[idx];
+		character[0] = characterImageData[idx];
 		break;
 	}
-
-	return character;
-}
-
-const pImageData ImageManager::GetBlueCharacterImageData(const SelectData& selectData) const
-{
-	pImageData character = NULL;
-	srand((unsigned int)GetTickCount64());
-	int idx = rand() % 2 + 2;
 
 	switch (selectData.blueCharacterNumber)
 	{
 	case CharacterSelect::BAZZI:
-		character = characterImageData[2];
+		character[1] = characterImageData[2];
 		break;
 
 	case CharacterSelect::DIZNI:
-		character = characterImageData[3];
+		character[1] = characterImageData[3];
 		break;
 
 	default:
-		character = characterImageData[idx];
+		character[1] = characterImageData[idx + 2];		//수정필요.. 랜덤일때 난수발생..
 		break;
 	}
-
 	return character;
 }
 
-const CharacterStatsData ImageManager::GetRedCharacterStatsData(const SelectData& selectData) const
+const CharacterStatsData* ImageManager::GetCharacterStatsData(const SelectData& selectData)
 {
-	CharacterStatsData temp{ NULL };
-
 	switch (selectData.redCharacterNumber)
 	{
 	case CharacterSelect::BAZZI:
-		temp = characterStatsData[0];
+		temp[0] = characterStatsData[0];
 		break;
 
 	case CharacterSelect::DIZNI:
-		temp = characterStatsData[1];
+		temp[0] = characterStatsData[1];
 		break;
 	}
-
-	return temp;
-}
-
-const CharacterStatsData ImageManager::GetBlueCharacterStatsData(const SelectData& selectData) const
-{
-	CharacterStatsData temp{ NULL };
 
 	switch (selectData.blueCharacterNumber)
 	{
 	case CharacterSelect::BAZZI:
-		temp = characterStatsData[0];
+		temp[1] = characterStatsData[0];
 		break;
 
 	case CharacterSelect::DIZNI:
-		temp = characterStatsData[1];
+		temp[1] = characterStatsData[1];
 		break;
 	}
 

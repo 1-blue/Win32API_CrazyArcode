@@ -13,9 +13,9 @@ void MapManager::LoadTextMapData()
 			fin >> str[i];
 
 		mapData.emplace_back(MapData{
-			str[0],
-			str[1],
-			NULL
+			str[0],		//맵이름
+			str[1],		//경로
+			NULL		//맵정보.. 뒤에서 저장
 			});
 	}
 	fin.close();
@@ -27,8 +27,8 @@ const MapData& MapManager::LoadMap(SelectData selectData)
 	int widx = 0;
 	int hidx = 0;
 
-	fin.open(mapData[selectData.mapNumber].path);
-	hidx = 0;
+	fin.open(mapData[selectData.mapNumber].path);		//맵이름에 맞는 경로의 txt파일열고
+	hidx = 0;											//0=>공백 1=>블럭 2=>벽
 	widx = 0;
 	while (!fin.eof())
 	{

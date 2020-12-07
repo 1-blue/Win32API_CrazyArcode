@@ -16,7 +16,9 @@ private:
 	vector<pImageData> lobbyBitmap;
 	vector<pImageData> InGameImageInfo;
 	vector<pImageData> characterImageData;
+	pImageData character[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터이미지를 넘겨줄때 사용
 	vector<CharacterStatsData> characterStatsData;
+	CharacterStatsData temp[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터 스텟을 넘겨줄때 사용
 
 public:
 	ImageManager();
@@ -27,11 +29,11 @@ public:
 	void LoadTextStatsData(const string path, vector<CharacterStatsData>& data);
 
 	const vector<pImageData>& GetLobbyImageData() const;
-	const vector<pImageData>& GetInGameImageData() const;
-	const pImageData GetRedCharacterImageData(const SelectData& selectData) const;
-	const pImageData GetBlueCharacterImageData(const SelectData& selectData) const;
-	const CharacterStatsData GetRedCharacterStatsData(const SelectData& selectData) const;
-	const CharacterStatsData GetBlueCharacterStatsData(const SelectData& selectData) const;
+
+	const vector<pImageData>& GetInGameBackGroundImage() const;
+	const pImageData* GetCharacterImageData(const SelectData& selectData);
+
+	const CharacterStatsData* GetCharacterStatsData(const SelectData& selectData);
 
 };
 
