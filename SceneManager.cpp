@@ -31,8 +31,6 @@ void SceneManager::Process(const int& stage)
 
 	oldHBitMap = (HBITMAP)SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
 
-	DeleteObject(oldHBitMap);
-
 	if (stage == GameStage::LOBBY)
 		lobbyScene->Process(memDCBack, memDC);
 	else if (stage == GameStage::INGAME)

@@ -23,22 +23,22 @@ void Character::Input()
 		if (GetAsyncKeyState(VK_UP))
 		{
 			dir = Diraction::TOP;
-			pos.y -= 5;
+			pos.y -= characterStats.speed + 4;
 		}
 		if (GetAsyncKeyState(VK_DOWN))
 		{
 			dir = Diraction::BOTTOM;
-			pos.y += 5;
+			pos.y += characterStats.speed + 4;
 		}
 		if (GetAsyncKeyState(VK_LEFT))
 		{
 			dir = Diraction::LEFT;
-			pos.x -= 5;
+			pos.x -= characterStats.speed + 4;
 		}
 		if (GetAsyncKeyState(VK_RIGHT))
 		{
 			dir = Diraction::RIGHT;
-			pos.x += 5;
+			pos.x += characterStats.speed + 4;
 		}
 		if (GetAsyncKeyState(VK_RSHIFT))		//공격
 		{
@@ -50,25 +50,25 @@ void Character::Input()
 	}
 	if (CharacterColor::BLUE == color)	//blue character move, attack
 	{
-		if (GetAsyncKeyState('R'))
+		if (GetAsyncKeyState('W'))
 		{
 			dir = Diraction::TOP;
-			pos.y -= 5;
+			pos.y -= characterStats.speed+4;
 		}
-		if (GetAsyncKeyState('F'))
+		if (GetAsyncKeyState('S'))
 		{
 			dir = Diraction::BOTTOM;
-			pos.y += 5;
+			pos.y += characterStats.speed + 4;
+		}
+		if (GetAsyncKeyState('A'))
+		{
+			dir = Diraction::LEFT;
+			pos.x -= characterStats.speed + 4;
 		}
 		if (GetAsyncKeyState('D'))
 		{
-			dir = Diraction::LEFT;
-			pos.x -= 5;
-		}
-		if (GetAsyncKeyState('G'))
-		{
 			dir = Diraction::RIGHT;
-			pos.x += 5;
+			pos.x += characterStats.speed + 4;
 		}
 		if (GetAsyncKeyState(VK_LSHIFT))		//공격
 		{

@@ -56,7 +56,7 @@ void InGameScene::LoadBackGroundImage(const vector<pImageData>& inGameData)
 	for (const auto& iterator : inGameData)
 	{
 		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
-		inGameObjectVector.emplace_back(new InGameBackGround(iterator->name,
+		inGameObjectVector.emplace_back(new StaticObject(iterator->name,
 			{ iterator->x,iterator->y },
 			{ bitMap.bmWidth ,bitMap.bmHeight },
 			iterator->hBitmap));

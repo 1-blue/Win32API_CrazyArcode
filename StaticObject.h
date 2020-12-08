@@ -8,9 +8,9 @@ public:
 	StaticObject();		//이거 나중에 삭제 지금은 block같은거 때문에 남겨놓음
 	StaticObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
 	~StaticObject();
-	virtual void Input() = 0;
-	virtual void Update() = 0;
-	virtual void Render(HDC hDC, HDC memDc) = 0;
+	virtual void Input();
+	virtual void Update();
+	virtual void Render(HDC hDC, HDC memDc);
 
 };
 

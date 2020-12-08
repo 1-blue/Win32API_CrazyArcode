@@ -115,7 +115,7 @@ const vector<pImageData>& ImageManager::GetInGameBackGroundImage() const
 
 const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectData)
 {
-	srand((unsigned int)GetTickCount64());
+	srand((unsigned int)time(NULL));
 	int idx = rand() % 2;
 
 	switch (selectData.redCharacterNumber)
