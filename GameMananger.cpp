@@ -2,9 +2,8 @@
 #include "SceneManager.h"
 #include "ImageManager.h"
 #include "MapManager.h"
-#include "MessageQueue.h"
 
-extern bool isGameStart;
+//extern bool isGameStart;
 
 GameMananger::GameMananger(HWND hWnd)
 {
@@ -24,20 +23,19 @@ GameMananger::~GameMananger()
 
 void GameMananger::Run()
 {
-	if (isGameStart && isFirst)
-	{
-		stage = GameStage::INGAME;
-		sceneManager->Process(stage);
-		sceneManager->LoadInGameBackGroundImage(imageManager->GetInGameBackGroundImage());
-		sceneManager->LoadCharacterData(imageManager->GetCharacterImageData(sceneManager->GetSelectData()), imageManager->GetCharacterStatsData(sceneManager->GetSelectData()));
-		sceneManager->LoadMapData(mapManager->LoadMap(sceneManager->GetSelectData()));
-		sceneManager->LoadWaterBallonData(imageManager->GetWaterBallonImageData());
+	//if (isGameStart && isFirst)
+	//{
+	//	stage = GameStage::INGAME;
+	//	sceneManager->Process(stage);
+	//	//sceneManager->LoadInGameBackGroundImage(imageManager->GetInGameBackGroundImage());
+	//	sceneManager->LoadCharacterData(imageManager->GetCharacterImageData(sceneManager->GetSelectData()), imageManager->GetCharacterStatsData(sceneManager->GetSelectData()));
+	//	sceneManager->LoadMapData(mapManager->LoadMap(sceneManager->GetSelectData()));
+	//	sceneManager->LoadWaterBallonData(imageManager->GetWaterBallonImageData());
 
-		isFirst = false;
-	}
+	//	isFirst = false;
+	//}
 
 	sceneManager->Process(stage);
-	//MessageQueue::RunEventQueue();
 }
 
 void GameMananger::LoadImageData()

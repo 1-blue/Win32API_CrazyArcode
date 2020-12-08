@@ -16,6 +16,8 @@ public:
 	Obj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
 	virtual ~Obj() = 0;
 
+	bool operator==(const Obj& e);
+
 	virtual void Input() = 0;
 	virtual void Update() = 0;
 	virtual void Render(HDC hDC, HDC memDc) = 0;

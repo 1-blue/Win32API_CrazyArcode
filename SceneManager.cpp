@@ -33,10 +33,14 @@ void SceneManager::Process(const int& stage)
 
 	if (stage == GameStage::LOBBY)
 		lobbyScene->Process(memDCBack, memDC);
+	//else if(stage == GameStage::INGAME_LOADING)
+		//로딩코드추가
 	else if (stage == GameStage::INGAME)
 		inGameScene->Process(memDCBack, memDC);
 
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
+
+
 
 	//임시추가
 	if (stage == GameStage::INGAME && isFirst)
@@ -54,11 +58,6 @@ void SceneManager::LoadLobbyData(const vector<pImageData>& lobbyData)
 const SelectData& SceneManager::GetSelectData()
 {
 	return selectData;
-}
-
-void SceneManager::LoadInGameBackGroundImage(const vector<pImageData>& inGameData)
-{
-	inGameScene->LoadBackGroundImage(inGameData);
 }
 
 void SceneManager::LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats)

@@ -139,7 +139,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Blank.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="BtnObj.h" />
     <ClInclude Include="Character.h" />
@@ -158,13 +157,11 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Lobby.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="WaterBallon.h" />
     <ClInclude Include="Win32API_CrazyArcode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Blank.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BtnObj.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -179,7 +176,6 @@
     <ClCompile Include="Obj.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="StaticObject.cpp" />
-    <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="WaterBallon.cpp" />
     <ClCompile Include="Win32API_CrazyArcode.cpp" />

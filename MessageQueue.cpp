@@ -1,23 +1,16 @@
-﻿//#include "MessageQueue.h"
-//
-//void MessageQueue::AddEventQueue(const string name)
-//{
-//	eventQueue.emplace_back(name);
-//}
-//
-//void MessageQueue::RunEventQueue()
-//{
-//	if (eventQueue.size() <= 0)
-//		return;
-//
-//	while (eventQueue.size()>=1)
-//	{
-//		ProcesssEvent(eventQueue.front());
-//		eventQueue.pop_front();
-//	}
-//}
-//
-//void MessageQueue::ProcesssEvent(const string str)
-//{
-//
-//}
+﻿#include "MessageQueue.h"
+
+list<ClickEvent> MessageQueue::eventQueue{};
+
+void MessageQueue::AddEventQueue(ClickEvent clickEvent)
+{
+	eventQueue.emplace_back(clickEvent);
+}
+
+const list<ClickEvent> MessageQueue::RunEventQueue()
+{
+	if (eventQueue.size() <= 0)
+		return{};
+
+	return eventQueue;
+}

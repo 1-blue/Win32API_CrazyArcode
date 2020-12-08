@@ -18,8 +18,8 @@ constexpr auto PLAYER_NUMBER = 2;
 //마우스 위치가져오는것은 여러군데 사용할거고 사용할때마다 적는것보단 적어야할코드가 어느정도 정해져있어서 매크로로 만들고 사용
 #define GET_CURSOR_POSITION(point) \
 GetCursorPos(&point);\
-ScreenToClient(hWnd, &point);\
-point.y -= CURSOR_HEIGHT;
+ScreenToClient(hWnd, &point);
+//point.y -= CURSOR_HEIGHT;
 
 typedef struct
 {
@@ -168,6 +168,13 @@ typedef struct
 	POINT pos;
 
 }Attack, *pAttack;
+
+typedef struct ClickEventStruct
+{
+	string name;
+	bool isRight;
+
+}ClickEvent, * pClickEvent;
 
 /*
 물풍선 이미지 저장순서

@@ -2,12 +2,14 @@
 #include "DataStruct.h"
 
 class Obj;
+class Character;
+class WaterBallon;
 class InGameScene
 {
 private:
 	list <Obj*> inGameObjectVector;	//INGAME Scene Data
-	list <Obj*> characterList;	//캐릭터들저장
-	list <Obj*> waterBallon;	//물풍선들저장
+	list <Character*> characterList;	//캐릭터들저장	//obj를 바꾸기
+	list <WaterBallon*> waterBallon;	//물풍선들저장
 
 	//물풍선관련
 	pImageData waterBallonData;

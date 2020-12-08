@@ -3,10 +3,10 @@
 background		image\Default\background.bmp			0		0 0		1		1
 redCharacter		image\Default\redCharacter.bmp			1		40 120		1		3
 blueCharacter		image\Default\blueCharacter.bmp			1		140 120		1		3
-bazziPickImage		image\Default\bazziPickImage.bmp			1		510 180		1		2
-dizniPickImage		image\Default\dizniPickImage.bmp			1		610 180		1		2
-RandomPickImage		image\Default\RandomPickImage.bmp		1		710 180		2		1
-exit			image\Default\exit.bmp				1		760 575		1		2
+bazziPickImage		image\Default\bazziPickImage.bmp			2		510 180		1		2
+dizniPickImage		image\Default\dizniPickImage.bmp			2		610 180		1		2
+RandomPickImage		image\Default\RandomPickImage.bmp		2		710 180		2		1
+exit			image\Default\exit.bmp				2		760 575		1		2
 map			image\Default\map.bmp				1		490 350		1		2
-mapPick			image\Default\mapPick.bmp			1		650 430		1		2
-start			image\Default\start.bmp				1		530 495		1		2
+mapPick			image\Default\mapPick.bmp			2		650 430		1		2
+start			image\Default\start.bmp				2		530 495		1		2

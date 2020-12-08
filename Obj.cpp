@@ -16,6 +16,11 @@ Obj::~Obj()
 {
 }
 
+bool Obj::operator==(const Obj& e)
+{
+	return this->name == e.name;
+}
+
 void Obj::SetPosition(ObjectData::POSITION pos)
 {
 	this->pos = pos;

@@ -121,7 +121,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         AdjustWindowRect(&clientRect, WS_OVERLAPPEDWINDOW, false);
         MoveWindow(hWnd, 400, 100, clientRect.right - clientRect.left, clientRect.bottom - clientRect.top, true);
         //커서 이미지 변경
-        SetCursor(cursor);
+        //SetCursor(cursor);
         break;
 
     case WM_GETMINMAXINFO:      //윈도우크기변경시 생성되는 메시지

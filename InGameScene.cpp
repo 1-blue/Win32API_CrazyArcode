@@ -2,7 +2,6 @@
 #include "InGameBackGround.h"
 #include "Character.h"
 #include "WaterBallon.h"
-#include "Blank.h"
 #include "Block.h"
 #include "Wall.h"
 
@@ -22,7 +21,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		character->Update();
 		character->Render(memDCBack, memDC);
 
-		attack = dynamic_cast<Character*>(character)->GetAttack();
+		attack = character->GetAttack();
 		
 		if (attack.isAttack)		//물풍선생성
 		{
@@ -86,10 +85,6 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 		{
 			switch (mapData.data[h][w])
 			{
-			case Objects::BLANK:
-				//공백생성
-				inGameObjectVector.emplace_back(new Blank());
-				break;
 			case Objects::BLOCK:
 				//블록생성
 				inGameObjectVector.emplace_back(new Block());

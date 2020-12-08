@@ -57,9 +57,6 @@
     <ClInclude Include="Block.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Blank.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Wall.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="InGameScene.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Lobby.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="InGameBackGround.h">
@@ -116,9 +110,6 @@
     <ClCompile Include="Block.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Blank.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Wall.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -129,9 +120,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="InGameScene.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Lobby.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="InGameBackGround.cpp">
