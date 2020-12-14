@@ -9,8 +9,6 @@ private:
 	bool isOverlap{ false };
 	bool isClicked{ false };
 
-
-
 public:
 	BtnObj();
 	BtnObj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);

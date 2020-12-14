@@ -36,18 +36,17 @@ void DynamicObject::Render(HDC hDC, HDC memDc)
 {
 	SelectObject(memDc, hBitmap);
 	
-	if (hNumber <= vNumber) 
+	if (hNumber <= vNumber)	
 	{
 		printhNumber = imageNumber % hNumber;
-		printvNumber = (imageNumber + 1) / vNumber;
+		printvNumber = imageNumber / hNumber;
 	}
 	else
 	{
 		printvNumber = imageNumber % vNumber;
-		printhNumber = (imageNumber + 1) / hNumber;
+		printhNumber = imageNumber / vNumber;
 	}
 	
-
 	TransparentBlt(hDC,
 		pos.x, pos.y,						//출력될 이미지 시작좌표
 		imageWidth, imageHeight,			//출력될 이미지크기
@@ -55,4 +54,12 @@ void DynamicObject::Render(HDC hDC, HDC memDc)
 		printhNumber * imageWidth, printvNumber * imageHeight,	//이미지에서 출력할 시작위치
 		imageWidth, imageHeight,			//이미지에서 출력할 이미지의 크기
 		RGB(255, 0, 255));
+}
+
+void DynamicObject::SetImageNumber(const int imageNumber)
+{
+	if ((imageNumber > (hNumber * vNumber)) || imageNumber < 0)
+		return;
+
+	this->imageNumber = imageNumber;
 }

@@ -36,6 +36,11 @@ void Obj::SetHBitmap(HBITMAP hBitmap)
 	this->hBitmap = hBitmap;
 }
 
+string Obj::GetName()
+{
+	return name;
+}
+
 HBITMAP Obj::GetHBitmap()
 {
 	return hBitmap;

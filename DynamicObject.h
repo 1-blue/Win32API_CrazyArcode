@@ -7,7 +7,7 @@ protected:
 	int hNumber{ 0 };		//가로이미지수
 	int vNumber{ 0 };		//세로이미지수
 
-	int imageNumber{ 0 };		//연속된 이미지중에 출력할 이미지 번호
+	int imageNumber{ 0 };	//연속된 이미지중에 출력할 이미지 번호
 
 	int imageWidth{ 0 };	//이미지 하나의 가로 길이
 	int imageHeight{ 0 };	//이미지 하나의 세로 길이
@@ -22,5 +22,7 @@ public:
 	virtual void Input();
 	virtual void Update();
 	virtual void Render(HDC hDC, HDC memDc);
+
+	void SetImageNumber(const int imageNumber);
 };
 

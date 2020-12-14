@@ -25,5 +25,8 @@ public:
 	void SetPosition(ObjectData::POSITION pos);
 	void SetSize(ObjectData::SIZE size);
 	void SetHBitmap(HBITMAP hBitmap);
+
+	string GetName();
+
 	HBITMAP GetHBitmap();
 };
