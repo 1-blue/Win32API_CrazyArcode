@@ -25,11 +25,12 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		if (attack.isAttack)		//물풍선생성
 		{
 			attack.isAttack = false;
-			waterBallon.emplace_back(new WaterBallon(waterBallonData->name,
+			waterBallon.emplace_back(new WaterBallon(
+				objectsData[2]->name,
 				{ attack.pos.x,attack.pos.y },
-				{ waterBallonBitmap.bmWidth,waterBallonBitmap.bmHeight},
-				waterBallonData->hNumber, waterBallonData->vNumber,
-				waterBallonData->hBitmap
+				{ objectsBitmap[2].bmWidth,objectsBitmap[2].bmHeight},
+				objectsData[2]->hNumber, objectsData[2]->vNumber,
+				objectsData[2]->hBitmap
 			));
 		}
 	}
@@ -44,20 +45,30 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 void InGameScene::LoadData(const vector<pImageData>& inGameData)
 {
-	this->LoadBackGroundImage(inGameData);
+	this->LoadInGameImage(inGameData);
 }
 
-void InGameScene::LoadBackGroundImage(const vector<pImageData>& inGameBackGround)
+void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 {
 	BITMAP bitMap;
 
 	for (const auto& iterator : inGameBackGround)
 	{
 		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
-		inGameObjectVector.emplace_back(new StaticObject(iterator->name,
-			{ iterator->x,iterator->y },
-			{ bitMap.bmWidth ,bitMap.bmHeight },
-			iterator->hBitmap));
+
+		if(iterator->name == "background")
+		{
+			inGameObjectVector.emplace_back(new StaticObject(iterator->name,
+				{ iterator->x,iterator->y },
+				{ bitMap.bmWidth ,bitMap.bmHeight },
+				iterator->hBitmap));
+		}
+		else		//block, wall, waterBallon순서대로 들어감
+		{
+			GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
+			objectsData.emplace_back(iterator);
+			objectsBitmap.emplace_back(bitMap);
+		}
 	}
 }
 
@@ -77,8 +88,7 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, CharacterSt
 
 void InGameScene::LoadStaticObjectData(const MapData& mapData)
 {
-	//나중에 생성자로 각종 정보들 넘겨주기
-	for (int h = 0; h < 13; h++)		//일단 맵세로길이
+	for (int h = 0; h < 11; h++)		//일단 맵세로길이
 	{
 		for (int w = 0; w < 15; w++)	//맵가로길이
 		{
@@ -86,19 +96,22 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 			{
 			case Objects::BLOCK:
 				//블록생성
-				inGameObjectVector.emplace_back(new Block());
+				inGameObjectVector.emplace_back(new Block(
+					objectsData[0]->name,
+					{ objectsData[0]->x + objectsBitmap[0].bmWidth * w, objectsData[0]->y + objectsBitmap[0].bmHeight * h },
+					{ objectsBitmap[0].bmWidth, objectsBitmap[0].bmHeight },
+					objectsData[0]->hBitmap
+					));
 				break;
-			case Objects::WALL:
-				//벽생성
-				inGameObjectVector.emplace_back(new Wall());
+			case Objects::WALL:		//벽생성.. 벽이랑 블럭이랑 사이즈가 달라가지고 놓는 위치 지정할때 블럭사이즈이용하고, -20함
+				inGameObjectVector.emplace_back(new Wall(
+					objectsData[1]->name,
+					{ objectsData[1]->x + objectsBitmap[0].bmWidth * w, objectsData[1]->y + objectsBitmap[0].bmHeight * h - 20},
+					{ objectsBitmap[1].bmWidth, objectsBitmap[1].bmHeight },
+					objectsData[1]->hBitmap
+				));
 				break;
 			}
 		}
 	}
-}
-
-void InGameScene::LoadWaterBallon(const pImageData waterBallon)
-{
-	this->waterBallonData = waterBallon;
-	GetObject(waterBallonData->hBitmap, sizeof(BITMAP), &waterBallonBitmap);
 }

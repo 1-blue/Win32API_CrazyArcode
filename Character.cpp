@@ -112,6 +112,8 @@ void Character::Update()
 		break;
 	}
 	dir = -1;
+
+	ImmovableArea();
 }
 
 void Character::Render(HDC hDC, HDC memDc)
@@ -143,4 +145,18 @@ void Character::Render(HDC hDC, HDC memDc)
 Attack& Character::GetAttack()
 {
 	return this->attack;
+}
+
+void Character::ImmovableArea()
+{
+	if (pos.x <= MOVE_MIN_X)
+		pos.x = MOVE_MIN_X;
+	else if (pos.x >= MOVE_MAX_X)
+		pos.x = MOVE_MAX_X;
+
+	if (pos.y <= MOVE_MIN_Y)
+		pos.y = MOVE_MIN_Y;
+	else if (pos.y >= MOVE_MAX_Y)
+		pos.y = MOVE_MAX_Y;
+
 }

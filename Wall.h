@@ -8,10 +8,9 @@ private:
 
 
 public:
-	Wall();
+	Wall(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
 	~Wall();
 
 	virtual void Input();
 	virtual void Update();
-	virtual void Render(HDC hDC, HDC memDc);
 };

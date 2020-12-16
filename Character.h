@@ -19,5 +19,7 @@ public:
 	virtual void Render(HDC hDC, HDC memDc);
 	Attack& GetAttack();
 
+	void ImmovableArea();	//이동불가영역판단
+
 };
 

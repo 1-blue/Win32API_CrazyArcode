@@ -27,9 +27,7 @@ public:
 	void LoadLobbyData(const vector<pImageData>& lobbyData);
 
 	const SelectData& GetSelectData();
-	void LoadInGameBackGroundImage(const vector<pImageData>& inGameBackGround);
+	void LoadInGameImage(const vector<pImageData>& inGameBackGround);
 	void LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats);
 	void LoadMapData(const MapData& mapData);
-	void LoadWaterBallonData(const pImageData waterBallon);
-
 };

@@ -1,9 +1,5 @@
 ﻿#include "Block.h"
 
-Block::Block()
-{
-}
-
 Block::Block(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
 	:StaticObject(name, pos, size, hBitmap)
 {
@@ -18,9 +14,5 @@ void Block::Input()
 }
 
 void Block::Update()
-{
-}
-
-void Block::Render(HDC hDC, HDC memDc)
 {
 }
