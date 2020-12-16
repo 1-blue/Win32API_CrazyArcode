@@ -23,5 +23,7 @@ public:
 
 	void Manual();
 	bool CheckmDelay(const int delayTime);
+	void ImmovableArea();	//이동불가영역판단
+
 };
 

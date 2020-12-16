@@ -18,8 +18,6 @@ ImageManager::~ImageManager()
 	for (const auto& bitmap : characterImageData)
 		delete bitmap;
 	characterImageData.clear();
-
-	delete waterBallon;
 }
 
 void ImageManager::LoadImageData()
@@ -29,7 +27,6 @@ void ImageManager::LoadImageData()
 	LoadTextImageData("data_char\\InGameImageData.txt", InGameImageInfo);
 	LoadTextImageData("data_char\\CharacterImageData.txt", characterImageData);
 	LoadTextStatsData("data_char\\CharacterStatsData.txt", characterStatsData);
-	LoadTextImageData("data_char\\WaterBallonImageData.txt", waterBallon);	//이건 게임시작하면 읽기로 바꿔야함
 }
 
 void ImageManager::LoadTextImageData(string path, vector<pImageData>& data)
@@ -108,7 +105,7 @@ const vector<pImageData>& ImageManager::GetLobbyImageData() const
 	return lobbyBitmap;
 }
 
-const vector<pImageData>& ImageManager::GetInGameBackGroundImage() const
+const vector<pImageData>& ImageManager::GetInGameImage() const
 {
 	return InGameImageInfo;
 }
@@ -175,9 +172,4 @@ const CharacterStatsData* ImageManager::GetCharacterStatsData(const SelectData& 
 	}
 
 	return temp;
-}
-
-const pImageData ImageManager::GetWaterBallonImageData()
-{
-	return waterBallon;
 }

@@ -60,9 +60,9 @@ const SelectData& SceneManager::GetSelectData()
 	return selectData;
 }
 
-void SceneManager::LoadInGameBackGroundImage(const vector<pImageData>& inGameBackGround)
+void SceneManager::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 {
-	inGameScene->LoadBackGroundImage(inGameBackGround);
+	inGameScene->LoadInGameImage(inGameBackGround);
 }
 
 void SceneManager::LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats)
@@ -74,9 +74,4 @@ void SceneManager::LoadCharacterData(const pImageData* characterImage, const Cha
 void SceneManager::LoadMapData(const MapData& mapData)
 {
 	inGameScene->LoadStaticObjectData(mapData);
-}
-
-void SceneManager::LoadWaterBallonData(const pImageData waterBallon)
-{
-	inGameScene->LoadWaterBallon(waterBallon);
 }

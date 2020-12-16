@@ -19,7 +19,6 @@ private:
 	pImageData character[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터이미지를 넘겨줄때 사용
 	vector<CharacterStatsData> characterStatsData;
 	CharacterStatsData temp[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터 스텟을 넘겨줄때 사용
-	pImageData waterBallon{ NULL };
 
 public:
 	ImageManager();
@@ -32,12 +31,9 @@ public:
 
 	const vector<pImageData>& GetLobbyImageData() const;
 
-	const vector<pImageData>& GetInGameBackGroundImage() const;
+	const vector<pImageData>& GetInGameImage() const;
 	const pImageData* GetCharacterImageData(const SelectData& selectData);
 
 	const CharacterStatsData* GetCharacterStatsData(const SelectData& selectData);
-
-	const pImageData GetWaterBallonImageData();
-
 };
 

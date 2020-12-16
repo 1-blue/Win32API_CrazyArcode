@@ -40,10 +40,9 @@ void GameMananger::LoadInGameData()
 {
 	stage = GameStage::INGAME;
 	isFirst = false;
-	sceneManager->LoadInGameBackGroundImage(imageManager->GetInGameBackGroundImage());
+	sceneManager->LoadInGameImage(imageManager->GetInGameImage());
 	sceneManager->LoadCharacterData(imageManager->GetCharacterImageData(sceneManager->GetSelectData()), imageManager->GetCharacterStatsData(sceneManager->GetSelectData()));
 	sceneManager->LoadMapData(mapManager->LoadMap(sceneManager->GetSelectData()));
-	sceneManager->LoadWaterBallonData(imageManager->GetWaterBallonImageData());
 }
 
 void GameMananger::LoadMapData()
