@@ -6,11 +6,11 @@
 
 void InGameScene::Process(HDC memDCBack, HDC memDC)
 {
-	for (const auto& inGame : inGameObjectVector)
+	for (const auto& inGameObj : inGameObjectVector)
 	{
-		inGame->Input();
-		inGame->Update();
-		inGame->Render(memDCBack, memDC);
+		inGameObj->Input();
+		inGameObj->Update();
+		inGameObj->Render(memDCBack, memDC);
 	}
 
 	Attack attack{ false, -1, 0, 0 };	//캐릭터공격
@@ -34,11 +34,11 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		}
 	}
 
-	for (const auto& inGame : waterBallon)
+	for (const auto& waterBallons : waterBallon)
 	{
-		inGame->Input();
-		inGame->Update();
-		inGame->Render(memDCBack, memDC);
+		waterBallons->Input();
+		waterBallons->Update();
+		waterBallons->Render(memDCBack, memDC);
 	}
 }
 

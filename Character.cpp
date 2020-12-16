@@ -18,66 +18,7 @@ Character::~Character()
 
 void Character::Input()
 {
-	if (CharacterColor::RED == color)	//red character move, attack
-	{
-		if (GetAsyncKeyState(VK_UP))
-		{
-			dir = Diraction::TOP;
-			pos.y -= characterStats.speed + 4;
-		}
-		if (GetAsyncKeyState(VK_DOWN))
-		{
-			dir = Diraction::BOTTOM;
-			pos.y += characterStats.speed + 4;
-		}
-		if (GetAsyncKeyState(VK_LEFT))
-		{
-			dir = Diraction::LEFT;
-			pos.x -= characterStats.speed + 4;
-		}
-		if (GetAsyncKeyState(VK_RIGHT))
-		{
-			dir = Diraction::RIGHT;
-			pos.x += characterStats.speed + 4;
-		}
-		if (GetAsyncKeyState(VK_RSHIFT))		//공격
-		{
-			attack.isAttack = true;
-			attack.isColor = CharacterColor::BLUE;
-			attack.pos.x = pos.x;
-			attack.pos.y = pos.y + imageHeight / 2;
-		}
-	}
-	if (CharacterColor::BLUE == color)	//blue character move, attack
-	{
-		if (GetAsyncKeyState('W'))
-		{
-			dir = Diraction::TOP;
-			pos.y -= characterStats.speed+4;
-		}
-		if (GetAsyncKeyState('S'))
-		{
-			dir = Diraction::BOTTOM;
-			pos.y += characterStats.speed + 4;
-		}
-		if (GetAsyncKeyState('A'))
-		{
-			dir = Diraction::LEFT;
-			pos.x -= characterStats.speed + 4;
-		}
-		if (GetAsyncKeyState('D'))
-		{
-			dir = Diraction::RIGHT;
-			pos.x += characterStats.speed + 4;
-		}
-		if (GetAsyncKeyState(VK_LSHIFT))		//공격
-		{
-			attack.isAttack = true;
-			attack.isColor = CharacterColor::RED;
-			attack.pos.x = pos.x;
-			attack.pos.y = pos.y + imageHeight / 2;
-		}
-	}
+	Manual();	//조작 입력
 }
 
 void Character::Update()
@@ -85,30 +26,56 @@ void Character::Update()
 	switch (dir)
 	{
 	case Diraction::LEFT:
+		pos.x -= characterStats.speed + 4;
+
+		if (!CheckmDelay(100) && (prevDir == dir))
+			break;
+
 		printPos.x += imageWidth;
 		printPos.y = 0;
 		if (printPos.x >= size.width)
 			printPos.x = 0;
+
+		prevDir = Diraction::LEFT;
 		break;
 	case Diraction::TOP:
+		pos.y -= characterStats.speed + 4;
+
+		if (!CheckmDelay(100) && (prevDir == dir))
+			break;
+
 		printPos.x += imageWidth;
 		printPos.y = imageHeight;
 		if (printPos.x >= size.width)
 			printPos.x = 0;
-		break;
 
+		prevDir = Diraction::TOP;
+		break;
 	case Diraction::RIGHT:
+		pos.x += characterStats.speed + 4;
+
+		if (!CheckmDelay(100) && (prevDir == dir))
+			break;
+
 		printPos.x += imageWidth;
 		printPos.y = imageHeight * 2;
 		if (printPos.x >= size.width)
 			printPos.x = 0;
-		break;
 
+		prevDir = Diraction::RIGHT;
+		break;
 	case Diraction::BOTTOM:
+		pos.y += characterStats.speed + 4;
+
+		if (!CheckmDelay(100) && (prevDir == dir))
+			break;
+
 		printPos.x += imageWidth;
 		printPos.y = imageHeight * 3;
 		if (printPos.x >= size.width)
 			printPos.x = 0;
+
+		prevDir = Diraction::BOTTOM;
 		break;
 	}
 	dir = -1;
@@ -144,3 +111,71 @@ Attack& Character::GetAttack()
 {
 	return this->attack;
 }
+
+void Character::Manual()
+{
+	if (CharacterColor::RED == color)	//red character move, attack
+	{
+		if (GetAsyncKeyState(VK_UP))
+		{
+			dir = Diraction::TOP;
+		}
+		if (GetAsyncKeyState(VK_DOWN))
+		{
+			dir = Diraction::BOTTOM;
+		}
+		if (GetAsyncKeyState(VK_LEFT))
+		{
+			dir = Diraction::LEFT;
+		}
+		if (GetAsyncKeyState(VK_RIGHT))
+		{
+			dir = Diraction::RIGHT;
+		}
+		if (GetAsyncKeyState(VK_RSHIFT))		//공격
+		{
+			attack.isAttack = true;
+			attack.isColor = CharacterColor::BLUE;
+			attack.pos.x = pos.x;
+			attack.pos.y = pos.y + imageHeight / 2;
+		}
+	}
+	if (CharacterColor::BLUE == color)	//blue character move, attack
+	{
+		if (GetAsyncKeyState('W'))
+		{
+			dir = Diraction::TOP;
+		}
+		if (GetAsyncKeyState('S'))
+		{
+			dir = Diraction::BOTTOM;
+		}
+		if (GetAsyncKeyState('A'))
+		{
+			dir = Diraction::LEFT;
+		}
+		if (GetAsyncKeyState('D'))
+		{
+			dir = Diraction::RIGHT;
+		}
+
+		if (GetAsyncKeyState(VK_LSHIFT))		//공격
+		{
+			attack.isAttack = true;
+			attack.isColor = CharacterColor::RED;
+			attack.pos.x = pos.x;
+			attack.pos.y = pos.y + imageHeight / 2;
+		}
+	}
+}
+
+bool Character::CheckmDelay(const int delayTime)
+{
+	if (GetTickCount64() > charAnimationTick + delayTime)
+	{
+		charAnimationTick = GetTickCount64();
+		return true;
+	}
+	return false;
+}
+	

@@ -8,5 +8,5 @@ dizniPickImage		image\Default\dizniPickImage.bmp			2		610 180		1		2
 RandomPickImage		image\Default\RandomPickImage.bmp		2		710 180		2		1
 exit			image\Default\exit.bmp				2		760 575		1		2
 map			image\Default\map.bmp				1		490 350		1		2
-mapPick			image\Default\mapPick.bmp			2		650 430		1		2
+mapPick			image\Default\mapPick.bmp			2		647 429		1		2
 start			image\Default\start.bmp				2		530 495		1		2
