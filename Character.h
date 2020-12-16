@@ -12,6 +12,10 @@ private:
 
 	int prevDir{ Diraction::TOP };
 	ULONGLONG charAnimationTick = GetTickCount64();
+
+	ObjectData::Position prevRedPos;
+	ObjectData::Position prevBluePos;
+
 public:
 	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
 	~Character();
@@ -23,7 +27,7 @@ public:
 
 	void Manual();
 	bool CheckmDelay(const int delayTime);
-	void ImmovableArea();	//이동불가영역판단
+	void ImmovableArea(const list<Obj*>& inGameObjectVector);	//이동불가영역판단
 
 };
 

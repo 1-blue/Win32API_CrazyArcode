@@ -26,6 +26,11 @@ void Obj::SetPosition(ObjectData::POSITION pos)
 	this->pos = pos;
 }
 
+const ObjectData::POSITION& Obj::GetPosition() const
+{
+	return pos;
+}
+
 void Obj::SetSize(ObjectData::SIZE size)
 {
 	this->size = size;

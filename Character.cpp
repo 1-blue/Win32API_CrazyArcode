@@ -80,7 +80,7 @@ void Character::Update()
 	}
 	dir = -1;
 
-	ImmovableArea();
+	//ImmovableArea();
 }
 
 void Character::Render(HDC hDC, HDC memDc)
@@ -118,6 +118,7 @@ void Character::Manual()
 {
 	if (CharacterColor::RED == color)	//red character move, attack
 	{
+		prevRedPos = pos;
 		if (GetAsyncKeyState(VK_UP))
 		{
 			dir = Diraction::TOP;
@@ -144,6 +145,7 @@ void Character::Manual()
 	}
 	if (CharacterColor::BLUE == color)	//blue character move, attack
 	{
+		prevBluePos = pos;
 		if (GetAsyncKeyState('W'))
 		{
 			dir = Diraction::TOP;
@@ -181,8 +183,9 @@ bool Character::CheckmDelay(const int delayTime)
 	return false;
 }
 	
-void Character::ImmovableArea()
+void Character::ImmovableArea(const list<Obj*>& inGameObjectVector)
 {
+	//맵전체 이동범위제한
 	if (pos.x <= MOVE_MIN_X)
 		pos.x = MOVE_MIN_X;
 	else if (pos.x >= MOVE_MAX_X)
@@ -193,4 +196,38 @@ void Character::ImmovableArea()
 	else if (pos.y >= MOVE_MAX_Y)
 		pos.y = MOVE_MAX_Y;
 
+	//블록과 벽이동범위제한..
+	//IntersectRect()안쓴이유는 나중에 물풍선 충돌처리할때 현재조건에서 조건을 조금바꿔서 충돌처리하기위해
+	RECT characterRect{ pos.x, pos.y, pos.x + BLOCK_X, pos.y + BLOCK_Y };
+	RECT objRect{ 0,0,0,0 };
+	for (const auto& temp : inGameObjectVector)
+	{
+		if (temp->GetName() == "background")
+			continue;
+		else if (temp->GetName() == "Block")
+		{
+			objRect.left = temp->GetPosition().x;
+			objRect.top = temp->GetPosition().y;
+			objRect.right = temp->GetPosition().x + BLOCK_X;
+			objRect.bottom = temp->GetPosition().y + BLOCK_Y - SIZE_TUNING;
+		}
+		else if (temp->GetName() == "Wall")
+		{
+			objRect.left = temp->GetPosition().x;
+			objRect.top = temp->GetPosition().y;
+			objRect.right = temp->GetPosition().x + BLOCK_X;
+			objRect.bottom = temp->GetPosition().y + BLOCK_Y;
+		}
+
+		if (characterRect.left < objRect.right
+			&& characterRect.right > objRect.left
+			&& characterRect.top < objRect.bottom
+			&& characterRect.bottom > objRect.top)
+		{
+			if (name.find("Red") != string::npos)
+				pos = prevRedPos;
+			else if (name.find("Blue") != string::npos)
+				pos = prevBluePos;
+		}
+	}
 }

@@ -4,6 +4,24 @@
 #include "Block.h"
 #include "Wall.h"
 
+InGameScene::~InGameScene()
+{
+	for (auto& obj : inGameObjectVector)
+		delete obj;
+	inGameObjectVector.clear();
+
+	for (auto& character : characterList)
+		delete character;
+	characterList.clear();
+
+	for (auto& wb : waterBallon)
+		delete wb;
+	waterBallon.clear();
+
+	objectsData.clear();
+	objectsBitmap.clear();
+}
+
 void InGameScene::Process(HDC memDCBack, HDC memDC)
 {
 	for (const auto& inGameObj : inGameObjectVector)
@@ -18,6 +36,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	{
 		character->Input();
 		character->Update();
+		character->ImmovableArea(inGameObjectVector);		//이동제한체크.. 물풍선으로 블럭파괴될경우 데이터 최신화해줘야함
 		character->Render(memDCBack, memDC);
 
 		attack = character->GetAttack();
@@ -106,7 +125,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 			case Objects::WALL:		//벽생성.. 벽이랑 블럭이랑 사이즈가 달라가지고 놓는 위치 지정할때 블럭사이즈이용하고, -20함
 				inGameObjectVector.emplace_back(new Wall(
 					objectsData[1]->name,
-					{ objectsData[1]->x + objectsBitmap[0].bmWidth * w, objectsData[1]->y + objectsBitmap[0].bmHeight * h - 20},
+					{ objectsData[1]->x + objectsBitmap[0].bmWidth * w, objectsData[1]->y + objectsBitmap[0].bmHeight * h - SIZE_TUNING},
 					{ objectsBitmap[1].bmWidth, objectsBitmap[1].bmHeight },
 					objectsData[1]->hBitmap
 				));

@@ -23,6 +23,7 @@ public:
 	virtual void Render(HDC hDC, HDC memDc) = 0;
 
 	void SetPosition(ObjectData::POSITION pos);
+	const ObjectData::POSITION & GetPosition() const;
 	void SetSize(ObjectData::SIZE size);
 	void SetHBitmap(HBITMAP hBitmap);
 

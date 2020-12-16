@@ -15,6 +15,7 @@ private:
 	vector<BITMAP> objectsBitmap;		//블럭, 벽, 물풍선 비트맵 저장
 
 public:
+	~InGameScene();
 	void Process(HDC memDCBack, HDC memDC);
 	void LoadData(const vector<pImageData>&);
 
