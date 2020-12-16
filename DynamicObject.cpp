@@ -63,3 +63,8 @@ void DynamicObject::SetImageNumber(const int imageNumber)
 
 	this->imageNumber = imageNumber;
 }
+
+const int DynamicObject::GetImageNumber()
+{
+	return this->imageNumber;
+}

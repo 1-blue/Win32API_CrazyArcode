@@ -72,6 +72,7 @@ namespace GameStage
 	enum
 	{
 		LOBBY,
+		INGAME_LOADING,
 		INGAME
 	};
 }
@@ -121,6 +122,7 @@ typedef struct
 	int redCharacterNumber;
 	int blueCharacterNumber;
 	int mapNumber;
+	bool isStart;
 }SelectData, * pSelectData;
 
 typedef struct

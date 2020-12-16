@@ -16,8 +16,6 @@ public:
 	void LoadData(const vector<pImageData>& lobbyData);
 	void Process(HDC memDCBack, HDC memDC);
 
-	//void EventProcess(list<ClickEvent> eventList);
-
 	void SaveSelectData();
 	const SelectData& GetSelectData() const;
 };

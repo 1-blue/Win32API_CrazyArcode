@@ -1,5 +1,4 @@
 ﻿#include "InGameScene.h"
-#include "InGameBackGround.h"
 #include "Character.h"
 #include "WaterBallon.h"
 #include "Block.h"
@@ -48,11 +47,11 @@ void InGameScene::LoadData(const vector<pImageData>& inGameData)
 	this->LoadBackGroundImage(inGameData);
 }
 
-void InGameScene::LoadBackGroundImage(const vector<pImageData>& inGameData)
+void InGameScene::LoadBackGroundImage(const vector<pImageData>& inGameBackGround)
 {
 	BITMAP bitMap;
 
-	for (const auto& iterator : inGameData)
+	for (const auto& iterator : inGameBackGround)
 	{
 		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
 		inGameObjectVector.emplace_back(new StaticObject(iterator->name,

@@ -145,7 +145,6 @@
     <ClInclude Include="DataStruct.h" />
     <ClInclude Include="DynamicObject.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="InGameBackGround.h" />
     <ClInclude Include="InGameScene.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="MapManager.h" />
@@ -166,7 +165,6 @@
     <ClCompile Include="BtnObj.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
-    <ClCompile Include="InGameBackGround.cpp" />
     <ClCompile Include="InGameScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MapManager.cpp" />

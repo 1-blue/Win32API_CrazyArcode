@@ -26,11 +26,11 @@ void BtnObj::Input()
 	{
 		isOverlap = true;
 		//버튼클릭하면
-		if ((GetAsyncKeyState(MK_LBUTTON)) & (0x8000) && (isClicked == false))	//0x8000없으면 클릭하고 마우스올려도 이미지 변화됨
+		if ((GetAsyncKeyState(MK_LBUTTON) & (0x0001)) && (isClicked == false))	//0x0001로 한거는 클릭했을때 한번만 입력받기 위해서
 		{
 			MessageQueue::AddEventQueue({name,false});
 		}
-		else if ((GetAsyncKeyState(MK_RBUTTON)) & (0x8000) && (isClicked == false))	//mouseUp
+		else if ((GetAsyncKeyState(MK_RBUTTON) & (0x0001)) && (isClicked == false))	//mouseUp
 		{
 			MessageQueue::AddEventQueue({name,true});
 		}

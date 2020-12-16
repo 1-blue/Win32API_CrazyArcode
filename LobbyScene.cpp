@@ -46,39 +46,14 @@ void LobbyScene::Process(HDC memDCBack, HDC memDC)
 		lobby->Render(memDCBack, memDC);
 	}
 	MessageQueue::RunEventQueue(lobbyObjectList);
-	/*EventProcess(MessageQueue::RunEventQueue());*/
 
-	this->SaveSelectData();		//현재 선택한 캐릭터과 맵정보 저장
+	if(MessageQueue::selectData.isStart)
+		this->SaveSelectData();		//현재 선택한 캐릭터과 맵정보 저장
 }
-
-//void LobbyScene::EventProcess(list<ClickEvent> eventList)
-//{
-//	if (eventList.size() <= 0)
-//		return;
-//
-//	for (auto iter : eventList)
-//	{
-//		if (iter.name == "exit")
-//			exit(0);
-//		if ((iter.name == "bazziPickImage" || iter.name == "dizniPickImage") && iter.isRight == false)
-//		{
-//			int x = 10;
-//			//redCharacter
-//			//blueCharacter
-//		}
-//		if ((iter.name == "bazziPickImage" || iter.name == "dizniPickImage") && iter.isRight == true)
-//		{
-//			//redCharacter
-//			//blueCharacter
-//		}
-//
-//		eventList.clear();
-//	}
-//}
 
 void LobbyScene::SaveSelectData()
 {
-
+	selectData = MessageQueue::selectData;
 }
 
 const SelectData& LobbyScene::GetSelectData() const

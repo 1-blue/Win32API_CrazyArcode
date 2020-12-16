@@ -17,8 +17,7 @@ private:
 	LobbyScene* lobbyScene;
 	InGameScene* inGameScene;
 
-	SelectData selectData{ 0 ,0, 0 };		//요거에 선택한 캐릭터들, 맵번호 넣음
-	bool isFirst{ true };
+	SelectData selectData{ 0 ,0, 0 , false};		//요거에 선택한 캐릭터들, 맵번호, 게임시작여부 넣음
 
 public:
 	SceneManager(HWND hWnd);
@@ -28,6 +27,7 @@ public:
 	void LoadLobbyData(const vector<pImageData>& lobbyData);
 
 	const SelectData& GetSelectData();
+	void LoadInGameBackGroundImage(const vector<pImageData>& inGameBackGround);
 	void LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats);
 	void LoadMapData(const MapData& mapData);
 	void LoadWaterBallonData(const pImageData waterBallon);

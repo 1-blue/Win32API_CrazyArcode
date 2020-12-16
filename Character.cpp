@@ -127,17 +127,17 @@ void Character::Render(HDC hDC, HDC memDc)
 		RGB(255, 0, 255));
 
 	//테스트용 현재 플레이어 위치좌표출력
-	//static char c[255];
-	//if (color == CharacterColor::RED)
-	//{
-	//	sprintf_s(c, "RED : %d, %d", pos.x, pos.y);
-	//	TextOut(hDC, 10, 10, c, sizeof(c));
-	//}
-	//if (color == CharacterColor::BLUE)
-	//{
-	//	sprintf_s(c, "BLUE : %d, %d", pos.x, pos.y);
-	//	TextOut(hDC, 10, 50, c, sizeof(c));
-	//}
+	static char c[255];
+	if (color == CharacterColor::RED)
+	{
+		sprintf_s(c, "RED : %d, %d", pos.x, pos.y);
+		TextOut(hDC, 10, 10, c, sizeof(c));
+	}
+	if (color == CharacterColor::BLUE)
+	{
+		sprintf_s(c, "BLUE : %d, %d", pos.x, pos.y);
+		TextOut(hDC, 10, 50, c, sizeof(c));
+	}
 }
 
 Attack& Character::GetAttack()

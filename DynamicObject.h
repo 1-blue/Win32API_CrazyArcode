@@ -24,5 +24,6 @@ public:
 	virtual void Render(HDC hDC, HDC memDc);
 
 	void SetImageNumber(const int imageNumber);
+	const int GetImageNumber();
 };
 

@@ -69,9 +69,6 @@
     <ClInclude Include="InGameScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="InGameBackGround.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="LobbyScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -120,9 +117,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="InGameScene.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="InGameBackGround.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="LobbyScene.cpp">

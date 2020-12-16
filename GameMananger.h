@@ -19,7 +19,8 @@ public:
 
 public:
 	void Run();
-	void LoadImageData();
+	void LoadLobbyData();
+	void LoadInGameData();
 	void LoadMapData();
 
 };

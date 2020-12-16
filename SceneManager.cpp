@@ -27,27 +27,27 @@ SceneManager::~SceneManager()
 void SceneManager::Process(const int& stage)
 {
 	if (oldHBitMap != NULL)
+	{
 		DeleteObject(oldHBitMap);
+		oldHBitMap = NULL;
+	}
 
 	oldHBitMap = (HBITMAP)SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
 
 	if (stage == GameStage::LOBBY)
+	{
 		lobbyScene->Process(memDCBack, memDC);
-	//else if(stage == GameStage::INGAME_LOADING)
-		//로딩코드추가
+		selectData = lobbyScene->GetSelectData();
+	}
+	else if (stage == GameStage::INGAME_LOADING)
+	{
+		//캐릭터생성, 맵생성, 물풍선, 아이템, 등등생성하고 stage값 변경
+		//이거를 SceneManager함수를 통해서 GameManager에서 하고있음
+	}
 	else if (stage == GameStage::INGAME)
 		inGameScene->Process(memDCBack, memDC);
 
-	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);
-
-
-
-	//임시추가
-	if (stage == GameStage::INGAME && isFirst)
-	{
-		selectData = lobbyScene->GetSelectData();
-		isFirst = false;
-	}
+	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);		
 }
 
 void SceneManager::LoadLobbyData(const vector<pImageData>& lobbyData)
@@ -58,6 +58,11 @@ void SceneManager::LoadLobbyData(const vector<pImageData>& lobbyData)
 const SelectData& SceneManager::GetSelectData()
 {
 	return selectData;
+}
+
+void SceneManager::LoadInGameBackGroundImage(const vector<pImageData>& inGameBackGround)
+{
+	inGameScene->LoadBackGroundImage(inGameBackGround);
 }
 
 void SceneManager::LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats)
