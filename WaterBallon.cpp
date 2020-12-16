@@ -22,7 +22,7 @@ void WaterBallon::Update()
 		return;
 
 	printhNumber++;					//시간지나면 모양변경
-	if (printhNumber == hNumber)	//시간지나면,, 8번반복하면
+	if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
 	{
 		//터지는작용만들어야함
 		printhNumber = 0;

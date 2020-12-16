@@ -42,22 +42,9 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	{
 		character->Input();
 		character->Update();
+		this->CreateWaterBallon(character);
 		character->ImmovableArea(inGameObjectVector);	//이동제한체크.. 물풍선으로 블럭파괴될경우 데이터 최신화해줘야함
 		character->Render(memDCBack, memDC);
-
-		Attack& attack = character->GetAttack();
-		
-		if (attack.isAttack)		//물풍선생성
-		{
-			attack.isAttack = false;
-			waterBallon.emplace_back(new WaterBallon(
-				objectsData[2]->name,
-				{ attack.pos.x,attack.pos.y },
-				{ objectsBitmap[2].bmWidth,objectsBitmap[2].bmHeight},
-				objectsData[2]->hNumber, objectsData[2]->vNumber,
-				objectsData[2]->hBitmap
-			));
-		}
 	}
 }
 
@@ -133,3 +120,24 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 		}
 	}
 }
+
+void InGameScene::CreateWaterBallon(Character* character)
+{
+	Attack& attack = character->GetAttack();
+
+	if (attack.isAttack)		//물풍선생성
+	{
+		attack.isAttack = false;
+		waterBallon.emplace_back(new WaterBallon(
+			objectsData[2]->name,
+			{ attack.pos.x,attack.pos.y },
+			{ objectsBitmap[2].bmWidth,objectsBitmap[2].bmHeight },
+			objectsData[2]->hNumber, objectsData[2]->vNumber,
+			objectsData[2]->hBitmap
+		));
+		//물풍선위치를 캐릭터에 전송
+		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
+		character->GetWaterBallonList(waterBallonPos);
+	}
+}
+

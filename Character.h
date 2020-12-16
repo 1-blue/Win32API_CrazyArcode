@@ -16,7 +16,9 @@ private:
 	ObjectData::Position prevRedPos;
 	ObjectData::Position prevBluePos;
 
-	void SettingAttackPos();
+	vector<ObjectData::Position> waterBallonPos;
+
+	bool isRevisit = true;		//물풍선을 놓고 범위밖에 나갔다가 다시들어오는지 체크하는 변수
 
 public:
 	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
@@ -30,6 +32,11 @@ public:
 	void Manual();
 	bool CheckmDelay(const int delayTime);
 	void ImmovableArea(const list<Obj*>& inGameObjectVector);	//이동불가영역판단
+	void GetWaterBallonList(vector<ObjectData::Position> waterBallon);	//물풍선 위치 가져오기
+
+private:
+	void SettingAttackPos();	//물풍선 위치 세팅(지정된 영역에만 설치되게)
+	void OverlapChack();		//중복설치체크
 
 };
 
