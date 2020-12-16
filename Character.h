@@ -16,6 +16,8 @@ private:
 	ObjectData::Position prevRedPos;
 	ObjectData::Position prevBluePos;
 
+	void SettingAttackPos();
+
 public:
 	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
 	~Character();

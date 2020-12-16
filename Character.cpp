@@ -79,8 +79,6 @@ void Character::Update()
 		break;
 	}
 	dir = -1;
-
-	//ImmovableArea();
 }
 
 void Character::Render(HDC hDC, HDC memDc)
@@ -114,6 +112,28 @@ Attack& Character::GetAttack()
 	return this->attack;
 }
 
+void Character::SettingAttackPos()
+{
+	int interval = 0;
+	if (attack.pos.x % BLOCK_X != 0)
+	{
+		interval = attack.pos.x % BLOCK_X;
+		if (interval >= BLOCK_X / 2)
+			attack.pos.x = attack.pos.x + (BLOCK_X - interval);
+		else
+			attack.pos.x = attack.pos.x - interval;
+	}
+	if (attack.pos.y % BLOCK_Y != 0)
+	{
+		interval = attack.pos.y % BLOCK_Y;
+		if (interval >= BLOCK_Y / 2)
+			attack.pos.y = attack.pos.y + (BLOCK_Y - interval);
+		else
+			attack.pos.y = attack.pos.y - interval;
+	}
+	attack.pos.x -= 20;		//이거는 맵이 (0, 0)부터 시작이 아니라서 맵시작위치만큼 연산해주는거
+}
+
 void Character::Manual()
 {
 	if (CharacterColor::RED == color)	//red character move, attack
@@ -135,14 +155,16 @@ void Character::Manual()
 		{
 			dir = Diraction::RIGHT;
 		}
-		if (GetAsyncKeyState(VK_RSHIFT))		//공격
+		if (GetAsyncKeyState(VK_RSHIFT) & 0x0001)		//공격
 		{
 			attack.isAttack = true;
 			attack.isColor = CharacterColor::BLUE;
 			attack.pos.x = pos.x;
 			attack.pos.y = pos.y + imageHeight / 2;
+			SettingAttackPos();		//물풍선 놓는위치 지정
 		}
 	}
+
 	if (CharacterColor::BLUE == color)	//blue character move, attack
 	{
 		prevBluePos = pos;
@@ -163,12 +185,13 @@ void Character::Manual()
 			dir = Diraction::RIGHT;
 		}
 
-		if (GetAsyncKeyState(VK_LSHIFT))		//공격
+		if (GetAsyncKeyState(VK_LSHIFT) & 0x0001)		//공격
 		{
 			attack.isAttack = true;
 			attack.isColor = CharacterColor::RED;
 			attack.pos.x = pos.x;
 			attack.pos.y = pos.y + imageHeight / 2;
+			SettingAttackPos();		//물풍선 놓는위치 지정
 		}
 	}
 }
@@ -197,7 +220,7 @@ void Character::ImmovableArea(const list<Obj*>& inGameObjectVector)
 		pos.y = MOVE_MAX_Y;
 
 	//블록과 벽이동범위제한..
-	//IntersectRect()안쓴이유는 나중에 물풍선 충돌처리할때 현재조건에서 조건을 조금바꿔서 충돌처리하기위해
+	//IntersectRect()안쓴이유는 나중에 물풍선 터지는거 처리할때 현재조건에서 조건을 조금바꿔서 충돌처리하기위해
 	RECT characterRect{ pos.x, pos.y, pos.x + BLOCK_X, pos.y + BLOCK_Y };
 	RECT objRect{ 0,0,0,0 };
 	for (const auto& temp : inGameObjectVector)

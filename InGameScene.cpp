@@ -31,15 +31,21 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		inGameObj->Render(memDCBack, memDC);
 	}
 
-	Attack attack{ false, -1, 0, 0 };	//캐릭터공격
+	for (const auto& waterBallons : waterBallon)
+	{
+		waterBallons->Input();
+		waterBallons->Update();
+		waterBallons->Render(memDCBack, memDC);
+	}
+
 	for (const auto& character : characterList)
 	{
 		character->Input();
 		character->Update();
-		character->ImmovableArea(inGameObjectVector);		//이동제한체크.. 물풍선으로 블럭파괴될경우 데이터 최신화해줘야함
+		character->ImmovableArea(inGameObjectVector);	//이동제한체크.. 물풍선으로 블럭파괴될경우 데이터 최신화해줘야함
 		character->Render(memDCBack, memDC);
 
-		attack = character->GetAttack();
+		Attack& attack = character->GetAttack();
 		
 		if (attack.isAttack)		//물풍선생성
 		{
@@ -52,13 +58,6 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 				objectsData[2]->hBitmap
 			));
 		}
-	}
-
-	for (const auto& waterBallons : waterBallon)
-	{
-		waterBallons->Input();
-		waterBallons->Update();
-		waterBallons->Render(memDCBack, memDC);
 	}
 }
 
