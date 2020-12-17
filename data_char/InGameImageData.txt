@@ -1,6 +1,7 @@
 이름		path				Object종류	출력위치		가로이미지수	세로이미지수
 
 background	image\InGame\BackGround.bmp	0		0 0		1		1
-Block		image\InGame\Block.bmp		0		20 45		1		1
-Wall		image\InGame\Wall.bmp		0		20 45		1		1
-WaterBallon	image\InGame\WaterBallon.bmp	1		0 0		8		10
+Block		image\InGame\Block.bmp		3		20 45		1		1
+Wall		image\InGame\Wall.bmp		3		20 45		1		1
+WaterBallon	image\InGame\WaterBallon.bmp	3		0 0		8		10
+exit		image\InGame\exit.bmp		2		648 560		1		2

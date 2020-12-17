@@ -11,28 +11,28 @@ void LobbyScene::LoadData(const vector<pImageData>& lobbyData)
 	{
 		GetObject(lobby->hBitmap, sizeof(BITMAP), &bitMap);
 
-		if (lobby->objType == 0)	//static
+		switch (lobby->objType)
 		{
+		case 0:					//static
 			lobbyObjectList.emplace_back(new StaticObject(lobby->name,
 				{ lobby->x,lobby->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				lobby->hBitmap));
-		}
-		else if (lobby->objType == 1)	//dynamic
-		{
+			break;
+		case 1:					//dynamic
 			lobbyObjectList.emplace_back(new DynamicObject(lobby->name,
 				{ lobby->x,lobby->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				lobby->hNumber, lobby->vNumber,
 				lobby->hBitmap));
-		}	
-		else if (lobby->objType == 2)	//btn
-		{
+			break;
+		case 2:					//button
 			lobbyObjectList.emplace_back(new BtnObj(lobby->name,
 				{ lobby->x,lobby->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				lobby->hNumber, lobby->vNumber,
 				lobby->hBitmap));
+			break;
 		}
 	}
 }

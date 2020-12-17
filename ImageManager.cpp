@@ -141,6 +141,8 @@ const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectDa
 		break;
 
 	default:
+		idx = rand() % 2;
+
 		character[1] = characterImageData[idx + 2];		//수정필요.. 랜덤일때 난수발생..
 		break;
 	}

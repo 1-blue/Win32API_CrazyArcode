@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "DataStruct.h"
+#include "BtnObj.h"
+#include "MessageQueue.h"
 
 class Obj;
 class Character;

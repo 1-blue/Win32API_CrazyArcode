@@ -46,6 +46,8 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		character->ImmovableArea(inGameObjectVector);	//이동제한체크.. 물풍선으로 블럭파괴될경우 데이터 최신화해줘야함
 		character->Render(memDCBack, memDC);
 	}
+
+	MessageQueue::RunEventQueue(inGameObjectVector);
 }
 
 void InGameScene::LoadData(const vector<pImageData>& inGameData)
@@ -57,23 +59,38 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 {
 	BITMAP bitMap;
 
-	for (const auto& iterator : inGameBackGround)
+	for (const auto& inGameObj : inGameBackGround)
 	{
-		GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
+		GetObject(inGameObj->hBitmap, sizeof(BITMAP), &bitMap);
 
-		if(iterator->name == "background")
+		switch (inGameObj->objType)
 		{
-			inGameObjectVector.emplace_back(new StaticObject(iterator->name,
-				{ iterator->x,iterator->y },
+		case 0:					//static
+			inGameObjectVector.emplace_back(new StaticObject(inGameObj->name,
+				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
-				iterator->hBitmap));
-		}
-		else		//block, wall, waterBallon순서대로 들어감
-		{
-			GetObject(iterator->hBitmap, sizeof(BITMAP), &bitMap);
-			objectsData.emplace_back(iterator);
+				inGameObj->hBitmap));
+			break;
+		case 1:					//dynamic
+			inGameObjectVector.emplace_back(new DynamicObject(inGameObj->name,
+				{ inGameObj->x,inGameObj->y },
+				{ bitMap.bmWidth ,bitMap.bmHeight },
+				inGameObj->hNumber, inGameObj->vNumber,
+				inGameObj->hBitmap));
+			break;
+		case 2:					//button
+			inGameObjectVector.emplace_back(new BtnObj(inGameObj->name,
+				{ inGameObj->x,inGameObj->y },
+				{ bitMap.bmWidth ,bitMap.bmHeight },
+				inGameObj->hNumber, inGameObj->vNumber,
+				inGameObj->hBitmap));
+			break;
+		default:				//기타, 물풍선,벽,블록
+			GetObject(inGameObj->hBitmap, sizeof(BITMAP), &bitMap);
+			objectsData.emplace_back(inGameObj);
 			objectsBitmap.emplace_back(bitMap);
-		}
+			break;
+		}	
 	}
 }
 

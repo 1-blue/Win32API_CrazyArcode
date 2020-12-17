@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "ImageManager.h"
 #include "MapManager.h"
+#include "MessageQueue.h"
 
 GameMananger::GameMananger(HWND hWnd)
 {
@@ -22,6 +23,9 @@ GameMananger::~GameMananger()
 void GameMananger::Run()
 {
 	sceneManager->Process(stage);
+
+	if(!MessageQueue::selectData.isStart)
+		stage = GameStage::LOBBY;
 
 	if (sceneManager->GetSelectData().isStart && isFirst)
 		stage = GameStage::INGAME_LOADING;

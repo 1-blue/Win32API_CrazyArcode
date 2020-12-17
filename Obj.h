@@ -11,6 +11,8 @@ protected:
 	ObjectData::SIZE size{ 0 ,0 };
 	HBITMAP hBitmap{ NULL };
 
+	int enumName{ 0 };
+
 public:
 	Obj();
 	Obj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);

@@ -34,18 +34,16 @@ void SceneManager::Process(const int& stage)
 
 	oldHBitMap = (HBITMAP)SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
 
-	if (stage == GameStage::LOBBY)
+	switch (stage)
 	{
+	case GameStage::LOBBY:
 		lobbyScene->Process(memDCBack, memDC);
 		selectData = lobbyScene->GetSelectData();
-	}
-	else if (stage == GameStage::INGAME_LOADING)
-	{
-		//캐릭터생성, 맵생성, 물풍선, 아이템, 등등생성하고 stage값 변경
-		//이거를 SceneManager함수를 통해서 GameManager에서 하고있음
-	}
-	else if (stage == GameStage::INGAME)
+		break;
+	case GameStage::INGAME:
 		inGameScene->Process(memDCBack, memDC);
+		break;
+	}
 
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);		
 }
