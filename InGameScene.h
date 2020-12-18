@@ -9,6 +9,7 @@ class WaterBallon;
 class InGameScene
 {
 private:
+	list <Obj*> allInGameScene;			//모든 INGAME Scene이 들어갈 리스트
 	list <Obj*> inGameObjectVector;		//INGAME Scene Data
 	list <Character*> characterList;	//캐릭터들저장	//obj를 바꾸기
 	list <WaterBallon*> waterBallon;	//물풍선들저장
@@ -29,5 +30,6 @@ public:
 
 private:
 	void CreateWaterBallon(Character* character);
+	static bool SortObject(Obj* obj1, Obj* obj2);	//출력순서정렬을 위한
 };
 

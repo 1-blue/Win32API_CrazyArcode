@@ -4,6 +4,7 @@ WaterBallon::WaterBallon(const string name, const ObjectData::POSITION pos, cons
 			: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
 	charAnimationTick = GetTickCount64();	//생성시간기록
+	order = pos.y;
 }
 
 WaterBallon::~WaterBallon()

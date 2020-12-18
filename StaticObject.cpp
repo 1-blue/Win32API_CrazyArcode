@@ -11,6 +11,7 @@ StaticObject::StaticObject(const string name, const ObjectData::POSITION pos, co
 	this->pos = pos;
 	this->size = size;
 	this->hBitmap = hBitmap;
+	order = -1;		//백그라운드의 출력순위
 }
 
 StaticObject::~StaticObject()

@@ -78,6 +78,7 @@ void Character::Update()
 		prevDir = Diraction::BOTTOM;
 		break;
 	}
+	order = pos.y;
 }
 
 void Character::LateUpdate(const list<Obj*>& inGameObjectVector)
@@ -304,14 +305,20 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 			}
 			else if (name.find("Blue") != string::npos)
 			{
-				if (objRect.right > characterRect.left && objRect.right - characterRect.left <= PERMIT_RANGE)
-					prevBluePos.x++;
-				else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-					prevBluePos.x--;
-				if (objRect.bottom > characterRect.top && objRect.bottom - characterRect.top <= PERMIT_RANGE)
-					prevBluePos.y++;
-				else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-					prevBluePos.y--;
+				if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
+				{
+					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
+						prevBluePos.x++;
+					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
+						prevBluePos.x--;
+				}
+				else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
+				{
+					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
+						prevBluePos.y++;
+					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
+						prevBluePos.y--;
+				}
 				pos = prevBluePos;
 			}
 		}
@@ -346,24 +353,46 @@ void Character::WaterBallonImmovableArea()
 				continue;
 		}
 
+		//비껴서 앞으로나가기
 		if (characterRect.left < objRect.right && characterRect.right > objRect.left
 			&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top)
 		{
-			if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
+			if (name.find("Red") != string::npos)
 			{
-				if (objRect.right > characterRect.left && objRect.right - characterRect.left <= PERMIT_RANGE)
-					prevRedPos.x++;
-				else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-					prevRedPos.x--;
+				if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
+				{
+					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
+						prevRedPos.x++;
+					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
+						prevRedPos.x--;
+				}
+				else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
+				{
+					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
+						prevRedPos.y++;
+					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
+						prevRedPos.y--;
+				}
+				pos = prevRedPos;
 			}
-			else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
+			else if (name.find("Blue") != string::npos)
 			{
-				if (objRect.bottom > characterRect.top && objRect.bottom - characterRect.top <= PERMIT_RANGE)
-					prevRedPos.y++;
-				else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-					prevRedPos.y--;
+				if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
+				{
+					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
+						prevBluePos.x++;
+					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
+						prevBluePos.x--;
+				}
+				else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
+				{
+					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
+						prevBluePos.y++;
+					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
+						prevBluePos.y--;
+				}
+				pos = prevBluePos;
 			}
-			pos = prevRedPos;
 		}
 	}
 }

@@ -12,6 +12,7 @@ protected:
 	HBITMAP hBitmap{ NULL };
 
 	int enumName{ 0 };
+	int order = 0;
 
 public:
 	Obj();
@@ -32,4 +33,6 @@ public:
 	string GetName();
 
 	HBITMAP GetHBitmap();
+
+	int GetOrder() const;
 };

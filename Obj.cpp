@@ -50,3 +50,8 @@ HBITMAP Obj::GetHBitmap()
 {
 	return hBitmap;
 }
+
+int Obj::GetOrder() const
+{
+	return this->order;
+}

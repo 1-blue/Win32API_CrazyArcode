@@ -20,6 +20,7 @@ InGameScene::~InGameScene()
 
 	objectsData.clear();
 	objectsBitmap.clear();
+	allInGameScene.clear();
 }
 
 void InGameScene::Process(HDC memDCBack, HDC memDC)
@@ -28,14 +29,12 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	{
 		inGameObj->Input();
 		inGameObj->Update();
-		inGameObj->Render(memDCBack, memDC);
 	}
 
 	for (const auto& waterBallons : waterBallon)
 	{
 		waterBallons->Input();
 		waterBallons->Update();
-		waterBallons->Render(memDCBack, memDC);
 	}
 
 	for (const auto& character : characterList)
@@ -44,7 +43,13 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		this->CreateWaterBallon(character);
 		character->Update();
 		character->LateUpdate(inGameObjectVector);
-		character->Render(memDCBack, memDC);
+	}
+
+	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
+	allInGameScene.sort(SortObject);
+	for (const auto& ts : allInGameScene)
+	{
+		ts->Render(memDCBack, memDC);
 	}
 
 	MessageQueue::RunEventQueue(inGameObjectVector);
@@ -70,6 +75,7 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hBitmap));
+			allInGameScene.emplace_back(inGameObjectVector.back());
 			break;
 		case 1:					//dynamic
 			inGameObjectVector.emplace_back(new DynamicObject(inGameObj->name,
@@ -106,6 +112,8 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, CharacterSt
 		characterImage->hNumber, characterImage->vNumber,
 		characterImage->hBitmap,
 		characterStats));
+
+	allInGameScene.emplace_back(characterList.back());
 }
 
 void InGameScene::LoadStaticObjectData(const MapData& mapData)
@@ -116,8 +124,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 		{
 			switch (mapData.data[h][w])
 			{
-			case Objects::BLOCK:
-				//블록생성
+			case Objects::BLOCK:		//블록생성
 				inGameObjectVector.emplace_back(new Block(
 					objectsData[0]->name,
 					{ objectsData[0]->x + objectsBitmap[0].bmWidth * w, objectsData[0]->y + objectsBitmap[0].bmHeight * h },
@@ -134,6 +141,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 				));
 				break;
 			}
+			allInGameScene.emplace_back(inGameObjectVector.back());
 		}
 	}
 }
@@ -155,6 +163,11 @@ void InGameScene::CreateWaterBallon(Character* character)
 		//물풍선위치를 캐릭터에 전송
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
 		character->GetWaterBallonList(waterBallonPos);
+		allInGameScene.emplace_back(waterBallon.back());
 	}
 }
 
+bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
+{
+	return obj1->GetOrder() < obj2->GetOrder();
+}
