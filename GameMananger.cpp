@@ -9,8 +9,6 @@ GameMananger::GameMananger(HWND hWnd)
 	sceneManager = new SceneManager(hWnd);
 	imageManager = new ImageManager();
 	mapManager = new MapManager();
-
-	stage = GameStage::LOBBY;
 }
 
 GameMananger::~GameMananger()
@@ -22,16 +20,19 @@ GameMananger::~GameMananger()
 
 void GameMananger::Run()
 {
-	sceneManager->Process(stage);
+	sceneManager->Process();
 
-	if(!MessageQueue::selectData.isStart)
-		stage = GameStage::LOBBY;
-
-	if (sceneManager->GetSelectData().isStart && isFirst)
-		stage = GameStage::INGAME_LOADING;
-
-	if (stage == GameStage::INGAME_LOADING && isFirst)
+	switch (sceneManager->GetSceneState())
+	{
+	case GameStage::INGAME_LOADING:
 		LoadInGameData();
+		sceneManager->SetSceneState(GameStage::INGAME);
+		break;
+	case GameStage::INGAME_EXITING: 
+		sceneManager->InitInGameData();
+		sceneManager->SetSceneState(GameStage::LOBBY);
+		break;	
+	}
 }
 
 void GameMananger::LoadLobbyData()
@@ -42,8 +43,6 @@ void GameMananger::LoadLobbyData()
 
 void GameMananger::LoadInGameData()
 {
-	stage = GameStage::INGAME;
-	isFirst = false;
 	sceneManager->LoadInGameImage(imageManager->GetInGameImage());
 	sceneManager->LoadCharacterData(imageManager->GetCharacterImageData(sceneManager->GetSelectData()), imageManager->GetCharacterStatsData(sceneManager->GetSelectData()));
 	sceneManager->LoadMapData(mapManager->LoadMap(sceneManager->GetSelectData()));

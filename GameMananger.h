@@ -10,8 +10,6 @@ private:
 	SceneManager* sceneManager{ NULL };
 	ImageManager* imageManager{ NULL };
 	MapManager* mapManager{ NULL };
-	int stage;
-	bool isFirst{ true };
 
 public:
 	GameMananger(HWND hWnd);

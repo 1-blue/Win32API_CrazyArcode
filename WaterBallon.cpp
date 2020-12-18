@@ -24,8 +24,8 @@ void WaterBallon::Update()
 	printhNumber++;					//시간지나면 모양변경
 	if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
 	{
-		//터지는작용만들어야함
 		printhNumber = 0;
+		isAlive = false;
 	}
 }
 
@@ -40,6 +40,11 @@ void WaterBallon::Render(HDC hDC, HDC memDc)
 		printhNumber * imageWidth, 0,	//이미지에서 출력할 시작위치
 		imageWidth, imageHeight,		//이미지에서 출력할 이미지의 크기
 		RGB(0, 0, 0));
+}
+
+const bool WaterBallon::GetIsAlive()
+{
+	return isAlive;
 }
 
 bool WaterBallon::CheckmDelay(const int delayTime)

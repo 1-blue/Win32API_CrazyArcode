@@ -2,7 +2,7 @@
 #include "DynamicObject.h"
 
 queue<ClickEvent> MessageQueue::eventQueue{};
-SelectData MessageQueue::selectData{ 0, 0, 0, false };
+SelectData MessageQueue::selectData{ 0, 0, 0};
 
 constexpr unsigned int HashCode(const char* str)
 {
@@ -48,24 +48,28 @@ void MessageQueue::AddEventQueue(ClickEvent clickEvent)
 	eventQueue.push(clickEvent);
 }
 
-void MessageQueue::RunEventQueue(list<Obj*>& objList)
+void MessageQueue::RunEventQueue(list<Obj*>& objList, int& sceneState)
 {
 	if (eventQueue.size() <= 0)
 		return;
 
 	while (eventQueue.size() != 0)
 	{
-		MessageLoop(eventQueue.front(), objList);
+		MessageLoop(eventQueue.front(), objList, sceneState);
 
 		eventQueue.pop();
 	}
 }
 
-void MessageQueue::MessageLoop(const ClickEvent clickEvent, list<Obj*>& objList)
+void MessageQueue::MessageLoop(const ClickEvent clickEvent, list<Obj*>& objList, int& sceneState)
 {
-	if (selectData.isStart)	//인게임
+	if (sceneState == GameStage::INGAME)	//인게임
 	{
-		selectData.isStart = false;
+		switch (HashCode(clickEvent.name.c_str()))
+		{
+		case HashCode("exit"):
+			sceneState = GameStage::INGAME_EXITING;	break;
+		}
 		return;
 	}
 
@@ -98,7 +102,7 @@ void MessageQueue::MessageLoop(const ClickEvent clickEvent, list<Obj*>& objList)
 		}
 		break;
 	case HashCode("start"):
-		selectData.isStart = true;
+		sceneState = GameStage::INGAME_LOADING;
 		break;
 	}
 }

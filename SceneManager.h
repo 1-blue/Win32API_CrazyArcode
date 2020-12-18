@@ -17,12 +17,19 @@ private:
 	LobbyScene* lobbyScene;
 	InGameScene* inGameScene;
 
-	SelectData selectData{ 0 ,0, 0 , false};		//요거에 선택한 캐릭터들, 맵번호, 게임시작여부 넣음
+	int sceneState{ GameStage::LOBBY };
+
+	SelectData selectData{ 0 ,0, 0};		//요거에 선택한 캐릭터들, 맵번호, 게임시작여부 넣음
 
 public:
 	SceneManager(HWND hWnd);
 	~SceneManager();
-	void Process(const int& stage);
+	void Process();
+
+	void InitInGameData();
+
+	const int GetSceneState();
+	void SetSceneState(int sceneState);
 
 	void LoadLobbyData(const vector<pImageData>& lobbyData);
 

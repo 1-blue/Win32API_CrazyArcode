@@ -45,10 +45,13 @@ void LobbyScene::Process(HDC memDCBack, HDC memDC)
 		lobby->Update();
 		lobby->Render(memDCBack, memDC);
 	}
-	MessageQueue::RunEventQueue(lobbyObjectList);
 
-	if(MessageQueue::selectData.isStart)
-		this->SaveSelectData();		//현재 선택한 캐릭터과 맵정보 저장
+	SaveSelectData();		//현재 선택한 캐릭터과 맵정보 저장
+}
+
+list<Obj*>& LobbyScene::GetLobbyObjList()
+{
+	return lobbyObjectList;
 }
 
 void LobbyScene::SaveSelectData()

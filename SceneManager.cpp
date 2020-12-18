@@ -24,7 +24,7 @@ SceneManager::~SceneManager()
 	delete inGameScene;
 }
 
-void SceneManager::Process(const int& stage)
+void SceneManager::Process()
 {
 	if (oldHBitMap != NULL)
 	{
@@ -34,18 +34,36 @@ void SceneManager::Process(const int& stage)
 
 	oldHBitMap = (HBITMAP)SelectObject(memDCBack, CreateCompatibleBitmap(hdc, WND_WIDTH, WND_HEIGHT));
 
-	switch (stage)
+	switch (sceneState)
 	{
 	case GameStage::LOBBY:
 		lobbyScene->Process(memDCBack, memDC);
 		selectData = lobbyScene->GetSelectData();
+		MessageQueue::RunEventQueue(lobbyScene->GetLobbyObjList(), sceneState);
 		break;
 	case GameStage::INGAME:
 		inGameScene->Process(memDCBack, memDC);
+		MessageQueue::RunEventQueue(inGameScene->GetInGameObjList(), sceneState);
 		break;
 	}
 
+
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);		
+}
+
+void SceneManager::InitInGameData()
+{
+	inGameScene->Init();
+}
+
+const int SceneManager::GetSceneState()
+{
+	return sceneState;
+}
+
+void SceneManager::SetSceneState(int sceneState)
+{
+	this->sceneState = sceneState;
 }
 
 void SceneManager::LoadLobbyData(const vector<pImageData>& lobbyData)

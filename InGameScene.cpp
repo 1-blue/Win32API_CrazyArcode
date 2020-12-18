@@ -4,11 +4,31 @@
 #include "Block.h"
 #include "Wall.h"
 
+void InGameScene::Init()
+{
+	for (auto& obj : inGameObjectList)
+		delete obj;
+	inGameObjectList.clear();
+
+	for (auto& character : characterList)
+		delete character;
+	characterList.clear();
+
+	for (auto& wb : waterBallon)
+		delete wb;
+	waterBallon.clear();
+
+	waterBallonPos.clear();
+
+	objectsData.clear();
+	objectsBitmap.clear();
+}
+
 InGameScene::~InGameScene()
 {
-	for (auto& obj : inGameObjectVector)
+	for (auto& obj : inGameObjectList)
 		delete obj;
-	inGameObjectVector.clear();
+	inGameObjectList.clear();
 
 	for (auto& character : characterList)
 		delete character;
@@ -24,7 +44,7 @@ InGameScene::~InGameScene()
 
 void InGameScene::Process(HDC memDCBack, HDC memDC)
 {
-	for (const auto& inGameObj : inGameObjectVector)
+	for (const auto& inGameObj : inGameObjectList)
 	{
 		inGameObj->Input();
 		inGameObj->Update();
@@ -36,23 +56,32 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		waterBallons->Input();
 		waterBallons->Update();
 		waterBallons->Render(memDCBack, memDC);
+
+		if (!waterBallons->GetIsAlive())
+			isDeleteWaterBallon = true;
 	}
+
+	if(isDeleteWaterBallon)
+		DeleteWaterBallons();
 
 	for (const auto& character : characterList)
 	{
 		character->Input();
 		this->CreateWaterBallon(character);
 		character->Update();
-		character->LateUpdate(inGameObjectVector);
+		character->LateUpdate(inGameObjectList);
 		character->Render(memDCBack, memDC);
 	}
-
-	MessageQueue::RunEventQueue(inGameObjectVector);
 }
 
 void InGameScene::LoadData(const vector<pImageData>& inGameData)
 {
 	this->LoadInGameImage(inGameData);
+}
+
+list<Obj*>& InGameScene::GetInGameObjList()
+{
+	return inGameObjectList;
 }
 
 void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
@@ -66,20 +95,20 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 		switch (inGameObj->objType)
 		{
 		case 0:					//static
-			inGameObjectVector.emplace_back(new StaticObject(inGameObj->name,
+			inGameObjectList.emplace_back(new StaticObject(inGameObj->name,
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hBitmap));
 			break;
 		case 1:					//dynamic
-			inGameObjectVector.emplace_back(new DynamicObject(inGameObj->name,
+			inGameObjectList.emplace_back(new DynamicObject(inGameObj->name,
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hNumber, inGameObj->vNumber,
 				inGameObj->hBitmap));
 			break;
 		case 2:					//button
-			inGameObjectVector.emplace_back(new BtnObj(inGameObj->name,
+			inGameObjectList.emplace_back(new BtnObj(inGameObj->name,
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hNumber, inGameObj->vNumber,
@@ -118,7 +147,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 			{
 			case Objects::BLOCK:
 				//블록생성
-				inGameObjectVector.emplace_back(new Block(
+				inGameObjectList.emplace_back(new Block(
 					objectsData[0]->name,
 					{ objectsData[0]->x + objectsBitmap[0].bmWidth * w, objectsData[0]->y + objectsBitmap[0].bmHeight * h },
 					{ objectsBitmap[0].bmWidth, objectsBitmap[0].bmHeight },
@@ -126,7 +155,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 					));
 				break;
 			case Objects::WALL:		//벽생성.. 벽이랑 블럭이랑 사이즈가 달라가지고 놓는 위치 지정할때 블럭사이즈이용하고, -20함
-				inGameObjectVector.emplace_back(new Wall(
+				inGameObjectList.emplace_back(new Wall(
 					objectsData[1]->name,
 					{ objectsData[1]->x + objectsBitmap[0].bmWidth * w, objectsData[1]->y + objectsBitmap[0].bmHeight * h - SIZE_TUNING},
 					{ objectsBitmap[1].bmWidth, objectsBitmap[1].bmHeight },
@@ -156,5 +185,21 @@ void InGameScene::CreateWaterBallon(Character* character)
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
 		character->GetWaterBallonList(waterBallonPos);
 	}
+}
+
+void InGameScene::DeleteWaterBallons()
+{
+	for (auto iterator = waterBallon.begin(); iterator != waterBallon.end();)
+	{
+		if (!(*iterator)->GetIsAlive())
+		{
+			delete* iterator;
+			waterBallon.erase(iterator++);
+		}
+		else
+			iterator++;
+	}
+
+	isDeleteWaterBallon = false;
 }
 
