@@ -1,4 +1,4 @@
-﻿#include "InGameScene.h"
+#include "InGameScene.h"
 #include "Character.h"
 #include "WaterBallon.h"
 #include "Block.h"
@@ -40,6 +40,7 @@ InGameScene::~InGameScene()
 
 	objectsData.clear();
 	objectsBitmap.clear();
+	allInGameScene.clear();
 }
 
 void InGameScene::Process(HDC memDCBack, HDC memDC)
@@ -48,7 +49,6 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	{
 		inGameObj->Input();
 		inGameObj->Update();
-		inGameObj->Render(memDCBack, memDC);
 	}
 
 	for (const auto& waterBallons : waterBallon)
@@ -69,8 +69,14 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		character->Input();
 		this->CreateWaterBallon(character);
 		character->Update();
-		character->LateUpdate(inGameObjectList);
-		character->Render(memDCBack, memDC);
+		character->LateUpdate(inGameObjectVector);
+	}
+
+	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
+	allInGameScene.sort(SortObject);
+	for (const auto& ts : allInGameScene)
+	{
+		ts->Render(memDCBack, memDC);
 	}
 }
 
@@ -99,6 +105,7 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hBitmap));
+			allInGameScene.emplace_back(inGameObjectVector.back());
 			break;
 		case 1:					//dynamic
 			inGameObjectList.emplace_back(new DynamicObject(inGameObj->name,
@@ -135,6 +142,8 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, CharacterSt
 		characterImage->hNumber, characterImage->vNumber,
 		characterImage->hBitmap,
 		characterStats));
+
+	allInGameScene.emplace_back(characterList.back());
 }
 
 void InGameScene::LoadStaticObjectData(const MapData& mapData)
@@ -163,6 +172,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 				));
 				break;
 			}
+			allInGameScene.emplace_back(inGameObjectVector.back());
 		}
 	}
 }
@@ -184,6 +194,7 @@ void InGameScene::CreateWaterBallon(Character* character)
 		//물풍선위치를 캐릭터에 전송
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
 		character->GetWaterBallonList(waterBallonPos);
+		allInGameScene.emplace_back(waterBallon.back());
 	}
 }
 
@@ -203,3 +214,7 @@ void InGameScene::DeleteWaterBallons()
 	isDeleteWaterBallon = false;
 }
 
+bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
+{
+	return obj1->GetOrder() < obj2->GetOrder();
+}
