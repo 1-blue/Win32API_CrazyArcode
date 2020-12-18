@@ -1,7 +1,7 @@
 ﻿#include "Character.h"
 
 Character::Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats)
-					: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
+	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
 	if (name.find("Red") != string::npos)
 		color = CharacterColor::RED;
@@ -137,7 +137,7 @@ void Character::SettingAttackPos()
 	{
 		interval = attack.pos.y % BLOCK_Y;
 		if (interval >= BLOCK_Y / 2)
-			attack.pos.y = attack.pos.y + (BLOCK_Y - interval);
+			attack.pos.y = attack.pos.y + (BLOCK_Y - interval) - 2;
 		else
 			attack.pos.y = attack.pos.y - interval - 2;		//이거 물풍선과 블럭사이의 y좌표에 2만큼오차가 생겨서 빼주는건데 원인찾아서 고치기
 	}
@@ -171,6 +171,8 @@ void Character::Manual()
 			attack.pos.y = pos.y + imageHeight / 2;
 			SettingAttackPos();		//물풍선 놓는위치 지정
 			OverlapChack();			//물풍선 중복설치금지를 위한 코드
+			redLastWaterBallon.x = attack.pos.x;	//마지막물풍선위치저장
+			redLastWaterBallon.y = attack.pos.y;
 		}
 	}
 
@@ -201,6 +203,8 @@ void Character::Manual()
 			attack.pos.y = pos.y + imageHeight / 2;
 			SettingAttackPos();		//물풍선 놓는위치 지정
 			OverlapChack();			//물풍선 중복설치 금지를 위한
+			blueLastWaterBallon.x = attack.pos.x;
+			blueLastWaterBallon.y = attack.pos.y;
 		}
 	}
 }
@@ -214,15 +218,15 @@ bool Character::CheckmDelay(const int delayTime)
 	}
 	return false;
 }
-	
+
 void Character::GetWaterBallonList(vector<ObjectData::Position> waterBallonPos)
 {
 	this->waterBallonPos = waterBallonPos;
 }
 
+//중복설치금지를 위한 코드
 void Character::OverlapChack()
 {
-	//중복설치금지를 위한 코드
 	if (waterBallonPos.empty())
 		attack.isAttack = true;
 
@@ -235,8 +239,16 @@ void Character::OverlapChack()
 	if (!isExist)
 	{
 		attack.isAttack = true;
-		if (isRevisit == false)
-			isRevisit = true;
+		if (name.find("Red") != string::npos)
+		{
+			if (isRevisit[0] == false)
+				isRevisit[0] = true;
+		}
+		else if (name.find("Blue") != string::npos)
+		{
+			if (isRevisit[1] == false)
+				isRevisit[1] = true;
+		}
 	}
 }
 
@@ -330,30 +342,51 @@ void Character::WaterBallonImmovableArea()
 	RECT characterRect{ pos.x, pos.y, pos.x + BLOCK_X, pos.y + BLOCK_Y };
 	RECT objRect{ 0,0,0,0 };
 
-	int waterBallonLastIndex = 0;
-
 	//물풍선 이동범위 제한
 	for (const auto& wbPos : waterBallonPos)
 	{
-		waterBallonLastIndex++;
+		if (name.find("Red") != string::npos)
+		{
+			objRect.left = redLastWaterBallon.x;
+			objRect.top = redLastWaterBallon.y - SIZE_TUNING;
+			objRect.right = redLastWaterBallon.x + BLOCK_X;
+			objRect.bottom = redLastWaterBallon.y + BLOCK_Y - SIZE_TUNING;
+			if (isRevisit[0])
+			{
+				if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
+					&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top))
+				{
+					isRevisit[0] = false;
+				}
+				else
+					continue;
+			}
+		}
+		if (name.find("Blue") != string::npos)
+		{
+			objRect.left = blueLastWaterBallon.x;
+			objRect.top = blueLastWaterBallon.y - SIZE_TUNING;
+			objRect.right = blueLastWaterBallon.x + BLOCK_X;
+			objRect.bottom = blueLastWaterBallon.y + BLOCK_Y - SIZE_TUNING;
+
+			if (isRevisit[1])
+			{
+				if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
+					&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top))
+				{
+					isRevisit[1] = false;
+				}
+				else
+					continue;
+			}
+		}
 
 		objRect.left = wbPos.x;
 		objRect.top = wbPos.y - SIZE_TUNING;
 		objRect.right = wbPos.x + BLOCK_X;
 		objRect.bottom = wbPos.y + BLOCK_Y - SIZE_TUNING;
 
-		if (waterBallonLastIndex == waterBallonPos.size() && isRevisit)
-		{
-			if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
-				&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top))
-			{
-				isRevisit = false;
-			}
-			else
-				continue;
-		}
-
-		//비껴서 앞으로나가기
+		//비껴서 앞으로나가기 + 이동제한
 		if (characterRect.left < objRect.right && characterRect.right > objRect.left
 			&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top)
 		{

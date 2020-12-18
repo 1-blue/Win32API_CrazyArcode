@@ -61,15 +61,15 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 			isDeleteWaterBallon = true;
 	}
 
-	if(isDeleteWaterBallon)
-		DeleteWaterBallons();
+	//if(isDeleteWaterBallon)
+	//	DeleteWaterBallons();
 
 	for (const auto& character : characterList)
 	{
 		character->Input();
 		this->CreateWaterBallon(character);
 		character->Update();
-		character->LateUpdate(inGameObjectVector);
+		character->LateUpdate(inGameObjectList);
 	}
 
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
@@ -105,7 +105,7 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hBitmap));
-			allInGameScene.emplace_back(inGameObjectVector.back());
+			allInGameScene.emplace_back(inGameObjectList.back());
 			break;
 		case 1:					//dynamic
 			inGameObjectList.emplace_back(new DynamicObject(inGameObj->name,
@@ -172,7 +172,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 				));
 				break;
 			}
-			allInGameScene.emplace_back(inGameObjectVector.back());
+			allInGameScene.emplace_back(inGameObjectList.back());
 		}
 	}
 }
@@ -193,7 +193,8 @@ void InGameScene::CreateWaterBallon(Character* character)
 		));
 		//물풍선위치를 캐릭터에 전송
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
-		character->GetWaterBallonList(waterBallonPos);
+		for (const auto& c : characterList)
+			c->GetWaterBallonList(waterBallonPos);
 		allInGameScene.emplace_back(waterBallon.back());
 	}
 }

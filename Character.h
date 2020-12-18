@@ -18,7 +18,10 @@ private:
 
 	vector<ObjectData::Position> waterBallonPos;
 
-	bool isRevisit = true;		//물풍선을 놓고 범위밖에 나갔다가 다시들어오는지 체크하는 변수
+	ObjectData::Position redLastWaterBallon{ 0,0 };		//마지막물풍선.. 각캐릭터마다 특수하게 적용해줘야해서 선언함
+	ObjectData::Position blueLastWaterBallon{ 0,0 };	//마지막물풍선
+
+	bool isRevisit[2]{ true, true };		//물풍선을 놓고 범위밖에 나갔다가 다시들어오는지 체크하는 변수
 
 public:
 	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
