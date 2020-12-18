@@ -41,9 +41,9 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	for (const auto& character : characterList)
 	{
 		character->Input();
-		character->Update();
 		this->CreateWaterBallon(character);
-		character->ImmovableArea(inGameObjectVector);	//이동제한체크.. 물풍선으로 블럭파괴될경우 데이터 최신화해줘야함
+		character->Update();
+		character->LateUpdate(inGameObjectVector);
 		character->Render(memDCBack, memDC);
 	}
 

@@ -26,17 +26,20 @@ public:
 
 	virtual void Input();
 	virtual void Update();
+	void LateUpdate(const list<Obj*>& inGameObjectVector);		//업데이트한 데이터보고 변경할거 변경
 	virtual void Render(HDC hDC, HDC memDc);
 	Attack& GetAttack();
 
 	void Manual();
 	bool CheckmDelay(const int delayTime);
-	void ImmovableArea(const list<Obj*>& inGameObjectVector);	//이동불가영역판단
 	void GetWaterBallonList(vector<ObjectData::Position> waterBallon);	//물풍선 위치 가져오기
 
 private:
 	void SettingAttackPos();	//물풍선 위치 세팅(지정된 영역에만 설치되게)
 	void OverlapChack();		//중복설치체크
+	void MapImmovableArea();			//맵이동제한
+	void StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector);	//벽과 벽이동제한
+	void WaterBallonImmovableArea();	//물풍선이동제한
 
 };
 

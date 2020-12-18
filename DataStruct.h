@@ -26,6 +26,9 @@ constexpr auto BLOCK_X = 40;
 constexpr auto BLOCK_Y = 47;
 constexpr auto SIZE_TUNING = 20;	//이거는 블록위치에 덮여서 출력되야할 사이즈조정을 위한거.. 설명하기 애매해서 보면알수있음
 
+//오차범위 (비껴서 앞으로 갈때)
+constexpr auto PERMIT_RANGE = 15;
+
 //사용이유 : 이미지로 마우스 선택하면 클릭위치가 이미지 좌측하단이라 맞춰주기위함
 //마우스 위치가져오는것은 여러군데 사용할거고 사용할때마다 적는것보단 적어야할코드가 어느정도 정해져있어서 매크로로 만들고 사용
 #define GET_CURSOR_POSITION(point) \
