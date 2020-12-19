@@ -8,7 +8,7 @@ private:
 
 
 public:
-	Wall(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
+	Wall(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
 	~Wall();
 
 	virtual void Input();

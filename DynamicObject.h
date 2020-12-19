@@ -16,8 +16,8 @@ protected:
 	int printvNumber{ 0 };	//출력될 이미지 세로 번호
 public:
 	DynamicObject();
-	DynamicObject(string name);		//이거 나중에 삭제
-	DynamicObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);
+	DynamicObject(int name);		//이거 나중에 삭제
+	DynamicObject(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);
 	virtual ~DynamicObject();
 	virtual void Input();
 	virtual void Update();

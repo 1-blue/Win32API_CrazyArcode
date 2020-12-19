@@ -4,12 +4,12 @@ DynamicObject::DynamicObject()
 {
 }
 
-DynamicObject::DynamicObject(string name)
+DynamicObject::DynamicObject(int name)
 {
 	this->name = name;
 }
 
-DynamicObject::DynamicObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap)
+DynamicObject::DynamicObject(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap)
 								: Obj(name, pos, size, hBitmap)
 {
 	this->hNumber = hNumber;

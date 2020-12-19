@@ -1,19 +1,29 @@
 ﻿#include "Character.h"
+#include "MessageQueue.h"
 
-Character::Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats)
+Character::Character(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats)
 	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
-	//색상값저장
-	if (name.find("Red") != string::npos)
-		color = CharacterColor::RED;
-	else if (name.find("Blue") != string::npos)
-		color = CharacterColor::BLUE;
 
-	//캐릭터이름값저장
-	if (name.find("Bazzi") != string::npos)
+	switch (name)
+	{
+	case EnumObj::RedBazzi:
+		color = CharacterColor::RED;
 		characterName = CharacterName::BAZZI;
-	else if (name.find("Dizni") != string::npos)
+		break;
+	case EnumObj::RedDizni:
+		color = CharacterColor::RED;
 		characterName = CharacterName::DIZNI;
+		break;
+	case EnumObj::BlueBazzi:
+		color = CharacterColor::BLUE;
+		characterName = CharacterName::BAZZI;
+		break;
+	case EnumObj::BlueDizni:
+		color = CharacterColor::BLUE;
+		characterName = CharacterName::DIZNI;
+		break;
+	}
 
 	this->characterStats = characterStats;
 
@@ -453,6 +463,7 @@ void Character::MapImmovableArea()
 		pos.y = MOVE_MAX_Y;
 }
 
+//벡터를 받는게 아니라, 배열에 저장되어있는 숫자값을 받아가지고 하는게 더 빠를듯
 void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 {
 	RECT characterRect{ pos.x, pos.y, pos.x + BLOCK_X, pos.y + BLOCK_Y };
@@ -461,16 +472,16 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 	//블록과 벽이동범위제한..
 	for (const auto& tempObj : inGameObjectVector)
 	{
-		if (tempObj->GetName() == "background")
+		if (tempObj->GetName() == MessageQueue::StringToEnum("background"))
 			continue;
-		else if (tempObj->GetName() == "Block")
+		else if (tempObj->GetName() == MessageQueue::StringToEnum("Block"))
 		{
 			objRect.left = tempObj->GetPosition().x;
 			objRect.top = tempObj->GetPosition().y - SIZE_TUNING;
 			objRect.right = tempObj->GetPosition().x + BLOCK_X;
 			objRect.bottom = tempObj->GetPosition().y + BLOCK_Y - SIZE_TUNING;
 		}
-		else if (tempObj->GetName() == "Wall")
+		else if (tempObj->GetName() == MessageQueue::StringToEnum("Wall"))
 		{
 			objRect.left = tempObj->GetPosition().x;
 			objRect.top = tempObj->GetPosition().y;

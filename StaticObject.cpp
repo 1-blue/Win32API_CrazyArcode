@@ -4,7 +4,7 @@ StaticObject::StaticObject()
 {
 }
 
-StaticObject::StaticObject(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
+StaticObject::StaticObject(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
 						: Obj(name, pos, size, hBitmap)
 {
 	this->name = name;

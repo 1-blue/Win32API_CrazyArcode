@@ -11,7 +11,7 @@ private:
 
 public:
 	BtnObj();
-	BtnObj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);
+	BtnObj(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);
 	~BtnObj();
 
 	virtual void Input();

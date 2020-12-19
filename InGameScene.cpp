@@ -24,6 +24,7 @@ void InGameScene::Init()
 
 	objectsData.clear();
 	objectsBitmap.clear();
+	allInGameScene.clear();
 }
 
 InGameScene::~InGameScene()
@@ -151,6 +152,7 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, const pImag
 
 void InGameScene::LoadStaticObjectData(const MapData& mapData)
 {
+	this->mapData = mapData;
 	for (int h = 0; h < 11; h++)		//일단 맵세로길이
 	{
 		for (int w = 0; w < 15; w++)	//맵가로길이
@@ -209,6 +211,9 @@ void InGameScene::DeleteWaterBallons()
 	{
 		if (!(*iterator)->GetIsAlive())
 		{
+
+
+
 			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
 			allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
 			delete* iterator;

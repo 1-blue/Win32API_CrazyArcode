@@ -6,7 +6,7 @@ using namespace std;
 class Obj
 {
 protected:
-	string name;
+	int name;
 	ObjectData::POSITION pos{ 0 ,0 };
 	ObjectData::SIZE size{ 0 ,0 };
 	HBITMAP hBitmap{ NULL };
@@ -16,7 +16,7 @@ protected:
 
 public:
 	Obj();
-	Obj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
+	Obj(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap);
 	virtual ~Obj() = 0;
 
 	bool operator==(const Obj& e);
@@ -30,7 +30,7 @@ public:
 	void SetSize(ObjectData::SIZE size);
 	void SetHBitmap(HBITMAP hBitmap);
 
-	string GetName();
+	int GetName();
 
 	HBITMAP GetHBitmap();
 
