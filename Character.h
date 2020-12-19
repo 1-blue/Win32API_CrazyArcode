@@ -8,8 +8,8 @@ private:
 	Img trappedImage;		//trapped이미지 관련 변수들 저장
 	Img dieImage;			//die이미지 관련 변수들 저장
 
-	int color{ -1 };				//플레이어 색깔 enum값으로 저장
-	int characterName{ -1 };			//플레이어 이름 enum값으로 저장
+	int color{ -1 };				//플레이어 색깔
+	int characterName{ -1 };		//플레이어 캐릭터 이름
 	int dir{ Diraction::TOP };		//플레이어 이동방향
 	POINT printPos{ 0, 0 };			//여러개 이미지중에서 출력할 위치
 	Attack attack{ false, -1, 0, 0 };	//공격관련 변수들 저장
@@ -25,6 +25,7 @@ private:
 public:
 	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
 	~Character();
+	void Init();
 
 	virtual void Input();
 	virtual void Update();

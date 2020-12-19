@@ -36,7 +36,7 @@ public:
 private:
 	void CreateWaterBallon(Character* character);
 	void DeleteWaterBallons();
-	static bool SortObject(Obj* obj1, Obj* obj2);	//출력순서정렬을 위한
+	static bool SortObject(Obj* obj1, Obj* obj2);			//출력순서정렬을 위한 정렬함수
 	static bool RemoveWaterBallonData(Obj* tempWaterBallon);					//모든 물풍선사용하는 자료구조들 초기화해주기위해 사용
 	static bool RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon);	//함수 오버로딩이 안되가지고 두개만듦
 };

@@ -8,6 +8,10 @@ ObjectData::POSITION InGameScene::removeWaterBallonPos{ 0,0 };
 
 void InGameScene::Init()
 {
+	for (auto& scene : allInGameScene)
+		delete scene;
+	allInGameScene.clear();
+
 	for (auto& obj : inGameObjectList)
 		delete obj;
 	inGameObjectList.clear();
@@ -20,10 +24,12 @@ void InGameScene::Init()
 		delete wb;
 	waterBallon.clear();
 
-	waterBallonPos.clear();
-
+	for (auto& data : objectsData)
+		delete data;
 	objectsData.clear();
+
 	objectsBitmap.clear();
+	waterBallonPos.clear();
 }
 
 InGameScene::~InGameScene()
@@ -57,7 +63,6 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	{
 		waterBallons->Input();
 		waterBallons->Update();
-		//waterBallons->Render(memDCBack, memDC);
 
 		if (!waterBallons->GetIsAlive())
 			isDeleteWaterBallon = true;
@@ -100,21 +105,21 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 
 		switch (inGameObj->objType)
 		{
-		case 0:					//static
+		case Objects::STATIC:					//static
 			inGameObjectList.emplace_back(new StaticObject(inGameObj->name,
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hBitmap));
 			allInGameScene.emplace_back(inGameObjectList.back());
 			break;
-		case 1:					//dynamic
+		case Objects::DYNAMIC:					//dynamic
 			inGameObjectList.emplace_back(new DynamicObject(inGameObj->name,
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hNumber, inGameObj->vNumber,
 				inGameObj->hBitmap));
 			break;
-		case 2:					//button
+		case Objects::BUTTON:					//button
 			inGameObjectList.emplace_back(new BtnObj(inGameObj->name,
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
@@ -151,9 +156,9 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, const pImag
 
 void InGameScene::LoadStaticObjectData(const MapData& mapData)
 {
-	for (int h = 0; h < 11; h++)		//일단 맵세로길이
+	for (int h = 0; h < MAP_HEIGHT_SIZE; h++)		//일단 맵세로길이
 	{
-		for (int w = 0; w < 15; w++)	//맵가로길이
+		for (int w = 0; w < MAP_WIDTH_SIZE; w++)	//맵가로길이
 		{
 			switch (mapData.data[h][w])
 			{

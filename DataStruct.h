@@ -15,6 +15,10 @@ constexpr auto CURSOR_WIDTH = 33;
 constexpr auto CURSOR_HEIGHT = 36;
 constexpr auto PLAYER_NUMBER = 2;
 
+//맵의 블록수
+constexpr auto MAP_WIDTH_SIZE = 15;
+constexpr auto MAP_HEIGHT_SIZE = 11;
+
 //최대최소이동가능포지션
 constexpr auto MOVE_MIN_X = 20;
 constexpr auto MOVE_MAX_X = 580;
@@ -174,6 +178,12 @@ namespace Objects
 		BLOCK,
 		WALL
 	};
+	enum
+	{
+		STATIC,
+		DYNAMIC,
+		BUTTON,
+	};
 }
 
 namespace WaterBallonKinds
@@ -223,7 +233,6 @@ bottom end
 bottom mid
 */
 
-//임시추가.. trapped, die 데이터저장공간필요해서
 typedef struct
 {
 	string name;		//이미지명
@@ -245,6 +254,8 @@ typedef struct
 	int diePrintvNumber;		//die 출력할 가로이미지번호
 	int diePrinthNumber;		//die 출력할 세로이미지번호
 	ULONGLONG time;		//시간저장할변수
+	bool isAttackPossible;		//공격가능여부
+	bool isMoveable;			//이동가능여부
 
 }CharacterValues, *pCharacterValues;
 
