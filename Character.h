@@ -17,13 +17,14 @@ private:
 	int prevDir{ Diraction::TOP };
 	ULONGLONG charAnimationTick = GetTickCount64();
 
+	//캐릭터 1개당 1개의 value만 가지면 되는데 캐릭터 1개가 2개의 변수를 가질 필요가 있나...??
 	CharacterValues redValue;	//red캐릭터 관련 변수들 저장
 	CharacterValues blueValue;	//blue캐릭터 관련 변수들 저장
 
 	list<ObjectData::Position> waterBallonPos;	
 
 public:
-	Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
+	Character(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
 	~Character();
 	void Init();
 

@@ -42,7 +42,7 @@ ScreenToClient(hWnd, &point);
 
 typedef struct
 {
-	string name;		//이미지명
+	int name;		//이미지명
 	HBITMAP hBitmap;	//출력할 비트맵
 	int objType;		//오브젝트타입
 	int x;				//임시 출력 x포지션
@@ -138,8 +138,18 @@ namespace Diraction
 		TOP,
 		RIGHT,
 		BOTTOM,
-		LEFT
+		LEFT,
+		CENTER
 	};
+
+	typedef struct Dir
+	{
+		int north{ 0 };	//북
+		int south{ 0 };	//남
+		int east{ 0 };	//동
+		int west{ 0 };	//서
+
+	} DirectionVar;
 }
 
 namespace MapSelect
@@ -213,7 +223,7 @@ typedef struct
 
 typedef struct ClickEventStruct
 {
-	string name;
+	int name;
 	bool isRight;
 
 }ClickEvent, * pClickEvent;
@@ -239,8 +249,8 @@ typedef struct
 	HBITMAP hBitmap;	//출력할 비트맵
 	int hNumber;		//가로이미지수
 	int vNumber;		//세로이미지수
-	int imageWidth{ 0 };	//이미지 하나의 가로 길이
-	int imageHeight{ 0 };	//이미지 하나의 세로 길이
+	int imageWidth;		//이미지 하나의 가로 길이
+	int imageHeight;	//이미지 하나의 세로 길이
 }Img, * pImg;
 
 typedef struct

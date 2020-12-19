@@ -15,6 +15,7 @@ private:
 	list <WaterBallon*> waterBallon;	//물풍선들저장
 	bool isDeleteWaterBallon{ false };
 
+	MapData mapData;
 	vector<pImageData> objectsData;		//블럭, 벽, 물풍선 데이터 저장
 	vector<BITMAP> objectsBitmap;		//블럭, 벽, 물풍선 비트맵 저장
 

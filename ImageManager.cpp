@@ -1,4 +1,5 @@
 ﻿#include "ImageManager.h"
+#include "MessageQueue.h"
 
 ImageManager::ImageManager()
 {
@@ -42,7 +43,7 @@ void ImageManager::LoadTextImageData(string path, vector<pImageData>& data)
 			fin >> str[i];
 
 		data.emplace_back(new ImageData{
-			str[0],			//이름저장
+			MessageQueue::StringToEnum(str[0]),			//이름저장
 			(HBITMAP)LoadImage(NULL, str[1].c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION),	//비트맵저장
 			stoi(str[2]),	//Object종류구분
 			stoi(str[3]),	//x좌표
@@ -65,7 +66,7 @@ void ImageManager::LoadTextImageData(const string path, pImageData& data)
 		fin >> str[i];
 
 	data = new ImageData{
-		str[0],			//이름저장
+		MessageQueue::StringToEnum(str[0]),			//이름저장
 		(HBITMAP)LoadImage(NULL, str[1].c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION),	//비트맵저장
 		stoi(str[2]),	//Object종류구분
 		stoi(str[3]),	//x좌표

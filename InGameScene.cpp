@@ -214,6 +214,9 @@ void InGameScene::DeleteWaterBallons()
 	{
 		if (!(*iterator)->GetIsAlive())
 		{
+
+
+
 			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
 			allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
 			delete* iterator;

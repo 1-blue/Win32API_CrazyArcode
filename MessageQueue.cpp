@@ -4,10 +4,14 @@
 queue<ClickEvent> MessageQueue::eventQueue{};
 SelectData MessageQueue::selectData{ 0, 0, 0};
 
-constexpr unsigned int HashCode(const char* str)
-{
-	return str[0] ? static_cast<unsigned int>(str[0]) + 0xEDB8832Full * HashCode(str + 1) : 8603;
-}
+map<string, int> MessageQueue::sToEnumMap{ {"background", EnumObj::background },{"redCharacter", EnumObj::redCharacter },
+{"blueCharacter", EnumObj::blueCharacter } ,{"bazziPickImage", EnumObj::bazziPickImage } ,{"dizniPickImage", EnumObj::dizniPickImage } ,
+{"RandomPickImage", EnumObj::RandomPickImage } ,{"exit", EnumObj::exit } ,{"map", EnumObj::map } ,
+{"mapPick", EnumObj::mapPick } ,{"start", EnumObj::start } ,{"Block", EnumObj::Block } ,
+{"Wall", EnumObj::Wall } ,{"WaterBallon", EnumObj::WaterBallon },
+{"RedBazzi", EnumObj::RedBazzi } ,{"RedDizni", EnumObj::RedDizni },
+{"BlueBazzi", EnumObj::BlueBazzi } ,{"BlueDizni", EnumObj::BlueDizni } ,
+{"Trapped", EnumObj::Trapped } ,{"Die", EnumObj::Die } };
 
 void MessageQueue::CharPickEvent(list<Obj*>& objList, bool isRight, int pickEvent)
 {
@@ -29,18 +33,23 @@ void MessageQueue::CharPickEvent(list<Obj*>& objList, bool isRight, int pickEven
 
 	for (auto iterator : objList)
 	{
-		if (HashCode(iterator->GetName().c_str()) == HashCode("redCharacter") && isRight == false)	//좌클릭
+		if (iterator->GetName() == StringToEnum("redCharacter") && isRight == false)	//좌클릭
 		{
 			dynamic_cast<DynamicObject*>(iterator)->SetImageNumber(setImageNumber);
 			selectData.redCharacterNumber = setImageNumber;
 		}
 
-		if (HashCode(iterator->GetName().c_str()) == HashCode("blueCharacter") && isRight == true)	//우클릭
+		if (iterator->GetName() == StringToEnum("blueCharacter") && isRight == true)	//우클릭
 		{
 			dynamic_cast<DynamicObject*>(iterator)->SetImageNumber(setImageNumber);
 			selectData.blueCharacterNumber = setImageNumber;
 		}
 	}
+}
+
+const int MessageQueue::StringToEnum(string str)
+{
+	return sToEnumMap[str];
 }
 
 void MessageQueue::AddEventQueue(ClickEvent clickEvent)
@@ -65,35 +74,35 @@ void MessageQueue::MessageLoop(const ClickEvent clickEvent, list<Obj*>& objList,
 {
 	if (sceneState == GameStage::INGAME)	//인게임
 	{
-		switch (HashCode(clickEvent.name.c_str()))
+		switch (clickEvent.name)
 		{
-		case HashCode("exit"):
+		case EnumObj::exit:
 			sceneState = GameStage::INGAME_EXITING;	break;
 		}
 		return;
 	}
 
 	//로비의 버튼기능
-	switch (HashCode(clickEvent.name.c_str()))
+	switch (clickEvent.name)
 	{
-	case HashCode("exit"):
+	case EnumObj::exit:
 		exit(0);	break;
-	case HashCode("bazziPickImage"):
+	case EnumObj::bazziPickImage:
 		CharPickEvent(objList, clickEvent.isRight, CharacterSelect::BAZZI);
 		break;
-	case HashCode("dizniPickImage"):
+	case EnumObj::dizniPickImage:
 		CharPickEvent(objList, clickEvent.isRight, CharacterSelect::DIZNI);
 		break;
-	case HashCode("RandomPickImage"):
+	case EnumObj::RandomPickImage:
 		CharPickEvent(objList, clickEvent.isRight, CharacterSelect::RANDOM);
 		break;
-	case HashCode("mapPick"):
+	case EnumObj::mapPick:
 		if (clickEvent.isRight)
 			break;
 
 		for (auto iterator : objList)
 		{
-			if (iterator->GetName() == "map")
+			if (iterator->GetName() == EnumObj::map)
 			{
 				int tempImageNumber = dynamic_cast<DynamicObject*>(iterator)->GetImageNumber();
 				dynamic_cast<DynamicObject*>(iterator)->SetImageNumber((tempImageNumber == 1 ? 0 : 1));
@@ -101,7 +110,7 @@ void MessageQueue::MessageLoop(const ClickEvent clickEvent, list<Obj*>& objList,
 			}
 		}
 		break;
-	case HashCode("start"):
+	case EnumObj::start:
 		sceneState = GameStage::INGAME_LOADING;
 		break;
 	}

@@ -4,12 +4,14 @@ Obj::Obj()
 {
 }
 
-Obj::Obj(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
+Obj::Obj(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, HBITMAP hBitmap)
 {
 	this->name = name;
 	this->pos = pos;
 	this->size = size;
 	this->hBitmap = hBitmap;
+
+
 }
 
 Obj::~Obj()
@@ -41,7 +43,7 @@ void Obj::SetHBitmap(HBITMAP hBitmap)
 	this->hBitmap = hBitmap;
 }
 
-string Obj::GetName()
+int Obj::GetName()
 {
 	return name;
 }
