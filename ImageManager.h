@@ -1,7 +1,5 @@
 ﻿#pragma once
 #pragma comment(lib, "Msimg32.lib")
-#include <list>
-#include <vector>
 #include <fstream>
 #include <algorithm>
 #include "DataStruct.h"
@@ -16,8 +14,8 @@ private:
 	vector<pImageData> lobbyBitmap;
 	vector<pImageData> InGameImageInfo;
 	vector<pImageData> characterImageData;
-	pImageData character[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터이미지를 넘겨줄때 사용
-	vector<CharacterStatsData> characterStatsData;
+	pImageData character[PLAYER_NUMBER + 2]{ NULL };	//선택한 캐릭터이미지둘을 넘겨줄때 사용.. +2는 trapped, die이미지데이터 넣을공간
+	vector<CharacterStatsData> characterStatsData;	
 	CharacterStatsData temp[PLAYER_NUMBER]{ NULL };		//선택한 캐릭터 스텟을 넘겨줄때 사용
 
 public:

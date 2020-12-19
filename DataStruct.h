@@ -189,7 +189,7 @@ typedef struct
 {
 	bool isAttack;
 	int isColor;
-	POINT pos;
+	ObjectData::Position pos;
 
 }Attack, *pAttack;
 
@@ -214,3 +214,36 @@ right mid
 bottom end
 bottom mid
 */
+
+//임시추가.. trapped, die 데이터저장공간필요해서
+typedef struct
+{
+	string name;		//이미지명
+	HBITMAP hBitmap;	//출력할 비트맵
+	int hNumber;		//가로이미지수
+	int vNumber;		//세로이미지수
+	int imageWidth{ 0 };	//이미지 하나의 가로 길이
+	int imageHeight{ 0 };	//이미지 하나의 세로 길이
+}Img, * pImg;
+
+typedef struct
+{
+	int state;		//현재상태
+	int trappedPrintvNumber;	//trapped 출력할 가로이미지번호
+	int trappedPrinthNumber;	//trapped 출력할 가로이미지번호
+	int diePrintvNumber;		//die 출력할 가로이미지번호
+	int diePrinthNumber;		//die 출력할 가로이미지번호
+	ULONGLONG time;		//시간저장할변수
+	//red, blue나눠서 저장한 변수들 여기다가 저장하기
+
+}CharacterValues, *pCharacterValues;
+
+namespace State
+{
+	enum
+	{
+		NORMAL,
+		TRAPPED,
+		DIE
+	};
+}

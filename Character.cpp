@@ -1,5 +1,15 @@
 ﻿#include "Character.h"
 
+bool Character::TestTick(ULONGLONG& time, const int delayTime)
+{
+	if (GetTickCount64() > time + delayTime)
+	{
+		time = GetTickCount64();
+		return true;
+	}
+	return false;
+}
+
 Character::Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats)
 	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
@@ -9,6 +19,9 @@ Character::Character(const string name, const ObjectData::POSITION pos, const Ob
 		color = CharacterColor::BLUE;
 
 	this->characterStats = characterStats;
+
+	redValue.state = State::NORMAL;
+	blueValue.state = State::NORMAL;
 }
 
 Character::~Character()
@@ -79,6 +92,50 @@ void Character::Update()
 		break;
 	}
 	order = pos.y;
+
+	//갇힌상태라면 실행
+	if (redValue.state == State::TRAPPED)
+	{
+		if (TestTick(redValue.time, 150))
+		{
+			redValue.trappedPrinthNumber++;
+			if (redValue.trappedPrinthNumber > trappedImage.hNumber)
+				redValue.state = State::DIE;
+		}
+	}
+	else if (blueValue.state == State::TRAPPED)
+	{
+		if (TestTick(blueValue.time, 150))
+		{
+			blueValue.trappedPrinthNumber++;
+			if (blueValue.trappedPrinthNumber > trappedImage.hNumber)
+				blueValue.state = State::DIE;
+		}
+	}
+
+	//죽을상태라면
+	if (redValue.state == State::DIE)
+	{
+		if (TestTick(redValue.time, 150))
+		{
+			redValue.diePrinthNumber++;
+			if (redValue.trappedPrinthNumber > trappedImage.hNumber)
+			{
+				//게임종료
+			}
+		}
+	}
+	else if (blueValue.state == State::DIE)
+	{
+		if (!TestTick(blueValue.time, 150))
+		{
+			blueValue.diePrinthNumber++;
+			if (blueValue.trappedPrinthNumber > trappedImage.hNumber)
+			{
+				//게임종료
+			}
+		}
+	}
 }
 
 void Character::LateUpdate(const list<Obj*>& inGameObjectVector)
@@ -92,15 +149,84 @@ void Character::LateUpdate(const list<Obj*>& inGameObjectVector)
 
 void Character::Render(HDC hDC, HDC memDc)
 {
-	SelectObject(memDc, hBitmap);
+	if (name.find("Red") != string::npos)
+	{
+		switch (redValue.state)
+		{
+		case State::NORMAL:
+			SelectObject(memDc, hBitmap);
+			TransparentBlt(hDC,
+				pos.x, pos.y,				//출력될 이미지 시작좌표
+				imageWidth, imageHeight,	//출력될 이미지크기
+				memDc,
+				printPos.x, printPos.y,		//이미지에서 출력할 시작위치
+				imageWidth, imageHeight,	//이미지에서 출력할 이미지의 크기
+				RGB(255, 0, 255));
+			break;
 
-	TransparentBlt(hDC,
-		pos.x, pos.y,				//출력될 이미지 시작좌표
-		imageWidth, imageHeight,	//출력될 이미지크기
-		memDc,
-		printPos.x, printPos.y,		//이미지에서 출력할 시작위치
-		imageWidth, imageHeight,	//이미지에서 출력할 이미지의 크기
-		RGB(255, 0, 255));
+		case State::TRAPPED:
+			SelectObject(memDc, trappedImage.hBitmap);
+			TransparentBlt(hDC,
+				pos.x, pos.y,				//출력될 이미지 시작좌표
+				trappedImage.imageWidth, trappedImage.imageHeight,	//출력될 이미지크기
+				memDc,
+				trappedImage.imageWidth * redValue.trappedPrinthNumber, trappedImage.imageHeight * redValue.trappedPrintvNumber,		//이미지에서 출력할 시작위치
+				trappedImage.imageWidth, trappedImage.imageHeight,	//이미지에서 출력할 이미지의 크기
+				RGB(255, 0, 255));
+			break;
+
+		case State::DIE:
+			SelectObject(memDc, dieImage.hBitmap);
+			TransparentBlt(hDC,
+				pos.x, pos.y,				//출력될 이미지 시작좌표
+				dieImage.imageWidth, dieImage.imageHeight,	//출력될 이미지크기
+				memDc,
+				dieImage.imageWidth * redValue.diePrinthNumber, dieImage.imageHeight * redValue.diePrintvNumber,		//이미지에서 출력할 시작위치
+				dieImage.imageWidth, dieImage.imageHeight,	//이미지에서 출력할 이미지의 크기
+				RGB(255, 0, 255));
+			break;
+		}
+	}
+
+	if (name.find("Blue") != string::npos)
+	{
+		switch (blueValue.state)
+		{
+		case State::NORMAL:
+			SelectObject(memDc, hBitmap);
+			TransparentBlt(hDC,
+				pos.x, pos.y,				//출력될 이미지 시작좌표
+				imageWidth, imageHeight,	//출력될 이미지크기
+				memDc,
+				printPos.x, printPos.y,		//이미지에서 출력할 시작위치
+				imageWidth, imageHeight,	//이미지에서 출력할 이미지의 크기
+				RGB(255, 0, 255));
+			break;
+
+		case State::TRAPPED:
+			SelectObject(memDc, trappedImage.hBitmap);
+			TransparentBlt(hDC,
+				pos.x, pos.y,				//출력될 이미지 시작좌표
+				trappedImage.imageWidth, trappedImage.imageHeight,	//출력될 이미지크기
+				memDc,
+				trappedImage.imageWidth * blueValue.trappedPrinthNumber, trappedImage.imageHeight * blueValue.trappedPrintvNumber,		//이미지에서 출력할 시작위치
+				trappedImage.imageWidth, trappedImage.imageHeight,	//이미지에서 출력할 이미지의 크기
+				RGB(255, 0, 255));
+			break;
+
+		case State::DIE:
+			SelectObject(memDc, dieImage.hBitmap);
+			TransparentBlt(hDC,
+				pos.x, pos.y,				//출력될 이미지 시작좌표
+				dieImage.imageWidth, dieImage.imageHeight,	//출력될 이미지크기
+				memDc,
+				dieImage.imageWidth * blueValue.diePrinthNumber, dieImage.imageHeight * blueValue.diePrintvNumber,		//이미지에서 출력할 시작위치
+				dieImage.imageWidth, dieImage.imageHeight,	//이미지에서 출력할 이미지의 크기
+				RGB(255, 0, 255));
+			break;
+		}
+	}
+
 
 	//테스트용 현재 플레이어 위치좌표출력
 	static char c[255];
@@ -171,9 +297,12 @@ void Character::Manual()
 			attack.pos.y = pos.y + imageHeight / 2;
 			SettingAttackPos();		//물풍선 놓는위치 지정
 			OverlapChack();			//물풍선 중복설치금지를 위한 코드
-			redLastWaterBallon.x = attack.pos.x;	//마지막물풍선위치저장
-			redLastWaterBallon.y = attack.pos.y;
+			redLastWaterBallon = attack.pos;	//마지막물풍선위치저장
 		}
+
+		//테스트용
+		if (GetAsyncKeyState('P'))
+			Trapped();
 	}
 
 	if (CharacterColor::BLUE == color)	//blue character move, attack
@@ -195,7 +324,6 @@ void Character::Manual()
 		{
 			dir = Diraction::RIGHT;
 		}
-
 		if (GetAsyncKeyState(VK_LSHIFT) & 0x0001)		//공격
 		{
 			attack.isColor = CharacterColor::RED;
@@ -203,9 +331,12 @@ void Character::Manual()
 			attack.pos.y = pos.y + imageHeight / 2;
 			SettingAttackPos();		//물풍선 놓는위치 지정
 			OverlapChack();			//물풍선 중복설치 금지를 위한
-			blueLastWaterBallon.x = attack.pos.x;
-			blueLastWaterBallon.y = attack.pos.y;
+			blueLastWaterBallon = attack.pos;
 		}
+
+		//테스트용
+		if (GetAsyncKeyState('Q'))
+			Trapped();
 	}
 }
 
@@ -222,6 +353,78 @@ bool Character::CheckmDelay(const int delayTime)
 void Character::GetWaterBallonList(list<ObjectData::Position> waterBallonPos)
 {
 	this->waterBallonPos = waterBallonPos;
+}
+
+void Character::Trapped()
+{
+	//this->characterStats.speed -= 4;		//물풍선 갖히면 속도감소.. 한번만 감소되게 만들어야함
+
+	if (name.find("Red") != string::npos)
+	{
+		redValue.time = GetTickCount64();		//갇히는 시작시간
+		redValue.state = State::TRAPPED;		//상태바꾸기
+	}
+	else if (name.find("Blue") != string::npos)
+	{
+		blueValue.time = GetTickCount64();
+		blueValue.state = State::TRAPPED;
+	}
+}
+
+void Character::GetDefaultImage(const pImageData trappedImage, const pImageData dieImage)
+{
+	//trapped, die저장
+	BITMAP bmp;
+	GetObject(trappedImage->hBitmap, sizeof(BITMAP), &bmp);
+
+	this->trappedImage.name = trappedImage->name;							//이름
+	this->trappedImage.hBitmap = trappedImage->hBitmap;						//비트맵
+	this->trappedImage.hNumber = trappedImage->hNumber;						//가로이미지수
+	this->trappedImage.vNumber = trappedImage->vNumber;						//세로이미지
+	this->trappedImage.imageWidth = bmp.bmWidth / trappedImage->hNumber;	//이미지크기/가로이미지수
+	this->trappedImage.imageHeight = bmp.bmHeight / trappedImage->vNumber;	//이미지크기/세로이미지수
+
+	GetObject(dieImage->hBitmap, sizeof(BITMAP), &bmp);
+
+	this->dieImage.name = dieImage->name;
+	this->dieImage.hBitmap = dieImage->hBitmap;
+	this->dieImage.hNumber = dieImage->hNumber;
+	this->dieImage.vNumber = dieImage->vNumber;
+	this->dieImage.imageWidth = bmp.bmWidth / dieImage->hNumber;
+	this->dieImage.imageHeight = bmp.bmHeight / dieImage->vNumber;
+
+	//캐릭터마다 출력될 위치값 지정
+	//여기밑에 코드정리할때 0~3은 전부 enum으로 만들고 이미지 보면서 만들기
+	if (name.find("Red") != string::npos)
+	{
+		redValue.trappedPrinthNumber = 0;			//trapped 가로 출력될 이미지 번호
+		redValue.diePrinthNumber = 0;				//die 가로 출력될 이미지 번호
+		if (name.find("Bazzi") != string::npos)
+		{
+			redValue.trappedPrintvNumber = 0;		//trapped 세로 출력될 이미지 번호
+			redValue.diePrintvNumber = 0;			//die 세로 출력될 이미지 번호
+		}
+		else if (name.find("Dizni") != string::npos)
+		{
+			redValue.trappedPrintvNumber = 1;
+			redValue.diePrintvNumber = 2;
+		}
+	}
+	else if (name.find("Blue") != string::npos)
+	{
+		blueValue.trappedPrinthNumber = 0;
+		blueValue.diePrinthNumber = 0;
+		if (name.find("Bazzi") != string::npos)
+		{
+			blueValue.trappedPrintvNumber = 0;
+			blueValue.diePrintvNumber = 1;
+		}
+		else if (name.find("Dizni") != string::npos)
+		{
+			blueValue.trappedPrintvNumber = 1;
+			blueValue.diePrintvNumber = 3;
+		}
+	}
 }
 
 //중복설치금지를 위한 코드

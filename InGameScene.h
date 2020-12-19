@@ -30,7 +30,7 @@ public:
 	list <Obj*>& GetInGameObjList();
 
 	void LoadInGameImage(const vector<pImageData>& inGameBackGround);
-	void LoadCharacterData(const pImageData characterImage, CharacterStatsData characterStats);
+	void LoadCharacterData(const pImageData characterImage, const pImageData trappedImage, const pImageData dieImage, CharacterStatsData characterStats);
 	void LoadStaticObjectData(const MapData& mapData);
 
 private:

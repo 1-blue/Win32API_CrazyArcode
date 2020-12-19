@@ -146,6 +146,10 @@ const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectDa
 		character[1] = characterImageData[idx + 2];		//수정필요.. 랜덤일때 난수발생..
 		break;
 	}
+
+	character[2] = characterImageData[4];		//Trapped
+	character[3] = characterImageData[5];		//Die
+
 	return character;
 }
 

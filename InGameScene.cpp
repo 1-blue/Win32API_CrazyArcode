@@ -77,9 +77,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
 	allInGameScene.sort(SortObject);
 	for (const auto& ts : allInGameScene)
-	{
 		ts->Render(memDCBack, memDC);
-	}
 }
 
 void InGameScene::LoadData(const vector<pImageData>& inGameData)
@@ -132,7 +130,7 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 	}
 }
 
-void InGameScene::LoadCharacterData(const pImageData characterImage, CharacterStatsData characterStats)
+void InGameScene::LoadCharacterData(const pImageData characterImage, const pImageData trappedImage, const pImageData dieImage, CharacterStatsData characterStats)
 {
 	BITMAP bitMap;
 
@@ -146,6 +144,9 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, CharacterSt
 		characterStats));
 
 	allInGameScene.emplace_back(characterList.back());
+
+	//die, trapped추가
+	characterList.back()->GetDefaultImage(trappedImage, dieImage);
 }
 
 void InGameScene::LoadStaticObjectData(const MapData& mapData)
@@ -198,13 +199,7 @@ void InGameScene::CreateWaterBallon(Character* character)
 		for (const auto& c : characterList)
 			c->GetWaterBallonList(waterBallonPos);
 
-		allInGameScene.emplace_back(new WaterBallon(
-			objectsData[2]->name,
-			{ attack.pos.x,attack.pos.y },
-			{ objectsBitmap[2].bmWidth,objectsBitmap[2].bmHeight },
-			objectsData[2]->hNumber, objectsData[2]->vNumber,
-			objectsData[2]->hBitmap
-		));
+		allInGameScene.emplace_back(waterBallon.back());
 	}
 }
 
@@ -215,6 +210,7 @@ void InGameScene::DeleteWaterBallons()
 		if (!(*iterator)->GetIsAlive())
 		{
 			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
+			allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
 			delete* iterator;
 			waterBallon.erase(iterator++);
 		}
@@ -224,7 +220,6 @@ void InGameScene::DeleteWaterBallons()
 
 	isDeleteWaterBallon = false;
 
-	allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
 	waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
 	for (const auto& c : characterList)	
 		c->GetWaterBallonList(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화

@@ -5,4 +5,4 @@ RedDizni		image\InGame\RedDizni.bmp	1		540 500		8		4
 BlueBazzi		image\InGame\BlueBazzi.bmp	1		60 500		8		4
 BlueDizni		image\InGame\BlueDizni.bmp	1		60 500		8		4
 Trapped		image\InGame\Trapped.bmp	1		0 0		16		2
-Die		image\InGame\Die.bmp		1		0 0		16		2
+Die		image\InGame\Die.bmp		1		0 0		8		4

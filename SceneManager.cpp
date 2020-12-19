@@ -84,7 +84,7 @@ void SceneManager::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 void SceneManager::LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats)
 {
 	for (int i = 0; i < 2; i++)
-		inGameScene->LoadCharacterData(characterImage[i], characterStats[i]);
+		inGameScene->LoadCharacterData(characterImage[i], characterImage[2], characterImage[3], characterStats[i]);
 }
 
 void SceneManager::LoadMapData(const MapData& mapData)
