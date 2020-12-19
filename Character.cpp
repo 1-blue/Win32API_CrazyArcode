@@ -219,7 +219,7 @@ bool Character::CheckmDelay(const int delayTime)
 	return false;
 }
 
-void Character::GetWaterBallonList(vector<ObjectData::Position> waterBallonPos)
+void Character::GetWaterBallonList(list<ObjectData::Position> waterBallonPos)
 {
 	this->waterBallonPos = waterBallonPos;
 }

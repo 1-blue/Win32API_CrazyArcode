@@ -4,6 +4,8 @@
 #include "Block.h"
 #include "Wall.h"
 
+ObjectData::POSITION InGameScene::removeWaterBallonPos{ 0,0 };
+
 void InGameScene::Init()
 {
 	for (auto& obj : inGameObjectList)
@@ -55,14 +57,14 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	{
 		waterBallons->Input();
 		waterBallons->Update();
-		waterBallons->Render(memDCBack, memDC);
+		//waterBallons->Render(memDCBack, memDC);
 
 		if (!waterBallons->GetIsAlive())
 			isDeleteWaterBallon = true;
 	}
 
-	//if(isDeleteWaterBallon)
-	//	DeleteWaterBallons();
+	if(isDeleteWaterBallon)
+		DeleteWaterBallons();
 
 	for (const auto& character : characterList)
 	{
@@ -195,7 +197,14 @@ void InGameScene::CreateWaterBallon(Character* character)
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
 		for (const auto& c : characterList)
 			c->GetWaterBallonList(waterBallonPos);
-		allInGameScene.emplace_back(waterBallon.back());
+
+		allInGameScene.emplace_back(new WaterBallon(
+			objectsData[2]->name,
+			{ attack.pos.x,attack.pos.y },
+			{ objectsBitmap[2].bmWidth,objectsBitmap[2].bmHeight },
+			objectsData[2]->hNumber, objectsData[2]->vNumber,
+			objectsData[2]->hBitmap
+		));
 	}
 }
 
@@ -205,6 +214,7 @@ void InGameScene::DeleteWaterBallons()
 	{
 		if (!(*iterator)->GetIsAlive())
 		{
+			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
 			delete* iterator;
 			waterBallon.erase(iterator++);
 		}
@@ -213,9 +223,29 @@ void InGameScene::DeleteWaterBallons()
 	}
 
 	isDeleteWaterBallon = false;
+
+	allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
+	waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
+	for (const auto& c : characterList)	
+		c->GetWaterBallonList(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
 {
 	return obj1->GetOrder() < obj2->GetOrder();
+}
+
+bool InGameScene::RemoveWaterBallonData(Obj* tempWaterBallon)
+{
+	//if (tempWaterBallon->GetPosition() == removeWaterBallonPos)		//이거 하나는 const고 하나는 const아니라서 직접비교함
+	if (tempWaterBallon->GetPosition().x == removeWaterBallonPos.x && tempWaterBallon->GetPosition().y == removeWaterBallonPos.y)
+		return true;
+	return false;
+}
+
+bool InGameScene::RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon)
+{
+	if (tempWaterBallon == removeWaterBallonPos && tempWaterBallon == removeWaterBallonPos)
+		return true;
+	return false;
 }

@@ -18,7 +18,8 @@ private:
 	vector<pImageData> objectsData;		//블럭, 벽, 물풍선 데이터 저장
 	vector<BITMAP> objectsBitmap;		//블럭, 벽, 물풍선 비트맵 저장
 
-	vector<ObjectData::Position> waterBallonPos;
+	list<ObjectData::Position> waterBallonPos;			//물풍선 포지션.. 캐릭터한테 전달함
+	static ObjectData::POSITION removeWaterBallonPos;	//삭제한물풍선좌표 전체 업데이트해주는데 사용
 
 public:
 	void Init();
@@ -36,5 +37,7 @@ private:
 	void CreateWaterBallon(Character* character);
 	void DeleteWaterBallons();
 	static bool SortObject(Obj* obj1, Obj* obj2);	//출력순서정렬을 위한
+	static bool RemoveWaterBallonData(Obj* tempWaterBallon);					//모든 물풍선사용하는 자료구조들 초기화해주기위해 사용
+	static bool RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon);	//함수 오버로딩이 안되가지고 두개만듦
 };
 

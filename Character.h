@@ -16,7 +16,7 @@ private:
 	ObjectData::Position prevRedPos;
 	ObjectData::Position prevBluePos;
 
-	vector<ObjectData::Position> waterBallonPos;
+	list<ObjectData::Position> waterBallonPos;
 
 	ObjectData::Position redLastWaterBallon{ 0,0 };		//마지막물풍선.. 각캐릭터마다 특수하게 적용해줘야해서 선언함
 	ObjectData::Position blueLastWaterBallon{ 0,0 };	//마지막물풍선
@@ -35,7 +35,7 @@ public:
 
 	void Manual();
 	bool CheckmDelay(const int delayTime);
-	void GetWaterBallonList(vector<ObjectData::Position> waterBallon);	//물풍선 위치 가져오기
+	void GetWaterBallonList(list<ObjectData::Position> waterBallon);	//물풍선 위치 가져오기
 
 private:
 	void SettingAttackPos();	//물풍선 위치 세팅(지정된 영역에만 설치되게)

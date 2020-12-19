@@ -65,6 +65,13 @@ namespace ObjectData
 		int x;
 		int y;
 
+		bool operator==(const Position& pos)
+		{
+			if (this->x == pos.x && this->y == pos.y)
+				return true;
+			return false;
+		}
+
 	}POSITION, * pPOSITION;
 
 	typedef struct Size
