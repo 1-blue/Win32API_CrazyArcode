@@ -197,7 +197,7 @@ void InGameScene::CreateWaterBallon(Character* character)
 		//물풍선위치를 캐릭터에 전송
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
 		for (const auto& c : characterList)
-			c->GetWaterBallonList(waterBallonPos);
+			c->SetWaterBallonList(waterBallonPos);
 
 		allInGameScene.emplace_back(waterBallon.back());
 	}
@@ -222,7 +222,7 @@ void InGameScene::DeleteWaterBallons()
 
 	waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
 	for (const auto& c : characterList)	
-		c->GetWaterBallonList(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화
+		c->SetWaterBallonList(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)

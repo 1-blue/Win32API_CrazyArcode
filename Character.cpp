@@ -1,22 +1,19 @@
 ﻿#include "Character.h"
 
-bool Character::TestTick(ULONGLONG& time, const int delayTime)
-{
-	if (GetTickCount64() > time + delayTime)
-	{
-		time = GetTickCount64();
-		return true;
-	}
-	return false;
-}
-
 Character::Character(const string name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats)
 	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
+	//색상값저장
 	if (name.find("Red") != string::npos)
 		color = CharacterColor::RED;
 	else if (name.find("Blue") != string::npos)
 		color = CharacterColor::BLUE;
+
+	//캐릭터이름값저장
+	if (name.find("Bazzi") != string::npos)
+		characterName = CharacterName::BAZZI;
+	else if (name.find("Dizni") != string::npos)
+		characterName = CharacterName::DIZNI;
 
 	this->characterStats = characterStats;
 
@@ -41,7 +38,7 @@ void Character::Update()
 	case Diraction::LEFT:
 		pos.x -= characterStats.speed + 4;
 
-		if (!CheckmDelay(100) && (prevDir == dir))
+		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
 
 		printPos.x += imageWidth;
@@ -54,7 +51,7 @@ void Character::Update()
 	case Diraction::TOP:
 		pos.y -= characterStats.speed + 4;
 
-		if (!CheckmDelay(100) && (prevDir == dir))
+		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
 
 		printPos.x += imageWidth;
@@ -67,7 +64,7 @@ void Character::Update()
 	case Diraction::RIGHT:
 		pos.x += characterStats.speed + 4;
 
-		if (!CheckmDelay(100) && (prevDir == dir))
+		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
 
 		printPos.x += imageWidth;
@@ -80,7 +77,7 @@ void Character::Update()
 	case Diraction::BOTTOM:
 		pos.y += characterStats.speed + 4;
 
-		if (!CheckmDelay(100) && (prevDir == dir))
+		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
 
 		printPos.x += imageWidth;
@@ -96,7 +93,12 @@ void Character::Update()
 	//갇힌상태라면 실행
 	if (redValue.state == State::TRAPPED)
 	{
-		if (TestTick(redValue.time, 150))
+		//if(바늘사용하면)
+		//{
+		//	redValue.state = State::NORMAL;
+		//	redValue.trappedPrinthNumber = 0;
+		//}
+		if (CheckmDelay(redValue.time, 150))
 		{
 			redValue.trappedPrinthNumber++;
 			if (redValue.trappedPrinthNumber > trappedImage.hNumber)
@@ -105,7 +107,7 @@ void Character::Update()
 	}
 	else if (blueValue.state == State::TRAPPED)
 	{
-		if (TestTick(blueValue.time, 150))
+		if (CheckmDelay(blueValue.time, 150))
 		{
 			blueValue.trappedPrinthNumber++;
 			if (blueValue.trappedPrinthNumber > trappedImage.hNumber)
@@ -116,23 +118,23 @@ void Character::Update()
 	//죽을상태라면
 	if (redValue.state == State::DIE)
 	{
-		if (TestTick(redValue.time, 150))
+		if (CheckmDelay(redValue.time, 150))
 		{
 			redValue.diePrinthNumber++;
-			if (redValue.trappedPrinthNumber > trappedImage.hNumber)
+			if (redValue.diePrinthNumber > dieImage.hNumber)
 			{
-				//게임종료
+				//게임종료UI띄우기
 			}
 		}
 	}
 	else if (blueValue.state == State::DIE)
 	{
-		if (!TestTick(blueValue.time, 150))
+		if (CheckmDelay(blueValue.time, 150))
 		{
 			blueValue.diePrinthNumber++;
-			if (blueValue.trappedPrinthNumber > trappedImage.hNumber)
+			if (blueValue.diePrinthNumber > dieImage.hNumber)
 			{
-				//게임종료
+				//게임종료UI띄우기
 			}
 		}
 	}
@@ -149,7 +151,7 @@ void Character::LateUpdate(const list<Obj*>& inGameObjectVector)
 
 void Character::Render(HDC hDC, HDC memDc)
 {
-	if (name.find("Red") != string::npos)
+	if (CharacterColor::RED == color)
 	{
 		switch (redValue.state)
 		{
@@ -188,7 +190,7 @@ void Character::Render(HDC hDC, HDC memDc)
 		}
 	}
 
-	if (name.find("Blue") != string::npos)
+	if (CharacterColor::BLUE == color)
 	{
 		switch (blueValue.state)
 		{
@@ -227,24 +229,74 @@ void Character::Render(HDC hDC, HDC memDc)
 		}
 	}
 
-
 	//테스트용 현재 플레이어 위치좌표출력
 	static char c[255];
-	if (color == CharacterColor::RED)
+	if (CharacterColor::RED == color)
 	{
 		sprintf_s(c, "RED : %d, %d", pos.x, pos.y);
 		TextOut(hDC, 10, 10, c, sizeof(c));
 	}
-	if (color == CharacterColor::BLUE)
+	if (CharacterColor::BLUE == color)
 	{
 		sprintf_s(c, "BLUE : %d, %d", pos.x, pos.y);
 		TextOut(hDC, 10, 50, c, sizeof(c));
 	}
 }
 
-Attack& Character::GetAttack()
+void Character::GetDefaultImage(const pImageData trappedImage, const pImageData dieImage)
 {
-	return this->attack;
+	//trapped, die저장
+	BITMAP bmp;
+	GetObject(trappedImage->hBitmap, sizeof(BITMAP), &bmp);
+
+	this->trappedImage.name = trappedImage->name;							//이름
+	this->trappedImage.hBitmap = trappedImage->hBitmap;						//비트맵
+	this->trappedImage.hNumber = trappedImage->hNumber;						//가로이미지수
+	this->trappedImage.vNumber = trappedImage->vNumber;						//세로이미지
+	this->trappedImage.imageWidth = bmp.bmWidth / trappedImage->hNumber;	//이미지크기/가로이미지수
+	this->trappedImage.imageHeight = bmp.bmHeight / trappedImage->vNumber;	//이미지크기/세로이미지수
+
+	GetObject(dieImage->hBitmap, sizeof(BITMAP), &bmp);
+
+	this->dieImage.name = dieImage->name;
+	this->dieImage.hBitmap = dieImage->hBitmap;
+	this->dieImage.hNumber = dieImage->hNumber;
+	this->dieImage.vNumber = dieImage->vNumber;
+	this->dieImage.imageWidth = bmp.bmWidth / dieImage->hNumber;
+	this->dieImage.imageHeight = bmp.bmHeight / dieImage->vNumber;
+
+	//캐릭터마다 출력될 위치값 지정
+	//여기밑에 코드정리할때 0~3은 전부 enum으로 만들고 이미지 보면서 만들기
+	if (CharacterColor::RED == color)
+	{
+		redValue.trappedPrinthNumber = 0;			//trapped 가로 출력될 이미지 번호
+		redValue.diePrinthNumber = 0;				//die 가로 출력될 이미지 번호
+		if (CharacterName::BAZZI == characterName)
+		{
+			redValue.trappedPrintvNumber = 0;		//trapped 세로 출력될 이미지 번호
+			redValue.diePrintvNumber = 0;			//die 세로 출력될 이미지 번호
+		}
+		else if (CharacterName::DIZNI == characterName)
+		{
+			redValue.trappedPrintvNumber = 1;
+			redValue.diePrintvNumber = 2;
+		}
+	}
+	else if (CharacterColor::BLUE == color)
+	{
+		blueValue.trappedPrinthNumber = 0;
+		blueValue.diePrinthNumber = 0;
+		if (CharacterName::BAZZI == characterName)
+		{
+			blueValue.trappedPrintvNumber = 0;
+			blueValue.diePrintvNumber = 1;
+		}
+		else if (CharacterName::DIZNI == characterName)
+		{
+			blueValue.trappedPrintvNumber = 1;
+			blueValue.diePrintvNumber = 3;
+		}
+	}
 }
 
 void Character::SettingAttackPos()
@@ -273,7 +325,7 @@ void Character::Manual()
 {
 	if (CharacterColor::RED == color)	//red character move, attack
 	{
-		prevRedPos = pos;
+		redValue.prevPos = pos;
 		if (GetAsyncKeyState(VK_UP))
 		{
 			dir = Diraction::TOP;
@@ -297,7 +349,7 @@ void Character::Manual()
 			attack.pos.y = pos.y + imageHeight / 2;
 			SettingAttackPos();		//물풍선 놓는위치 지정
 			OverlapChack();			//물풍선 중복설치금지를 위한 코드
-			redLastWaterBallon = attack.pos;	//마지막물풍선위치저장
+			redValue.lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
 		}
 
 		//테스트용
@@ -307,7 +359,7 @@ void Character::Manual()
 
 	if (CharacterColor::BLUE == color)	//blue character move, attack
 	{
-		prevBluePos = pos;
+		blueValue.prevPos = pos;
 		if (GetAsyncKeyState('W'))
 		{
 			dir = Diraction::TOP;
@@ -331,7 +383,7 @@ void Character::Manual()
 			attack.pos.y = pos.y + imageHeight / 2;
 			SettingAttackPos();		//물풍선 놓는위치 지정
 			OverlapChack();			//물풍선 중복설치 금지를 위한
-			blueLastWaterBallon = attack.pos;
+			blueValue.lastWaterBallonPos = attack.pos;
 		}
 
 		//테스트용
@@ -340,94 +392,26 @@ void Character::Manual()
 	}
 }
 
-bool Character::CheckmDelay(const int delayTime)
+bool Character::CheckmDelay(ULONGLONG& animationTick, const int delayTime)
 {
-	if (GetTickCount64() > charAnimationTick + delayTime)
+	if (GetTickCount64() > animationTick + delayTime)
 	{
-		charAnimationTick = GetTickCount64();
+		animationTick = GetTickCount64();
 		return true;
 	}
 	return false;
 }
 
-void Character::GetWaterBallonList(list<ObjectData::Position> waterBallonPos)
+void Character::SetWaterBallonList(list<ObjectData::Position> waterBallonPos)
 {
 	this->waterBallonPos = waterBallonPos;
 }
 
-void Character::Trapped()
+Attack& Character::GetAttack()
 {
-	//this->characterStats.speed -= 4;		//물풍선 갖히면 속도감소.. 한번만 감소되게 만들어야함
-
-	if (name.find("Red") != string::npos)
-	{
-		redValue.time = GetTickCount64();		//갇히는 시작시간
-		redValue.state = State::TRAPPED;		//상태바꾸기
-	}
-	else if (name.find("Blue") != string::npos)
-	{
-		blueValue.time = GetTickCount64();
-		blueValue.state = State::TRAPPED;
-	}
+	return this->attack;
 }
 
-void Character::GetDefaultImage(const pImageData trappedImage, const pImageData dieImage)
-{
-	//trapped, die저장
-	BITMAP bmp;
-	GetObject(trappedImage->hBitmap, sizeof(BITMAP), &bmp);
-
-	this->trappedImage.name = trappedImage->name;							//이름
-	this->trappedImage.hBitmap = trappedImage->hBitmap;						//비트맵
-	this->trappedImage.hNumber = trappedImage->hNumber;						//가로이미지수
-	this->trappedImage.vNumber = trappedImage->vNumber;						//세로이미지
-	this->trappedImage.imageWidth = bmp.bmWidth / trappedImage->hNumber;	//이미지크기/가로이미지수
-	this->trappedImage.imageHeight = bmp.bmHeight / trappedImage->vNumber;	//이미지크기/세로이미지수
-
-	GetObject(dieImage->hBitmap, sizeof(BITMAP), &bmp);
-
-	this->dieImage.name = dieImage->name;
-	this->dieImage.hBitmap = dieImage->hBitmap;
-	this->dieImage.hNumber = dieImage->hNumber;
-	this->dieImage.vNumber = dieImage->vNumber;
-	this->dieImage.imageWidth = bmp.bmWidth / dieImage->hNumber;
-	this->dieImage.imageHeight = bmp.bmHeight / dieImage->vNumber;
-
-	//캐릭터마다 출력될 위치값 지정
-	//여기밑에 코드정리할때 0~3은 전부 enum으로 만들고 이미지 보면서 만들기
-	if (name.find("Red") != string::npos)
-	{
-		redValue.trappedPrinthNumber = 0;			//trapped 가로 출력될 이미지 번호
-		redValue.diePrinthNumber = 0;				//die 가로 출력될 이미지 번호
-		if (name.find("Bazzi") != string::npos)
-		{
-			redValue.trappedPrintvNumber = 0;		//trapped 세로 출력될 이미지 번호
-			redValue.diePrintvNumber = 0;			//die 세로 출력될 이미지 번호
-		}
-		else if (name.find("Dizni") != string::npos)
-		{
-			redValue.trappedPrintvNumber = 1;
-			redValue.diePrintvNumber = 2;
-		}
-	}
-	else if (name.find("Blue") != string::npos)
-	{
-		blueValue.trappedPrinthNumber = 0;
-		blueValue.diePrinthNumber = 0;
-		if (name.find("Bazzi") != string::npos)
-		{
-			blueValue.trappedPrintvNumber = 0;
-			blueValue.diePrintvNumber = 1;
-		}
-		else if (name.find("Dizni") != string::npos)
-		{
-			blueValue.trappedPrintvNumber = 1;
-			blueValue.diePrintvNumber = 3;
-		}
-	}
-}
-
-//중복설치금지를 위한 코드
 void Character::OverlapChack()
 {
 	if (waterBallonPos.empty())
@@ -442,15 +426,15 @@ void Character::OverlapChack()
 	if (!isExist)
 	{
 		attack.isAttack = true;
-		if (name.find("Red") != string::npos)
+		if (CharacterColor::RED == color)
 		{
-			if (isRevisit[0] == false)
-				isRevisit[0] = true;
+			if (redValue.isRevisit == false)
+				redValue.isRevisit = true;
 		}
-		else if (name.find("Blue") != string::npos)
+		else if (CharacterColor::BLUE == color)
 		{
-			if (isRevisit[1] == false)
-				isRevisit[1] = true;
+			if (blueValue.isRevisit == false)
+				blueValue.isRevisit = true;
 		}
 	}
 }
@@ -498,43 +482,43 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 		if (characterRect.left < objRect.right && characterRect.right > objRect.left
 			&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top)
 		{
-			if (name.find("Red") != string::npos)
+			if (CharacterColor::RED == color)
 			{
 				//끝에 조금 스치면 빗겨서 앞으로나가게 만드는 구문
 				//15는 좌측, 우측에서 15이내로 떨어져있을경우에만 서서히 좌측/우측으로 이동할때 값으로 사용
 				if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
 				{
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
-						prevRedPos.x++;
+						redValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-						prevRedPos.x--;
+						redValue.prevPos.x--;
 				}
 				else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
 				{
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
-						prevRedPos.y++;
+						redValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-						prevRedPos.y--;
+						redValue.prevPos.y--;
 				}
-				pos = prevRedPos;
+				pos = redValue.prevPos;
 			}
-			else if (name.find("Blue") != string::npos)
+			else if (CharacterColor::BLUE == color)
 			{
 				if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
 				{
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
-						prevBluePos.x++;
+						blueValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-						prevBluePos.x--;
+						blueValue.prevPos.x--;
 				}
 				else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
 				{
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
-						prevBluePos.y++;
+						blueValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-						prevBluePos.y--;
+						blueValue.prevPos.y--;
 				}
-				pos = prevBluePos;
+				pos = blueValue.prevPos;
 			}
 		}
 	}
@@ -548,36 +532,36 @@ void Character::WaterBallonImmovableArea()
 	//물풍선 이동범위 제한
 	for (const auto& wbPos : waterBallonPos)
 	{
-		if (name.find("Red") != string::npos)
+		if (CharacterColor::RED == color)
 		{
-			objRect.left = redLastWaterBallon.x;
-			objRect.top = redLastWaterBallon.y - SIZE_TUNING;
-			objRect.right = redLastWaterBallon.x + BLOCK_X;
-			objRect.bottom = redLastWaterBallon.y + BLOCK_Y - SIZE_TUNING;
-			if (isRevisit[0])
+			objRect.left = redValue.lastWaterBallonPos.x;
+			objRect.top = redValue.lastWaterBallonPos.y - SIZE_TUNING;
+			objRect.right = redValue.lastWaterBallonPos.x + BLOCK_X;
+			objRect.bottom = redValue.lastWaterBallonPos.y + BLOCK_Y - SIZE_TUNING;
+			if (redValue.isRevisit)
 			{
 				if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
 					&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top))
 				{
-					isRevisit[0] = false;
+					redValue.isRevisit = false;
 				}
 				else
 					continue;
 			}
 		}
-		if (name.find("Blue") != string::npos)
+		if (CharacterColor::BLUE == color)
 		{
-			objRect.left = blueLastWaterBallon.x;
-			objRect.top = blueLastWaterBallon.y - SIZE_TUNING;
-			objRect.right = blueLastWaterBallon.x + BLOCK_X;
-			objRect.bottom = blueLastWaterBallon.y + BLOCK_Y - SIZE_TUNING;
+			objRect.left = blueValue.lastWaterBallonPos.x;
+			objRect.top = blueValue.lastWaterBallonPos.y - SIZE_TUNING;
+			objRect.right = blueValue.lastWaterBallonPos.x + BLOCK_X;
+			objRect.bottom = blueValue.lastWaterBallonPos.y + BLOCK_Y - SIZE_TUNING;
 
-			if (isRevisit[1])
+			if (blueValue.isRevisit)
 			{
 				if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
 					&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top))
 				{
-					isRevisit[1] = false;
+					blueValue.isRevisit = false;
 				}
 				else
 					continue;
@@ -593,42 +577,58 @@ void Character::WaterBallonImmovableArea()
 		if (characterRect.left < objRect.right && characterRect.right > objRect.left
 			&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top)
 		{
-			if (name.find("Red") != string::npos)
+			if (CharacterColor::RED == color)
 			{
 				if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
 				{
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
-						prevRedPos.x++;
+						redValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-						prevRedPos.x--;
+						redValue.prevPos.x--;
 				}
 				else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
 				{
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
-						prevRedPos.y++;
+						redValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-						prevRedPos.y--;
+						redValue.prevPos.y--;
 				}
-				pos = prevRedPos;
+				pos = redValue.prevPos;
 			}
-			else if (name.find("Blue") != string::npos)
+			else if (CharacterColor::BLUE == color)
 			{
 				if (dir == Diraction::TOP || dir == Diraction::BOTTOM)
 				{
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
-						prevBluePos.x++;
+						blueValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-						prevBluePos.x--;
+						blueValue.prevPos.x--;
 				}
 				else if (dir == Diraction::LEFT || dir == Diraction::RIGHT)
 				{
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
-						prevBluePos.y++;
+						blueValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-						prevBluePos.y--;
+						blueValue.prevPos.y--;
 				}
-				pos = prevBluePos;
+				pos = blueValue.prevPos;
 			}
 		}
+	}
+}
+
+void Character::Trapped()
+{
+	//this->characterStats.speed -= 4;		//물풍선 갖히면 속도감소.. 한번만 감소되게 만들어야함
+
+	if (CharacterColor::RED == color)
+	{
+		redValue.time = GetTickCount64();		//갇히는 시작시간
+		redValue.state = State::TRAPPED;		//상태바꾸기
+	}
+	else if (CharacterColor::BLUE == color)
+	{
+		blueValue.time = GetTickCount64();
+		blueValue.state = State::TRAPPED;
 	}
 }

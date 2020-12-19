@@ -118,6 +118,14 @@ namespace CharacterColor
 	};
 }
 
+namespace CharacterName
+{
+	enum
+	{
+		BAZZI,
+		DIZNI
+	};
+}
 
 namespace Diraction
 {
@@ -229,12 +237,14 @@ typedef struct
 typedef struct
 {
 	int state;		//현재상태
+	ObjectData::Position prevPos;				//이전위치
+	ObjectData::Position lastWaterBallonPos;	//마지막물풍선위치
+	bool isRevisit;								//마지막물풍선에서 범위밖으로 나갔는지 여부
 	int trappedPrintvNumber;	//trapped 출력할 가로이미지번호
-	int trappedPrinthNumber;	//trapped 출력할 가로이미지번호
+	int trappedPrinthNumber;	//trapped 출력할 세로이미지번호
 	int diePrintvNumber;		//die 출력할 가로이미지번호
-	int diePrinthNumber;		//die 출력할 가로이미지번호
+	int diePrinthNumber;		//die 출력할 세로이미지번호
 	ULONGLONG time;		//시간저장할변수
-	//red, blue나눠서 저장한 변수들 여기다가 저장하기
 
 }CharacterValues, *pCharacterValues;
 
