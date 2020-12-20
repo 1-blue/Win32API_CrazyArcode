@@ -31,7 +31,7 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 
 		if (mapData.data[y + (yCount * n)][x + (xCount * n)] != 0)
 		{
-			hitObjectPos[dirCount].x = x + (xCount * n)
+			//hitObjectPos[dirCount].x = x + (xCount * n)
 			break;
 		}
 
@@ -135,7 +135,7 @@ void WaterBallon::BoomRender(HDC hDC, HDC memDc, const int printBoomImgCount, co
 	for (int n = 1; n <= printBoomImgCount; n++)
 	{
 		//폭발 맨끝 처리
-		if ((n == printBoomImgCount ) && (printBoomImgPos != 1))
+		if ((n == waterLength) && (printBoomImgPos != 1))
 		{
 			TransparentBlt(hDC,
 				pos.x + (addXPos * n * BLOCK_X), pos.y + (addYPos * n * BLOCK_X),					//출력될 이미지 시작좌표
