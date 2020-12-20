@@ -131,7 +131,7 @@ namespace CharacterName
 	};
 }
 
-namespace Diraction
+namespace Direction
 {
 	enum
 	{

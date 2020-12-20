@@ -55,7 +55,7 @@ void Character::Update()
 {
 	switch (dir)
 	{
-	case Diraction::LEFT:
+	case Direction::LEFT:
 		pos.x -= characterStats.speed + 4;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
@@ -66,9 +66,9 @@ void Character::Update()
 		if (printPos.x >= size.width)
 			printPos.x = 0;
 
-		prevDir = Diraction::LEFT;
+		prevDir = Direction::LEFT;
 		break;
-	case Diraction::TOP:
+	case Direction::TOP:
 		pos.y -= characterStats.speed + 4;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
@@ -79,9 +79,9 @@ void Character::Update()
 		if (printPos.x >= size.width)
 			printPos.x = 0;
 
-		prevDir = Diraction::TOP;
+		prevDir = Direction::TOP;
 		break;
-	case Diraction::RIGHT:
+	case Direction::RIGHT:
 		pos.x += characterStats.speed + 4;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
@@ -92,9 +92,9 @@ void Character::Update()
 		if (printPos.x >= size.width)
 			printPos.x = 0;
 
-		prevDir = Diraction::RIGHT;
+		prevDir = Direction::RIGHT;
 		break;
-	case Diraction::BOTTOM:
+	case Direction::BOTTOM:
 		pos.y += characterStats.speed + 4;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
@@ -105,7 +105,7 @@ void Character::Update()
 		if (printPos.x >= size.width)
 			printPos.x = 0;
 
-		prevDir = Diraction::BOTTOM;
+		prevDir = Direction::BOTTOM;
 		break;
 	}
 	order = pos.y;
@@ -359,19 +359,19 @@ void Character::Manual()
 			redValue.prevPos = pos;
 			if (GetAsyncKeyState(VK_UP))
 			{
-				dir = Diraction::TOP;
+				dir = Direction::TOP;
 			}
 			if (GetAsyncKeyState(VK_DOWN))
 			{
-				dir = Diraction::BOTTOM;
+				dir = Direction::BOTTOM;
 			}
 			if (GetAsyncKeyState(VK_LEFT))
 			{
-				dir = Diraction::LEFT;
+				dir = Direction::LEFT;
 			}
 			if (GetAsyncKeyState(VK_RIGHT))
 			{
-				dir = Diraction::RIGHT;
+				dir = Direction::RIGHT;
 			}
 			if (redValue.isAttackPossible)
 			{
@@ -396,19 +396,19 @@ void Character::Manual()
 			blueValue.prevPos = pos;
 			if (GetAsyncKeyState('W'))
 			{
-				dir = Diraction::TOP;
+				dir = Direction::TOP;
 			}
 			if (GetAsyncKeyState('S'))
 			{
-				dir = Diraction::BOTTOM;
+				dir = Direction::BOTTOM;
 			}
 			if (GetAsyncKeyState('A'))
 			{
-				dir = Diraction::LEFT;
+				dir = Direction::LEFT;
 			}
 			if (GetAsyncKeyState('D'))
 			{
-				dir = Diraction::RIGHT;
+				dir = Direction::RIGHT;
 			}
 			if (blueValue.isAttackPossible)
 			{
@@ -449,6 +449,11 @@ void Character::SetWaterBallonList(list<ObjectData::Position> waterBallonPos)
 Attack& Character::GetAttack()
 {
 	return this->attack;
+}
+
+const int Character::GetWaterBallonBLength()
+{
+	return characterStats.bLength;
 }
 
 void Character::OverlapChack()
@@ -530,15 +535,15 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 				//15는 좌측, 우측에서 15이내로 떨어져있을경우에만 서서히 좌측/우측으로 이동할때 값으로 사용
 				switch (dir)
 				{
-				case Diraction::TOP:
-				case Diraction::BOTTOM:
+				case Direction::TOP:
+				case Direction::BOTTOM:
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x--;
 					break;
-				case Diraction::LEFT:
-				case Diraction::RIGHT:
+				case Direction::LEFT:
+				case Direction::RIGHT:
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
 						redValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
@@ -551,15 +556,15 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 			case CharacterColor::BLUE:
 				switch (dir)
 				{
-				case Diraction::TOP:
-				case Diraction::BOTTOM:
+				case Direction::TOP:
+				case Direction::BOTTOM:
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
 						blueValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 						blueValue.prevPos.x--;
 					break;
-				case Diraction::LEFT:
-				case Diraction::RIGHT:
+				case Direction::LEFT:
+				case Direction::RIGHT:
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
 						blueValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
@@ -632,15 +637,15 @@ void Character::WaterBallonImmovableArea()
 			case CharacterColor::RED:
 				switch (dir)
 				{
-				case Diraction::TOP:
-				case Diraction::BOTTOM:
+				case Direction::TOP:
+				case Direction::BOTTOM:
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x--;
 					break;
-				case Diraction::LEFT:
-				case Diraction::RIGHT:
+				case Direction::LEFT:
+				case Direction::RIGHT:
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
 						redValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
@@ -652,15 +657,15 @@ void Character::WaterBallonImmovableArea()
 			case CharacterColor::BLUE:
 				switch (dir)
 				{
-				case Diraction::TOP:
-				case Diraction::BOTTOM:
+				case Direction::TOP:
+				case Direction::BOTTOM:
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
 						blueValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 						blueValue.prevPos.x--;
 					break;
-				case Diraction::LEFT:
-				case Diraction::RIGHT:
+				case Direction::LEFT:
+				case Direction::RIGHT:
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
 						blueValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)

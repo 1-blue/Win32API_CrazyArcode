@@ -15,7 +15,8 @@ private:
 	list <WaterBallon*> waterBallon;	//물풍선들저장
 	bool isDeleteWaterBallon{ false };
 
-	MapData mapData;
+	MapData mapData;	//맵정보
+
 	vector<pImageData> objectsData;		//블럭, 벽, 물풍선 데이터 저장
 	vector<BITMAP> objectsBitmap;		//블럭, 벽, 물풍선 비트맵 저장
 
@@ -30,12 +31,13 @@ public:
 
 	list <Obj*>& GetInGameObjList();
 
+	void GetMapData(MapData mapData);
 	void LoadInGameImage(const vector<pImageData>& inGameBackGround);
 	void LoadCharacterData(const pImageData characterImage, const pImageData trappedImage, const pImageData dieImage, CharacterStatsData characterStats);
-	void LoadStaticObjectData(const MapData& mapData);
+	void LoadStaticObjectData();
 
 private:
-	void CreateWaterBallon(Character* character);
+	void CreateWaterBallon(Character* character, const MapData& mapData);
 	void DeleteWaterBallons();
 	static bool SortObject(Obj* obj1, Obj* obj2);			//출력순서정렬을 위한 정렬함수
 	static bool RemoveWaterBallonData(Obj* tempWaterBallon);					//모든 물풍선사용하는 자료구조들 초기화해주기위해 사용

@@ -10,11 +10,11 @@ private:
 
 	int color{ -1 };				//플레이어 색깔
 	int characterName{ -1 };		//플레이어 캐릭터 이름
-	int dir{ Diraction::TOP };		//플레이어 이동방향
+	int dir{ Direction::TOP };		//플레이어 이동방향
 	POINT printPos{ 0, 0 };			//여러개 이미지중에서 출력할 위치
 	Attack attack{ false, -1, 0, 0 };	//공격관련 변수들 저장
 
-	int prevDir{ Diraction::TOP };
+	int prevDir{ Direction::TOP };
 	ULONGLONG charAnimationTick = GetTickCount64();
 
 	//캐릭터 1개당 1개의 value만 가지면 되는데 캐릭터 1개가 2개의 변수를 가질 필요가 있나...??
@@ -39,6 +39,7 @@ public:
 	void SetWaterBallonList(list<ObjectData::Position> waterBallon);	//물풍선 위치 가져오기
 	Attack& GetAttack();			//공격관련 데이터전송
 
+	const int GetWaterBallonBLength();
 private:
 	void SettingAttackPos();	//물풍선 위치 세팅(지정된 영역에만 설치되게)
 	void OverlapChack();		//중복설치체크

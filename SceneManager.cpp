@@ -89,5 +89,6 @@ void SceneManager::LoadCharacterData(const pImageData* characterImage, const Cha
 
 void SceneManager::LoadMapData(const MapData& mapData)
 {
-	inGameScene->LoadStaticObjectData(mapData);
+	inGameScene->GetMapData(mapData);
+	inGameScene->LoadStaticObjectData();
 }

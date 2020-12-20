@@ -11,6 +11,7 @@ void InGameScene::Init()
 	for (auto& scene : allInGameScene)
 		delete scene;
 	allInGameScene.clear();
+	//이거때문에 재 시작 시 오류,,,;
 
 	for (auto& obj : inGameObjectList)
 		delete obj;
@@ -74,7 +75,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	for (const auto& character : characterList)
 	{
 		character->Input();
-		this->CreateWaterBallon(character);
+		this->CreateWaterBallon(character, mapData);
 		character->Update();
 		character->LateUpdate(inGameObjectList);
 	}
@@ -93,6 +94,11 @@ void InGameScene::LoadData(const vector<pImageData>& inGameData)
 list<Obj*>& InGameScene::GetInGameObjList()
 {
 	return inGameObjectList;
+}
+
+void InGameScene::GetMapData(MapData mapData)
+{
+	this->mapData = mapData;
 }
 
 void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
@@ -154,7 +160,7 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, const pImag
 	characterList.back()->GetDefaultImage(trappedImage, dieImage);
 }
 
-void InGameScene::LoadStaticObjectData(const MapData& mapData)
+void InGameScene::LoadStaticObjectData()
 {
 	for (int h = 0; h < MAP_HEIGHT_SIZE; h++)		//일단 맵세로길이
 	{
@@ -185,7 +191,7 @@ void InGameScene::LoadStaticObjectData(const MapData& mapData)
 	}
 }
 
-void InGameScene::CreateWaterBallon(Character* character)
+void InGameScene::CreateWaterBallon(Character* character, const MapData& mapData)
 {
 	Attack& attack = character->GetAttack();
 
@@ -197,8 +203,13 @@ void InGameScene::CreateWaterBallon(Character* character)
 			{ attack.pos.x,attack.pos.y },
 			{ objectsBitmap[2].bmWidth,objectsBitmap[2].bmHeight },
 			objectsData[2]->hNumber, objectsData[2]->vNumber,
-			objectsData[2]->hBitmap
+			objectsData[2]->hBitmap,
+			character->GetWaterBallonBLength()
 		));
+
+		//풍선에 맵정보 제공
+		waterBallon.back()->GetMapData(mapData);
+
 		//물풍선위치를 캐릭터에 전송
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
 		for (const auto& c : characterList)

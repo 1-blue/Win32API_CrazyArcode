@@ -1,23 +1,51 @@
 ﻿#include "WaterBallon.h"
 
-void WaterBallon::SetEffect4Dir()
+void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dirCount)
 {
-	//설치 시 플레이어 물줄기, 주변 오브젝트 이용해서 맥스카운트 설정
-	//생성자에서 물줄기 크기 받는거 추가 해야 함
+	int xCount = 0;
+	int yCount = 0;
+
+	switch (dir)
+	{
+	case Direction::TOP:
+		yCount = -1;
+		break;
+	case Direction::BOTTOM:
+		yCount = 1;
+		break;
+	case Direction::RIGHT:
+		xCount = 1;
+		break;
+	case Direction::LEFT:
+		xCount = -1;
+		break;
+	}
+
+	for (int n = 1; n <= waterLength; n++)
+	{
+		//범위 제한
+		if (((y + (yCount * n)) < 0) || ((y + (yCount * n)) > 10))
+			break;
+		else if (((x + (xCount * n)) < 0) || ((x + (xCount * n)) > 14))
+			break;
+
+		if (mapData.data[y + (yCount * n)][x + (xCount * n)] != 0)
+		{
+			hitObjectPos[dirCount].x = x + (xCount * n)
+			break;
+		}
+
+		dirCount++;
+	}
 }
 
-WaterBallon::WaterBallon(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap)
+WaterBallon::WaterBallon(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap,const int& waterLength)
 			: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
 	charAnimationTick = GetTickCount64();	//생성시간기록
 	order = pos.y;
 
-	//출력 테스트용
-	printDirCount.north = 4;
-	printDirCount.south = 4;
-	printDirCount.east = 4;
-	printDirCount.west = 4;
-	//출력 테스트용
+	this->waterLength = waterLength;
 }
 
 WaterBallon::~WaterBallon()
@@ -37,6 +65,12 @@ void WaterBallon::Update()
 		if (CheckmDelay(600, deadlineTick))
 			isAlive = false;
 
+		if (!CheckmDelay(50, charAnimationTick))
+			return;
+		printhNumber++;
+
+		if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
+			printhNumber = 0;
 		return;
 	}
 
@@ -69,11 +103,11 @@ void WaterBallon::Render(HDC hDC, HDC memDc)
 	else
 	{
 		//4방향 폭발 출력 + 중앙 폭발
-		BoomRender(hDC, memDc, printDirCount.north, Diraction::TOP);
-		BoomRender(hDC, memDc, printDirCount.south, Diraction::BOTTOM);
-		BoomRender(hDC, memDc, printDirCount.east, Diraction::RIGHT);
-		BoomRender(hDC, memDc, printDirCount.west,  Diraction::LEFT);
-		BoomRender(hDC, memDc, 1, Diraction::CENTER);
+		BoomRender(hDC, memDc, printDirCount.north, Direction::TOP);
+		BoomRender(hDC, memDc, printDirCount.south, Direction::BOTTOM);
+		BoomRender(hDC, memDc, printDirCount.east, Direction::RIGHT);
+		BoomRender(hDC, memDc, printDirCount.west,  Direction::LEFT);
+		BoomRender(hDC, memDc, 1, Direction::CENTER);
 	}
 
 }
@@ -86,22 +120,22 @@ void WaterBallon::BoomRender(HDC hDC, HDC memDc, const int printBoomImgCount, co
 
 	switch (direction)
 	{
-	case Diraction::TOP:
+	case Direction::TOP:
 		printBoomImgPos = 5;	addYPos = -1;	break;
-	case Diraction::BOTTOM:
+	case Direction::BOTTOM:
 		printBoomImgPos = 9;	addYPos = 1;	break;
-	case Diraction::RIGHT:
+	case Direction::RIGHT:
 		printBoomImgPos = 7;	addXPos = 1;	break;
-	case Diraction::LEFT:
+	case Direction::LEFT:
 		printBoomImgPos = 3;	addXPos = -1;	break;
-	case Diraction::CENTER:
+	case Direction::CENTER:
 		printBoomImgPos = 1;	break;
 	}
 
-	for (int n = 0; n < printBoomImgCount; n++)
+	for (int n = 1; n <= printBoomImgCount; n++)
 	{
 		//폭발 맨끝 처리
-		if ((n == (printBoomImgCount - 1)) && (printBoomImgPos != 1))
+		if ((n == printBoomImgCount ) && (printBoomImgPos != 1))
 		{
 			TransparentBlt(hDC,
 				pos.x + (addXPos * n * BLOCK_X), pos.y + (addYPos * n * BLOCK_X),					//출력될 이미지 시작좌표
@@ -127,7 +161,14 @@ void WaterBallon::BoomRender(HDC hDC, HDC memDc, const int printBoomImgCount, co
 void WaterBallon::GetMapData(const MapData& mapData)
 {
 	this->mapData = mapData;
-	SetEffect4Dir();
+
+	int mapXpos = ((pos.x + 20) / BLOCK_X) - 1;
+	int mapYpos = ((pos.y + 2) / BLOCK_Y) - 1;
+
+	SetEffectDir(mapXpos, mapYpos,Direction::TOP, printDirCount.north);
+	SetEffectDir(mapXpos, mapYpos, Direction::BOTTOM, printDirCount.south);
+	SetEffectDir(mapXpos, mapYpos, Direction::RIGHT, printDirCount.east);
+	SetEffectDir(mapXpos, mapYpos, Direction::LEFT, printDirCount.west);
 }
 
 const bool WaterBallon::GetIsAlive()
