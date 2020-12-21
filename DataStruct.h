@@ -28,7 +28,7 @@ constexpr auto MOVE_MAX_Y = 500;
 //한블럭크기
 constexpr auto BLOCK_X = 40;
 constexpr auto BLOCK_Y = 47;
-constexpr auto SIZE_TUNING = 20;	//이거는 블록위치에 덮여서 출력되야할 사이즈조정을 위한거.. 설명하기 애매해서 보면알수있음
+constexpr auto SIZE_TUNING = 20;	//이거는 블록위치에 덮어서 출력되야할 사이즈조정을 위한거.. 설명하기 애매해서 보면알수있음
 
 //오차범위 (비껴서 앞으로 갈때)
 constexpr auto PERMIT_RANGE = 15;
@@ -266,6 +266,7 @@ typedef struct
 	ULONGLONG time;		//시간저장할변수
 	bool isAttackPossible;		//공격가능여부
 	bool isMoveable;			//이동가능여부
+	int waterBallonNumber;		//물풍선 개수
 
 }CharacterValues, *pCharacterValues;
 

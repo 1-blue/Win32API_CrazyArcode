@@ -149,7 +149,7 @@ void WaterBallon::BoomRender(HDC hDC, HDC memDc, const int printBoomImgCount, co
 		}
 
 		TransparentBlt(hDC,
-			pos.x +(addXPos * n * BLOCK_X), pos.y + (addYPos * n * BLOCK_X),					//출력될 이미지 시작좌표
+			pos.x + (addXPos * n * BLOCK_X), pos.y + (addYPos * n * BLOCK_X),					//출력될 이미지 시작좌표
 			imageWidth, imageHeight,		//출력될 이미지크기
 			memDc,
 			printhNumber * imageWidth, imageHeight * printBoomImgPos,	//이미지에서 출력할 시작위치
@@ -165,7 +165,7 @@ void WaterBallon::GetMapData(const MapData& mapData)
 	int mapXpos = ((pos.x + 20) / BLOCK_X) - 1;
 	int mapYpos = ((pos.y + 2) / BLOCK_Y) - 1;
 
-	SetEffectDir(mapXpos, mapYpos,Direction::TOP, printDirCount.north);
+	SetEffectDir(mapXpos, mapYpos, Direction::TOP, printDirCount.north);
 	SetEffectDir(mapXpos, mapYpos, Direction::BOTTOM, printDirCount.south);
 	SetEffectDir(mapXpos, mapYpos, Direction::RIGHT, printDirCount.east);
 	SetEffectDir(mapXpos, mapYpos, Direction::LEFT, printDirCount.west);
@@ -174,6 +174,16 @@ void WaterBallon::GetMapData(const MapData& mapData)
 const bool WaterBallon::GetIsAlive()
 {
 	return isAlive;
+}
+
+void WaterBallon::SetColor(int color)
+{
+	this->color = color;
+}
+
+const int& WaterBallon::GetColor() const
+{
+	return color;
 }
 
 bool WaterBallon::CheckmDelay(const int delayTime, ULONGLONG& tick)

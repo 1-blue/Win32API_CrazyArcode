@@ -4,7 +4,7 @@
 class Character : public DynamicObject
 {
 private:
-	CharacterStatsData characterStats{ 0 };	//캐릭터의 정보.. 물풍선개수, 속도 등을 가지고있음
+	CharacterStatsData stats{ 0 };	//캐릭터의 정보.. 물풍선개수, 속도 등을 가지고있음
 	Img trappedImage;		//trapped이미지 관련 변수들 저장
 	Img dieImage;			//die이미지 관련 변수들 저장
 
@@ -21,7 +21,10 @@ private:
 	CharacterValues redValue;	//red캐릭터 관련 변수들 저장
 	CharacterValues blueValue;	//blue캐릭터 관련 변수들 저장
 
-	list<ObjectData::Position> waterBallonPos;	
+	list<ObjectData::Position> waterBallonPos;
+
+	//각캐릭터마다의 물풍선 수 저장할 변수
+
 
 public:
 	Character(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);
@@ -38,8 +41,12 @@ public:
 	bool CheckmDelay(ULONGLONG& animationTick, const int delayTime);
 	void SetWaterBallonList(list<ObjectData::Position> waterBallon);	//물풍선 위치 가져오기
 	Attack& GetAttack();			//공격관련 데이터전송
+	void SettingBallonNumber(int color);
 
 	const int GetWaterBallonBLength();
+	void UPBallonNumber();	//물풍선 개수 UP
+	void UPBallonLength();	//물풍선 길이 UP
+	void UPSetSpeed();		//캐릭터 속도 UP
 private:
 	void SettingAttackPos();	//물풍선 위치 세팅(지정된 영역에만 설치되게)
 	void OverlapChack();		//중복설치체크
@@ -49,4 +56,3 @@ private:
 	void Trapped();						//물풍선 맞을경우 실행
 
 };
-

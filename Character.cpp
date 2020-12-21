@@ -4,7 +4,18 @@
 Character::Character(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats)
 	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
+	this->stats = characterStats;
 
+	Init();
+}
+
+Character::~Character()
+{
+
+}
+
+void Character::Init()
+{
 	switch (name)
 	{
 	case EnumObj::RedBazzi:
@@ -25,25 +36,15 @@ Character::Character(const int name, const ObjectData::POSITION pos, const Objec
 		break;
 	}
 
-	this->characterStats = characterStats;
-
-	Init();
-}
-
-Character::~Character()
-{
-
-}
-
-void Character::Init()
-{
 	redValue.state = State::NORMAL;		//현재상태
 	redValue.isAttackPossible = true;	//공격가능여부
 	redValue.isMoveable = true;			//이동가능여부
+	redValue.waterBallonNumber = 0;		//현재 놓은 물풍선 개수
 
 	blueValue.state = State::NORMAL;
 	blueValue.isAttackPossible = true;
 	blueValue.isMoveable = true;
+	blueValue.waterBallonNumber = 0;
 }
 
 void Character::Input()
@@ -56,7 +57,7 @@ void Character::Update()
 	switch (dir)
 	{
 	case Direction::LEFT:
-		pos.x -= characterStats.speed + 4;
+		pos.x -= stats.speed;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
@@ -69,7 +70,7 @@ void Character::Update()
 		prevDir = Direction::LEFT;
 		break;
 	case Direction::TOP:
-		pos.y -= characterStats.speed + 4;
+		pos.y -= stats.speed;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
@@ -82,7 +83,7 @@ void Character::Update()
 		prevDir = Direction::TOP;
 		break;
 	case Direction::RIGHT:
-		pos.x += characterStats.speed + 4;
+		pos.x += stats.speed;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
@@ -95,7 +96,7 @@ void Character::Update()
 		prevDir = Direction::RIGHT;
 		break;
 	case Direction::BOTTOM:
-		pos.y += characterStats.speed + 4;
+		pos.y += stats.speed;
 
 		if (!CheckmDelay(charAnimationTick, 100) && (prevDir == dir))
 			break;
@@ -373,16 +374,17 @@ void Character::Manual()
 			{
 				dir = Direction::RIGHT;
 			}
-			if (redValue.isAttackPossible)
+			if (redValue.isAttackPossible && (this->stats.bNum > redValue.waterBallonNumber))
 			{
-				if (GetAsyncKeyState(VK_RSHIFT) & 0x0001)		//공격
+				if (GetAsyncKeyState(VK_RSHIFT) & 0x8000)		//공격
 				{
-					attack.isColor = CharacterColor::BLUE;
+					attack.isColor = CharacterColor::RED;
 					attack.pos.x = pos.x;
 					attack.pos.y = pos.y + imageHeight / 2;
 					SettingAttackPos();		//물풍선 놓는위치 지정
 					OverlapChack();			//물풍선 중복설치금지를 위한 코드
 					redValue.lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
+					redValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 				}
 			}
 			//테스트용
@@ -410,16 +412,17 @@ void Character::Manual()
 			{
 				dir = Direction::RIGHT;
 			}
-			if (blueValue.isAttackPossible)
+			if (blueValue.isAttackPossible && (this->stats.bNum > blueValue.waterBallonNumber))
 			{
-				if (GetAsyncKeyState(VK_LSHIFT) & 0x0001)		//공격
+				if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)		//공격
 				{
-					attack.isColor = CharacterColor::RED;
+					attack.isColor = CharacterColor::BLUE;
 					attack.pos.x = pos.x;
 					attack.pos.y = pos.y + imageHeight / 2;
 					SettingAttackPos();		//물풍선 놓는위치 지정
 					OverlapChack();			//물풍선 중복설치 금지를 위한
 					blueValue.lastWaterBallonPos = attack.pos;
+					blueValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 				}
 			}
 
@@ -451,9 +454,37 @@ Attack& Character::GetAttack()
 	return this->attack;
 }
 
+void Character::SettingBallonNumber(int color)
+{
+	switch (color)
+	{
+	case CharacterColor::RED:
+		redValue.waterBallonNumber--;
+		break;
+	case CharacterColor::BLUE:
+		blueValue.waterBallonNumber--;
+		break;
+	}
+}
+
 const int Character::GetWaterBallonBLength()
 {
-	return characterStats.bLength;
+	return stats.bLength;
+}
+
+void Character::UPBallonNumber()
+{
+	(stats.bNumMax != stats.bNum + 1) ? stats.bNum++ : stats.bNum = stats.bNumMax;
+}
+
+void Character::UPBallonLength()
+{
+	(stats.bLengthMax != stats.bLength + 1) ? stats.bLength++ : stats.bLength = stats.bLengthMax;
+}
+
+void Character::UPSetSpeed()
+{
+	(stats.speedMax != stats.speed + 1) ? stats.speed++ : stats.speed = stats.speedMax;
 }
 
 void Character::OverlapChack()

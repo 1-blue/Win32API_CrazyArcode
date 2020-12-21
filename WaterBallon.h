@@ -5,6 +5,7 @@ class WaterBallon : public DynamicObject
 {
 private:
 	int waterLength { 1 };	//물줄기
+	int color{ -1 };
 
 	ULONGLONG charAnimationTick;
 	ULONGLONG deadlineTick;
@@ -31,6 +32,9 @@ public:
 	void GetMapData(const MapData& mapData);
 
 	const bool GetIsAlive();
+
+	void SetColor(int color);
+	const int& GetColor() const;
 private:
 	bool CheckmDelay(const int delayTime, ULONGLONG& tick);
 };

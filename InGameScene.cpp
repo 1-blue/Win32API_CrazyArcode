@@ -8,45 +8,27 @@ ObjectData::POSITION InGameScene::removeWaterBallonPos{ 0,0 };
 
 void InGameScene::Init()
 {
-	for (auto& scene : allInGameScene)
+	for (auto& scene : allInGameScene)		//여기서 사용하던 모든 오브젝트들 delete
 		delete scene;
-	allInGameScene.clear();
-	//이거때문에 재 시작 시 오류,,,;
 
-	for (auto& obj : inGameObjectList)
-		delete obj;
+	//list들 clear
+	allInGameScene.clear();		
 	inGameObjectList.clear();
-
-	for (auto& character : characterList)
-		delete character;
 	characterList.clear();
-
-	for (auto& wb : waterBallon)
-		delete wb;
 	waterBallon.clear();
-
-	for (auto& data : objectsData)
-		delete data;
-	objectsData.clear();
-
-	objectsBitmap.clear();
 	waterBallonPos.clear();
 }
 
 InGameScene::~InGameScene()
 {
-	for (auto& obj : inGameObjectList)
-		delete obj;
+	for (auto& scene : allInGameScene)		//여기서 사용하던 모든 오브젝트들 delete
+		delete scene;
+
+	//data와 bitmap가진 list까지 모두 clear
+	allInGameScene.clear();
 	inGameObjectList.clear();
-
-	for (auto& character : characterList)
-		delete character;
 	characterList.clear();
-
-	for (auto& wb : waterBallon)
-		delete wb;
 	waterBallon.clear();
-
 	objectsData.clear();
 	objectsBitmap.clear();
 	allInGameScene.clear();
@@ -116,7 +98,7 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hBitmap));
-			allInGameScene.emplace_back(inGameObjectList.back());
+			allInGameScene.emplace_back(inGameObjectList.back());		//allInGameScene에 백그라운드
 			break;
 		case Objects::DYNAMIC:					//dynamic
 			inGameObjectList.emplace_back(new DynamicObject(inGameObj->name,
@@ -176,6 +158,7 @@ void InGameScene::LoadStaticObjectData()
 					{ objectsBitmap[0].bmWidth, objectsBitmap[0].bmHeight },
 					objectsData[0]->hBitmap
 					));
+				allInGameScene.emplace_back(inGameObjectList.back());
 				break;
 			case Objects::WALL:		//벽생성.. 벽이랑 블럭이랑 사이즈가 달라가지고 놓는 위치 지정할때 블럭사이즈이용하고, -20함
 				inGameObjectList.emplace_back(new Wall(
@@ -184,9 +167,9 @@ void InGameScene::LoadStaticObjectData()
 					{ objectsBitmap[1].bmWidth, objectsBitmap[1].bmHeight },
 					objectsData[1]->hBitmap
 				));
+				allInGameScene.emplace_back(inGameObjectList.back());
 				break;
 			}
-			allInGameScene.emplace_back(inGameObjectList.back());
 		}
 	}
 }
@@ -206,6 +189,7 @@ void InGameScene::CreateWaterBallon(Character* character, const MapData& mapData
 			objectsData[2]->hBitmap,
 			character->GetWaterBallonBLength()
 		));
+		waterBallon.back()->SetColor(attack.isColor);
 
 		//풍선에 맵정보 제공
 		waterBallon.back()->GetMapData(mapData);
@@ -225,8 +209,17 @@ void InGameScene::DeleteWaterBallons()
 	{
 		if (!(*iterator)->GetIsAlive())
 		{
-
-
+			switch ((*iterator)->GetColor())
+			{
+			case CharacterColor::RED:
+				for (const auto& c : characterList)
+					c->SettingBallonNumber(CharacterColor::RED);
+				break;
+			case CharacterColor::BLUE:
+				for (const auto& c : characterList)
+					c->SettingBallonNumber(CharacterColor::BLUE);
+				break;
+			}
 
 			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
 			allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
