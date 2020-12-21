@@ -4,20 +4,25 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 {
 	int xCount = 0;
 	int yCount = 0;
+	int direction = 0;
 
 	switch (dir)
 	{
 	case Direction::TOP:
 		yCount = -1;
+		direction = Direction::TOP;
 		break;
 	case Direction::BOTTOM:
 		yCount = 1;
+		direction = Direction::BOTTOM;
 		break;
 	case Direction::RIGHT:
 		xCount = 1;
+		direction = Direction::RIGHT;
 		break;
 	case Direction::LEFT:
 		xCount = -1;
+		direction = Direction::LEFT;
 		break;
 	}
 
@@ -25,14 +30,19 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 	{
 		//범위 제한
 		if (((y + (yCount * n)) < 0) || ((y + (yCount * n)) > 10))
-			break;
+			return;
 		else if (((x + (xCount * n)) < 0) || ((x + (xCount * n)) > 14))
-			break;
+			return;
 
-		if (mapData.data[y + (yCount * n)][x + (xCount * n)] != 0)
+
+		if (mapData->data[y + (yCount * n)][x + (xCount * n)] != 0)
 		{
-			//hitObjectPos[dirCount].x = x + (xCount * n)
-			break;
+			hitObjectPos[direction].x = (x + (xCount * n));
+			hitObjectPos[direction].y = (y + (yCount * n));
+
+			//피격당한 오브젝트가 물풍선이 아니면 (벽, 블럭)이면 길이 제한
+			if(mapData->data[y + (yCount * n)][x + (xCount * n)] != 3)
+				return;
 		}
 
 		dirCount++;
@@ -60,8 +70,18 @@ void WaterBallon::Input()
 
 void WaterBallon::Update()
 {
+	if (!isAlive)
+		return;
+
 	if (isEffect)
 	{
+		mapData->data[mapPos.y][mapPos.x] = 0;	//물풍선 맵에서 제거
+
+		SetEffectDir(mapPos.x, mapPos.y, Direction::TOP, printDirCount.north);
+		SetEffectDir(mapPos.x, mapPos.y, Direction::BOTTOM, printDirCount.south);
+		SetEffectDir(mapPos.x, mapPos.y, Direction::RIGHT, printDirCount.east);
+		SetEffectDir(mapPos.x, mapPos.y, Direction::LEFT, printDirCount.west);
+
 		if (CheckmDelay(600, deadlineTick))
 			isAlive = false;
 
@@ -71,6 +91,7 @@ void WaterBallon::Update()
 
 		if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
 			printhNumber = 0;
+
 		return;
 	}
 
@@ -109,7 +130,6 @@ void WaterBallon::Render(HDC hDC, HDC memDc)
 		BoomRender(hDC, memDc, printDirCount.west,  Direction::LEFT);
 		BoomRender(hDC, memDc, 1, Direction::CENTER);
 	}
-
 }
 
 void WaterBallon::BoomRender(HDC hDC, HDC memDc, const int printBoomImgCount, const int direction)
@@ -158,22 +178,42 @@ void WaterBallon::BoomRender(HDC hDC, HDC memDc, const int printBoomImgCount, co
 	}
 }
 
-void WaterBallon::GetMapData(const MapData& mapData)
+void WaterBallon::GetMapData(MapData* mapData)
 {
 	this->mapData = mapData;
 
-	int mapXpos = ((pos.x + 20) / BLOCK_X) - 1;
-	int mapYpos = ((pos.y + 2) / BLOCK_Y) - 1;
+	mapPos.x = ((pos.x + 20) / BLOCK_X) - 1;
+	mapPos.y = ((pos.y + 2) / BLOCK_Y) - 1;
 
-	SetEffectDir(mapXpos, mapYpos, Direction::TOP, printDirCount.north);
-	SetEffectDir(mapXpos, mapYpos, Direction::BOTTOM, printDirCount.south);
-	SetEffectDir(mapXpos, mapYpos, Direction::RIGHT, printDirCount.east);
-	SetEffectDir(mapXpos, mapYpos, Direction::LEFT, printDirCount.west);
+	//물풍선 위치 맵에 반영
+	mapData->data[mapPos.y][mapPos.x] = 3;
+}
+
+const bool WaterBallon::GetIsEffect()
+{
+	return isEffect;
 }
 
 const bool WaterBallon::GetIsAlive()
 {
 	return isAlive;
+}
+
+void WaterBallon::SetIsEffect(const bool isEffect)
+{
+	this->isEffect = isEffect;
+	printhNumber = 0;
+	deadlineTick = GetTickCount64();
+}
+
+ObjectData::POSITION WaterBallon::GetMapPos()
+{
+	return mapPos;
+}
+
+ObjectData::POSITION* WaterBallon::GetHitObjectPos()
+{
+	return hitObjectPos;
 }
 
 void WaterBallon::SetColor(int color)

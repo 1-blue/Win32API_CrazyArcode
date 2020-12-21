@@ -7,8 +7,10 @@ private:
 	POINT cursorPos{ 0,0 };
 
 	bool isOverlap{ false };
-	bool isClicked{ false };
+	bool isLClicked{ false };
+	bool isRClicked{ false };
 
+	ULONGLONG clickDelayTick{ 0 };
 public:
 	BtnObj();
 	BtnObj(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);
@@ -17,6 +19,6 @@ public:
 	virtual void Input();
 	virtual void Update();
 
-
+	const bool CheckmDelay(const int delayTime);
 };
 

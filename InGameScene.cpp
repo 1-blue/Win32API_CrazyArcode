@@ -42,10 +42,14 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		inGameObj->Update();
 	}
 
+
 	for (const auto& waterBallons : waterBallon)
 	{
 		waterBallons->Input();
 		waterBallons->Update();
+
+		if (waterBallons->GetIsEffect())
+			DeleteHitObject(waterBallons->GetHitObjectPos());
 
 		if (!waterBallons->GetIsAlive())
 			isDeleteWaterBallon = true;
@@ -57,10 +61,11 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	for (const auto& character : characterList)
 	{
 		character->Input();
-		this->CreateWaterBallon(character, mapData);
+		this->CreateWaterBallon(character);
 		character->Update();
 		character->LateUpdate(inGameObjectList);
 	}
+
 
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
 	allInGameScene.sort(SortObject);
@@ -174,7 +179,80 @@ void InGameScene::LoadStaticObjectData()
 	}
 }
 
-void InGameScene::CreateWaterBallon(Character* character, const MapData& mapData)
+void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
+{
+	bool isDeleteBlocks = false;
+	bool isDeleteWaterBallons = false;
+	list <int> hitObjectIndex;
+
+	//북동남서, (크기 4)
+	for (int i = 0; i < 4; i++)
+	{
+		if (hitObjectPos[i].x == -1)
+			continue;
+		if (hitObjectPos[i].y == -1)
+			continue;
+
+		switch (mapData.data[hitObjectPos[i].y][hitObjectPos[i].x])
+		{
+		case 1:		// 블럭
+			isDeleteBlocks = true;
+			hitObjectIndex.emplace_back(i);
+			mapData.data[hitObjectPos[i].y][hitObjectPos[i].x] = 0;		//맵에서 오브젝트 삭제
+			break;
+		case 3:		//물풍선
+			isDeleteWaterBallons = true;
+			hitObjectIndex.emplace_back(i);
+			mapData.data[hitObjectPos[i].y][hitObjectPos[i].x] = 0;		//맵에서 오브젝트 삭제
+			break;
+		}
+	}
+
+	//물풍선 삭제 처리
+	if (isDeleteWaterBallons)
+	{
+
+		//삭제부분
+		for (auto waterBallons : waterBallon)
+		{
+			for (auto hitObjects : hitObjectIndex)
+			{
+				if (waterBallons->GetMapPos() == hitObjectPos[hitObjects])
+					waterBallons->SetIsEffect(true);
+			}
+		}
+	}
+
+	if (!isDeleteBlocks)
+		return;
+	//블럭 삭제 부분
+	for (auto blocks = inGameObjectList.begin(); blocks != inGameObjectList.end();)
+	{
+		for (auto hitObjects : hitObjectIndex)
+		{
+			//맵좌표의 블럭을 찾아서 삭제!
+			if ((*blocks)->GetPosition().x == hitObjectPos[hitObjects].x && (*blocks)->GetPosition().y == hitObjectPos[hitObjects].y)
+			{
+				*blocks = nullptr;
+				delete* blocks;
+				inGameObjectList.erase(blocks);
+			}
+			else
+				blocks++;
+		}
+	}
+
+	//모든 오브젝트 저장 변수에서 해당 오브젝트까지 삭제
+	for (auto allInGameObjects = allInGameScene.begin(); allInGameObjects != allInGameScene.end();)
+	{
+		if (*allInGameObjects == nullptr)
+			allInGameScene.erase(allInGameObjects);
+		else
+			allInGameObjects++;
+	}
+}
+
+void InGameScene::CreateWaterBallon(Character* character)
 {
 	Attack& attack = character->GetAttack();
 
@@ -192,7 +270,7 @@ void InGameScene::CreateWaterBallon(Character* character, const MapData& mapData
 		waterBallon.back()->SetColor(attack.isColor);
 
 		//풍선에 맵정보 제공
-		waterBallon.back()->GetMapData(mapData);
+		waterBallon.back()->GetMapData(&mapData);
 
 		//물풍선위치를 캐릭터에 전송
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });

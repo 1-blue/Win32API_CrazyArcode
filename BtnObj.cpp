@@ -26,20 +26,32 @@ void BtnObj::Input()
 	{
 		isOverlap = true;
 		//버튼클릭하면
-		if ((GetAsyncKeyState(MK_LBUTTON) & (0x0001)) && (isClicked == false))	//0x0001로 한거는 클릭했을때 한번만 입력받기 위해서
+
+		if (GetAsyncKeyState(MK_LBUTTON) & 0x8000)
+			isLClicked = true;
+		else if(GetAsyncKeyState(MK_RBUTTON) & 0x8000)
+			isRClicked = true;
+
+		if (!CheckmDelay(100))
+			return;
+
+		if (isLClicked == true)
 		{
 			MessageQueue::AddEventQueue({name,false});
 		}
-		else if ((GetAsyncKeyState(MK_RBUTTON) & (0x0001)) && (isClicked == false))	//mouseUp
+		else if (isRClicked == true)
 		{
 			MessageQueue::AddEventQueue({name,true});
 		}
-		
+
+		isLClicked = false;
+		isRClicked = false;
 	}
 	else //화면 밖으로 나가면 원상복구
 	{
 		isOverlap = false;
-		isClicked = false;
+		isLClicked = false;
+		isRClicked = false;
 	}
 }
 
@@ -53,9 +65,15 @@ void BtnObj::Update()
 	{
 		imageNumber = 1;
 	}
-	else if (isClicked == true)
+}
+
+const bool BtnObj::CheckmDelay(const int delayTime)
+{
+	if (GetTickCount64() > clickDelayTick + delayTime)
 	{
-		//클릭 이미지 바꾸기
+		clickDelayTick = GetTickCount64();
+		return true;
 	}
+	return false;
 }
 

@@ -8,12 +8,14 @@ private:
 	int color{ -1 };
 
 	ULONGLONG charAnimationTick;
-	ULONGLONG deadlineTick;
+	ULONGLONG deadlineTick{ 0 };
 
-	MapData mapData;
+	MapData* mapData{ nullptr };
 
 	Direction::DirectionVar printDirCount{ 0,0,0,0 };
-	ObjectData::POSITION hitObjectPos[4] = { -1 };	//피격 오브젝트 위치 (북,동,남,서)
+	ObjectData::POSITION hitObjectPos[4] = { {-1,-1},{-1,-1},{-1,-1},{-1,-1} };	//피격 오브젝트 위치 (북,동,남,서)
+
+	ObjectData::POSITION mapPos{ 0 };
 
 	bool isEffect{ false };
 	bool isAlive{ true };
@@ -29,9 +31,15 @@ public:
 	virtual void Render(HDC hDC, HDC memDc);
 	void  BoomRender(HDC hDC, HDC memDc, const int printBoomImgCount, const int direction);
 	
-	void GetMapData(const MapData& mapData);
+	void GetMapData(MapData* mapData);
 
+	const bool GetIsEffect();
 	const bool GetIsAlive();
+
+	void SetIsEffect(const bool isEffect);
+
+	ObjectData::POSITION GetMapPos();
+	ObjectData::POSITION* GetHitObjectPos();
 
 	void SetColor(int color);
 	const int& GetColor() const;

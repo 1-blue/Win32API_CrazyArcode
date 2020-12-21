@@ -6,10 +6,11 @@
 class Obj;
 class Character;
 class WaterBallon;
+class Block;
 class InGameScene
 {
 private:
-	list <Obj*> allInGameScene;			//모든 INGAME Scene이 들어갈 리스트
+	list <Obj*> allInGameScene;			//모든 INGAME Scene이 들어갈 리스트	<- allInGameObject로 이름바꾸기
 	list <Obj*> inGameObjectList;		//INGAME Scene Data
 	list <Character*> characterList;	//캐릭터들저장	//obj를 바꾸기
 	list <WaterBallon*> waterBallon;	//물풍선들저장
@@ -37,7 +38,9 @@ public:
 	void LoadStaticObjectData();
 
 private:
-	void CreateWaterBallon(Character* character, const MapData& mapData);
+	void DeleteHitObject(const ObjectData::POSITION* hitObjectPos);
+
+	void CreateWaterBallon(Character* character);
 	void DeleteWaterBallons();
 	static bool SortObject(Obj* obj1, Obj* obj2);			//출력순서정렬을 위한 정렬함수
 	static bool RemoveWaterBallonData(Obj* tempWaterBallon);					//모든 물풍선사용하는 자료구조들 초기화해주기위해 사용
