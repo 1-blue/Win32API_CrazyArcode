@@ -32,7 +32,7 @@ public:
 	list <Obj*>& GetInGameObjList();
 
 	void GetMapData(MapData mapData);
-	void LoadInGameImage(const vector<pImageData>& inGameBackGround);
+	void LoadInGameImage(const vector<pImageData>& inGameImage);
 	void LoadCharacterData(const pImageData characterImage, const pImageData trappedImage, const pImageData dieImage, CharacterStatsData characterStats);
 	void LoadStaticObjectData();
 

@@ -83,11 +83,11 @@ void InGameScene::GetMapData(MapData mapData)
 	this->mapData = mapData;
 }
 
-void InGameScene::LoadInGameImage(const vector<pImageData>& inGameBackGround)
+void InGameScene::LoadInGameImage(const vector<pImageData>& inGameImage)
 {
 	BITMAP bitMap;
 
-	for (const auto& inGameObj : inGameBackGround)
+	for (const auto& inGameObj : inGameImage)
 	{
 		GetObject(inGameObj->hBitmap, sizeof(BITMAP), &bitMap);
 
@@ -144,7 +144,7 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, const pImag
 
 void InGameScene::LoadStaticObjectData()
 {
-	for (int h = 0; h < MAP_HEIGHT_SIZE; h++)		//일단 맵세로길이
+	for (int h = 0; h < MAP_HEIGHT_SIZE; h++)		//맵세로길이
 	{
 		for (int w = 0; w < MAP_WIDTH_SIZE; w++)	//맵가로길이
 		{

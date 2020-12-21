@@ -22,8 +22,8 @@ constexpr auto MAP_HEIGHT_SIZE = 11;
 //최대최소이동가능포지션
 constexpr auto MOVE_MIN_X = 20;
 constexpr auto MOVE_MAX_X = 580;
-constexpr auto MOVE_MIN_Y = 20;
-constexpr auto MOVE_MAX_Y = 500;
+constexpr auto MOVE_MIN_Y = 25;
+constexpr auto MOVE_MAX_Y = 495;
 
 //한블럭크기
 constexpr auto BLOCK_X = 40;
