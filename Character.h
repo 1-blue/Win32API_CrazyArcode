@@ -49,7 +49,7 @@ public:
 	void UPSetSpeed();		//캐릭터 속도 UP
 private:
 	void SettingAttackPos();	//물풍선 위치 세팅(지정된 영역에만 설치되게)
-	void OverlapChack();		//중복설치체크
+	void OverlapCheck();		//중복설치체크
 	void MapImmovableArea();	//맵이동제한
 	void StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector);	//블럭과 벽이동제한
 	void WaterBallonImmovableArea();	//물풍선이동제한

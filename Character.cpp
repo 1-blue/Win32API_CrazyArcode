@@ -382,7 +382,7 @@ void Character::Manual()
 					attack.pos.x = pos.x;
 					attack.pos.y = pos.y + imageHeight / 2;
 					SettingAttackPos();		//물풍선 놓는위치 지정
-					OverlapChack();			//물풍선 중복설치금지를 위한 코드
+					OverlapCheck();			//물풍선 중복설치금지를 위한 코드
 					redValue.lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
 					redValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 				}
@@ -420,7 +420,7 @@ void Character::Manual()
 					attack.pos.x = pos.x;
 					attack.pos.y = pos.y + imageHeight / 2;
 					SettingAttackPos();		//물풍선 놓는위치 지정
-					OverlapChack();			//물풍선 중복설치 금지를 위한
+					OverlapCheck();			//물풍선 중복설치 금지를 위한
 					blueValue.lastWaterBallonPos = attack.pos;
 					blueValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 				}
@@ -487,7 +487,7 @@ void Character::UPSetSpeed()
 	(stats.speedMax != stats.speed + 1) ? stats.speed++ : stats.speed = stats.speedMax;
 }
 
-void Character::OverlapChack()
+void Character::OverlapCheck()
 {
 	if (waterBallonPos.empty())
 		attack.isAttack = true;
@@ -530,6 +530,8 @@ void Character::MapImmovableArea()
 }
 
 //벡터를 받는게 아니라, 배열에 저장되어있는 숫자값을 받아가지고 하는게 더 빠를듯
+//바꿀려고 했는데 생각해보면 어차피 참조라 속도차이없을거고 const라 변화할일도없기도하고
+//map[][]을 받아오면 다시 pos값 구해야하는데 또 map크기만큼 연산해야하니까 이게더 낫다고 생각함
 void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 {
 	RECT characterRect{ pos.x, pos.y, pos.x + BLOCK_X, pos.y + BLOCK_Y };
@@ -562,23 +564,40 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 			switch (color)
 			{
 			case CharacterColor::RED:
-				//끝에 조금 스치면 빗겨서 앞으로나가게 만드는 구문
-				//15는 좌측, 우측에서 15이내로 떨어져있을경우에만 서서히 좌측/우측으로 이동할때 값으로 사용
 				switch (dir)
 				{
 				case Direction::TOP:
-				case Direction::BOTTOM:
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x--;
+					redValue.prevPos.y = objRect.bottom;
+					//이거 들어간 이유는 캐릭터 이동속도에따라서 캐릭터는 +5+6+7이런식으로 이동하는데
+					//staticObject좌표는 20+47*x로 고정되어있어서 20+5하다보면 y좌표가 안맞아서 이동할 수 없음 그걸 맞춰주기위한코드
 					break;
+
+				case Direction::BOTTOM:
+					if (objRect.right > characterRect.left && objRect.right - characterRect.left <= PERMIT_RANGE)
+						redValue.prevPos.x++;
+					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
+						redValue.prevPos.x--;
+					redValue.prevPos.y = objRect.top - BLOCK_Y;
+					break;
+
 				case Direction::LEFT:
-				case Direction::RIGHT:
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
 						redValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
 						redValue.prevPos.y--;
+					redValue.prevPos.x = objRect.right;
+					break;
+
+				case Direction::RIGHT:
+					if (objRect.bottom > characterRect.top && objRect.bottom - characterRect.top <= PERMIT_RANGE)
+						redValue.prevPos.y++;
+					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
+						redValue.prevPos.y--;
+					redValue.prevPos.x = objRect.left - BLOCK_X;
 					break;
 				}
 				pos = redValue.prevPos;
@@ -588,18 +607,35 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 				switch (dir)
 				{
 				case Direction::TOP:
+					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
+						blueValue.prevPos.x++;
+					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
+						blueValue.prevPos.x--;
+					blueValue.prevPos.y = objRect.bottom;
+					break;
+
 				case Direction::BOTTOM:
 					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
 						blueValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 						blueValue.prevPos.x--;
+					blueValue.prevPos.y = objRect.top - BLOCK_Y;
 					break;
+
 				case Direction::LEFT:
+					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
+						blueValue.prevPos.y++;
+					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
+						blueValue.prevPos.y--;
+					blueValue.prevPos.x = objRect.right;
+					break;
+
 				case Direction::RIGHT:
 					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
 						blueValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
 						blueValue.prevPos.y--;
+					blueValue.prevPos.x = objRect.left - BLOCK_X;
 					break;
 				}
 				pos = blueValue.prevPos;
@@ -624,6 +660,7 @@ void Character::WaterBallonImmovableArea()
 			objRect.top = redValue.lastWaterBallonPos.y - SIZE_TUNING;
 			objRect.right = redValue.lastWaterBallonPos.x + BLOCK_X;
 			objRect.bottom = redValue.lastWaterBallonPos.y + BLOCK_Y - SIZE_TUNING;
+
 			if (redValue.isRevisit)
 			{
 				if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
@@ -659,6 +696,21 @@ void Character::WaterBallonImmovableArea()
 		objRect.right = wbPos.x + BLOCK_X;
 		objRect.bottom = wbPos.y + BLOCK_Y - SIZE_TUNING;
 
+		//캐릭터위에 물풍선을 놓은 경우 처리하는구문
+		switch (color)
+		{
+		case CharacterColor::RED:
+			if (redValue.prevPos.x < objRect.right && redValue.prevPos.x + 40 > objRect.left
+				&& redValue.prevPos.y < objRect.bottom && redValue.prevPos.y + 47 > objRect.top)
+				continue;
+			break;
+		case CharacterColor::BLUE:
+			if (blueValue.prevPos.x < objRect.right && blueValue.prevPos.x + 40 > objRect.left
+				&& blueValue.prevPos.y < objRect.bottom && blueValue.prevPos.y + 47 > objRect.top)
+				continue;
+			break;
+		}
+
 		//비껴서 앞으로나가기 + 이동제한
 		if (characterRect.left < objRect.right && characterRect.right > objRect.left
 			&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top)
@@ -670,14 +722,14 @@ void Character::WaterBallonImmovableArea()
 				{
 				case Direction::TOP:
 				case Direction::BOTTOM:
-					if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
+					if (objRect.right > characterRect.left && objRect.right - characterRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x++;
 					else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 						redValue.prevPos.x--;
 					break;
 				case Direction::LEFT:
 				case Direction::RIGHT:
-					if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
+					if (objRect.bottom > characterRect.top && objRect.bottom - characterRect.top <= PERMIT_RANGE)
 						redValue.prevPos.y++;
 					else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
 						redValue.prevPos.y--;
