@@ -13,18 +13,12 @@ private:
 	int dir{ Direction::TOP };		//플레이어 이동방향
 	POINT printPos{ 0, 0 };			//여러개 이미지중에서 출력할 위치
 	Attack attack{ false, -1, 0, 0 };	//공격관련 변수들 저장
+	CharacterValues characterValue;		//캐릭터 관련 변수들 저장.. 이거 나중에 캐릭터멤버변수로 바꾸기
 
 	int prevDir{ Direction::TOP };
 	ULONGLONG charAnimationTick = GetTickCount64();
 
-	//캐릭터 1개당 1개의 value만 가지면 되는데 캐릭터 1개가 2개의 변수를 가질 필요가 있나...??
-	CharacterValues redValue;	//red캐릭터 관련 변수들 저장
-	CharacterValues blueValue;	//blue캐릭터 관련 변수들 저장
-
 	list<ObjectData::Position> waterBallonPos;
-
-	//각캐릭터마다의 물풍선 수 저장할 변수
-
 
 public:
 	Character(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, CharacterStatsData characterStats);

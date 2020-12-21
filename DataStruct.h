@@ -251,6 +251,9 @@ typedef struct
 	int vNumber;		//세로이미지수
 	int imageWidth;		//이미지 하나의 가로 길이
 	int imageHeight;	//이미지 하나의 세로 길이
+	int printVerticalNumber;	//출력할 가로이미지번호
+	int printHorizontalNumber;	//출력할 세로이미지번호
+
 }Img, * pImg;
 
 typedef struct
@@ -259,14 +262,10 @@ typedef struct
 	ObjectData::Position prevPos;				//이전위치
 	ObjectData::Position lastWaterBallonPos;	//마지막물풍선위치
 	bool isRevisit;								//마지막물풍선에서 범위밖으로 나갔는지 여부
-	int trappedPrintvNumber;	//trapped 출력할 가로이미지번호
-	int trappedPrinthNumber;	//trapped 출력할 세로이미지번호
-	int diePrintvNumber;		//die 출력할 가로이미지번호
-	int diePrinthNumber;		//die 출력할 세로이미지번호
-	ULONGLONG time;		//시간저장할변수
+	ULONGLONG time;				//시간저장할변수
 	bool isAttackPossible;		//공격가능여부
 	bool isMoveable;			//이동가능여부
-	int waterBallonNumber;		//물풍선 개수
+	int waterBallonNumber;		//놓여진 물풍선 개수
 
 }CharacterValues, *pCharacterValues;
 
