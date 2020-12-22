@@ -278,3 +278,13 @@ namespace State
 		DIE
 	};
 }
+
+//물풍선 공격범위.. 물풍선에서 캐릭터에게 넘겨줄값
+typedef struct
+{
+	POINT pos;	//물풍선좌표
+	int t;		//공격범위
+	int r;
+	int b;
+	int l;
+}AttackArea, *pAttackArea;

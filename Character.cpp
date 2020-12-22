@@ -106,6 +106,70 @@ void Character::Update()
 	}
 	order = pos.y;
 
+	POINT boomPosition{ -1, -1 };	//터지는물풍선의 위치
+	POINT boomPoint{ -1, -1 };		//터지는 물풍선 캐릭터와 조건검사할 좌표
+
+	//물풍선 폭팔범위에 캐릭터가 존재하는지 체크
+	if (attackArea.pos.x != -1)
+	{
+		boomPosition.x = attackArea.pos.x * BLOCK_X + 20;
+		boomPosition.y = attackArea.pos.y * BLOCK_Y + 25;
+
+		//위
+		for (int i = 0; i <= attackArea.t; i++)
+		{
+			boomPoint.y = boomPosition.y - (i * BLOCK_Y) + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				characterValue.state = State::TRAPPED;
+				stats.speed = 1;
+			}
+		}
+		//우측
+		for (int i = 0; i <= attackArea.r; i++)
+		{
+			boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x + (i * BLOCK_X) + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				characterValue.state = State::TRAPPED;
+				stats.speed = 1;
+			}
+		}
+		//아래
+		for (int i = 0; i <= attackArea.b; i++)
+		{
+			boomPoint.y = boomPosition.y + (i * BLOCK_Y) + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				characterValue.state = State::TRAPPED;
+				stats.speed = 1;
+			}
+		}
+		//좌측
+		for (int i = 0; i <= attackArea.l; i++)
+		{
+			boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x - (i * BLOCK_X) + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				characterValue.state = State::TRAPPED;
+				stats.speed = 1;
+			}
+		}
+
+		attackArea = { {-1, -1}, -1, -1, -1, -1 };
+	}
+	
+
+
+
 	//갇힌상태라면 실행
 	if (characterValue.state == State::TRAPPED)
 	{
@@ -120,7 +184,7 @@ void Character::Update()
 			if (trappedImage.printHorizontalNumber > trappedImage.hNumber)
 			{
 				characterValue.state = State::DIE;
-				characterValue.isMoveable = false;
+				characterValue.isAttackPossible = false;
 			}
 		}
 	}
@@ -128,6 +192,7 @@ void Character::Update()
 	//죽을상태라면
 	if (characterValue.state == State::DIE)
 	{
+		characterValue.isMoveable = false;
 		if (CheckmDelay(characterValue.time, 150))
 		{
 			dieImage.printHorizontalNumber++;
@@ -297,9 +362,6 @@ void Character::Manual()
 					characterValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 				}
 			}
-			//테스트용
-			if (GetAsyncKeyState('P'))
-				Trapped();
 		}
 		break;
 	case CharacterColor::BLUE:
@@ -335,9 +397,6 @@ void Character::Manual()
 					characterValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 				}
 			}
-			//테스트용
-			if (GetAsyncKeyState('Q'))
-				Trapped();
 		}
 		break;
 	}
@@ -386,6 +445,11 @@ void Character::UPBallonLength()
 void Character::UPSetSpeed()
 {
 	(stats.speedMax != stats.speed + 1) ? ++stats.speed : stats.speed = stats.speedMax;
+}
+
+void Character::SetAttackArea(const AttackArea& attackArea)
+{
+	this->attackArea = attackArea;
 }
 
 void Character::OverlapCheck()

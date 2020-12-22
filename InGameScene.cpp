@@ -49,7 +49,12 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		waterBallons->Update();
 
 		if (waterBallons->GetIsEffect())
+		{
 			DeleteHitObject(waterBallons->GetHitObjectPos());
+			for (const auto& character : characterList)		//물풍선 터질때 공격범위 전송
+				character->SetAttackArea(waterBallons->GetAttackArea());
+		}
+			
 
 		if (!waterBallons->GetIsAlive())
 			isDeleteWaterBallon = true;
@@ -65,7 +70,6 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		character->Update();
 		character->LateUpdate(inGameObjectList);
 	}
-
 
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
 	allInGameScene.sort(SortObject);
@@ -249,7 +253,7 @@ void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
 			allInGameScene.erase(allInGameObjects);
 		else
 			allInGameObjects++;
-	}
+	}		
 }
 
 void InGameScene::CreateWaterBallon(Character* character)

@@ -17,6 +17,8 @@ private:
 
 	ObjectData::POSITION mapPos{ 0 };
 
+	AttackArea attackArea{ {-1,-1}, -1, -1, -1, -1 };	//공격범위에대한 정보
+
 	bool isEffect{ false };
 	bool isAlive{ true };
 
@@ -43,8 +45,11 @@ public:
 
 	void SetColor(int color);
 	const int& GetColor() const;
+
+	const AttackArea& GetAttackArea() const;
 private:
 	bool CheckmDelay(const int delayTime, ULONGLONG& tick);
+
 };
 
 

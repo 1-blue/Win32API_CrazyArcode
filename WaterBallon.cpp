@@ -2,9 +2,9 @@
 
 void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dirCount)
 {
-	int xCount = 0;
-	int yCount = 0;
-	int direction = 0;
+	int xCount = 0;		
+	int yCount = 0;		
+	int direction = 0;	
 
 	switch (dir)
 	{
@@ -44,8 +44,26 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 			if(mapData->data[y + (yCount * n)][x + (xCount * n)] != 3)
 				return;
 		}
-
 		dirCount++;
+
+		//공격범위값저장,,, 시작위치, 위, 우측, 아래, 좌측범위 return문있어가지고 값안들어갈때 있어서 안에다가 넣음
+		attackArea.pos.x = mapPos.x;
+		attackArea.pos.y = mapPos.y;
+		switch (direction)
+		{
+		case Direction::TOP:
+			attackArea.t = dirCount;
+			break;
+		case Direction::RIGHT:
+			attackArea.r = dirCount;
+			break;
+		case Direction::BOTTOM:
+			attackArea.b = dirCount;
+			break;
+		case Direction::LEFT:
+			attackArea.l = dirCount;
+			break;
+		}
 	}
 }
 
@@ -129,6 +147,8 @@ void WaterBallon::Render(HDC hDC, HDC memDc)
 		BoomRender(hDC, memDc, printDirCount.east, Direction::RIGHT);
 		BoomRender(hDC, memDc, printDirCount.west,  Direction::LEFT);
 		BoomRender(hDC, memDc, 1, Direction::CENTER);
+
+		printDirCount = { 0, 0, 0, 0 };
 	}
 }
 
@@ -224,6 +244,11 @@ void WaterBallon::SetColor(int color)
 const int& WaterBallon::GetColor() const
 {
 	return color;
+}
+
+const AttackArea& WaterBallon::GetAttackArea() const
+{
+	return attackArea;
 }
 
 bool WaterBallon::CheckmDelay(const int delayTime, ULONGLONG& tick)

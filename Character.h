@@ -41,6 +41,12 @@ public:
 	void UPBallonNumber();	//물풍선 개수 UP
 	void UPBallonLength();	//물풍선 길이 UP
 	void UPSetSpeed();		//캐릭터 속도 UP
+
+	//임시추가
+public:
+	void SetAttackArea(const AttackArea& attackArea);
+	AttackArea attackArea{ {-1, -1}, -1, -1, -1, -1 };	//터지는 물풍선에 대한 정보,, 좌표, top, right, bottom, left
+
 private:
 	void SettingAttackPos();	//물풍선 위치 세팅(지정된 영역에만 설치되게)
 	void OverlapCheck();		//중복설치체크
