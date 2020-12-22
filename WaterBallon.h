@@ -13,7 +13,7 @@ private:
 	MapData* mapData{ nullptr };
 
 	Direction::DirectionVar printDirCount{ 0,0,0,0 };
-	ObjectData::POSITION hitObjectPos[4] = { {-1,-1},{-1,-1},{-1,-1},{-1,-1} };	//피격 오브젝트 위치 (북,동,남,서)
+	ObjectData::POSITION hitObjectPos[4] = { {-1,-1},{-1,-1},{-1,-1},{-1,-1} };	//피격 오브젝트 위치 (북,서,동,남)
 
 	ObjectData::POSITION mapPos{ 0 };
 
@@ -41,7 +41,7 @@ public:
 	void SetIsEffect(const bool isEffect);
 
 	ObjectData::POSITION GetMapPos();
-	ObjectData::POSITION* GetHitObjectPos();
+	ObjectData::pPOSITION GetHitObjectPos();
 
 	void SetColor(int color);
 	const int& GetColor() const;

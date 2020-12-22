@@ -205,6 +205,7 @@ void Character::Update()
 	}
 }
 
+//매개변수 이름 바꿔줘야할듯
 void Character::LateUpdate(const list<Obj*>& inGameObjectVector)
 {
 	//이동제한

@@ -136,18 +136,18 @@ namespace Direction
 	enum
 	{
 		TOP,
+		LEFT,
 		RIGHT,
 		BOTTOM,
-		LEFT,
 		CENTER
 	};
 
 	typedef struct Dir
 	{
 		int north{ 0 };	//북
-		int south{ 0 };	//남
-		int east{ 0 };	//동
 		int west{ 0 };	//서
+		int east{ 0 };	//동
+		int south{ 0 };	//남
 
 	} DirectionVar;
 }

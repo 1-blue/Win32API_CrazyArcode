@@ -10,8 +10,6 @@ Obj::Obj(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE 
 	this->pos = pos;
 	this->size = size;
 	this->hBitmap = hBitmap;
-
-
 }
 
 Obj::~Obj()

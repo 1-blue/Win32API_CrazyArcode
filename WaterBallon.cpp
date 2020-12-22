@@ -93,13 +93,6 @@ void WaterBallon::Update()
 
 	if (isEffect)
 	{
-		mapData->data[mapPos.y][mapPos.x] = 0;	//물풍선 맵에서 제거
-
-		SetEffectDir(mapPos.x, mapPos.y, Direction::TOP, printDirCount.north);
-		SetEffectDir(mapPos.x, mapPos.y, Direction::BOTTOM, printDirCount.south);
-		SetEffectDir(mapPos.x, mapPos.y, Direction::RIGHT, printDirCount.east);
-		SetEffectDir(mapPos.x, mapPos.y, Direction::LEFT, printDirCount.west);
-
 		if (CheckmDelay(600, deadlineTick))
 			isAlive = false;
 
@@ -118,11 +111,7 @@ void WaterBallon::Update()
 
 	printhNumber++;					//시간지나면 모양변경
 	if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
-	{
-		printhNumber = 0;
-		isEffect = true;
-		deadlineTick = GetTickCount64();	// 이펙트 시작 타임부터 죽음까지 시간 체크
-	}
+		SetIsEffect(true);
 }
 
 void WaterBallon::Render(HDC hDC, HDC memDc)
@@ -147,8 +136,6 @@ void WaterBallon::Render(HDC hDC, HDC memDc)
 		BoomRender(hDC, memDc, printDirCount.east, Direction::RIGHT);
 		BoomRender(hDC, memDc, printDirCount.west,  Direction::LEFT);
 		BoomRender(hDC, memDc, 1, Direction::CENTER);
-
-		printDirCount = { 0, 0, 0, 0 };
 	}
 }
 
@@ -223,7 +210,14 @@ void WaterBallon::SetIsEffect(const bool isEffect)
 {
 	this->isEffect = isEffect;
 	printhNumber = 0;
-	deadlineTick = GetTickCount64();
+	mapData->data[mapPos.y][mapPos.x] = 0;	//물풍선 맵에서 제거
+
+	SetEffectDir(mapPos.x, mapPos.y, Direction::TOP, printDirCount.north);
+	SetEffectDir(mapPos.x, mapPos.y, Direction::BOTTOM, printDirCount.south);
+	SetEffectDir(mapPos.x, mapPos.y, Direction::RIGHT, printDirCount.east);
+	SetEffectDir(mapPos.x, mapPos.y, Direction::LEFT, printDirCount.west);
+
+	deadlineTick = GetTickCount64(); // 이펙트 시작 타임부터 죽음까지 시간 체크
 }
 
 ObjectData::POSITION WaterBallon::GetMapPos()
@@ -231,7 +225,7 @@ ObjectData::POSITION WaterBallon::GetMapPos()
 	return mapPos;
 }
 
-ObjectData::POSITION* WaterBallon::GetHitObjectPos()
+ObjectData::pPOSITION WaterBallon::GetHitObjectPos()
 {
 	return hitObjectPos;
 }
