@@ -172,12 +172,12 @@ typedef struct
 {
 	string name;
 	string path;
-	int data[13][15];
+	int data[MAP_HEIGHT_SIZE][MAP_WIDTH_SIZE];
 }MapData, * pMapData;
 
 typedef struct
 {
-	int mapWidth[255][255];
+	int mapWidth[MAP_HEIGHT_SIZE][MAP_WIDTH_SIZE];
 }Map, *pMap;
 
 namespace Objects
@@ -255,19 +255,6 @@ typedef struct
 	int printHorizontalNumber;	//출력할 세로이미지번호
 
 }Img, * pImg;
-
-typedef struct
-{
-	int state;		//현재상태
-	ObjectData::Position prevPos;				//이전위치
-	ObjectData::Position lastWaterBallonPos;	//마지막물풍선위치
-	bool isRevisit;								//마지막물풍선에서 범위밖으로 나갔는지 여부
-	ULONGLONG time;				//시간저장할변수
-	bool isAttackPossible;		//공격가능여부
-	bool isMoveable;			//이동가능여부
-	int waterBallonNumber;		//놓여진 물풍선 개수
-
-}CharacterValues, *pCharacterValues;
 
 namespace State
 {
