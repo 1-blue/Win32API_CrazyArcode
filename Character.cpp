@@ -36,15 +36,94 @@ void Character::Init()
 		break;
 	}
 
-	characterValue.state = State::NORMAL;		//현재상태
-	characterValue.isAttackPossible = true;	//공격가능여부
-	characterValue.isMoveable = true;			//이동가능여부
-	characterValue.waterBallonNumber = 0;		//현재 놓은 물풍선 개수
+	dir = Direction::TOP;		//이동방향
+	prevDir = Direction::TOP;	//이전이동방향
+	state = State::NORMAL;		//현재상태
+	isAttackPossible = true;	//공격가능여부
+	isMoveable = true;			//이동가능여부
+	waterBallonNumber = 0;		//현재 놓은 물풍선 개수
+	charAnimationTick = GetTickCount64();	//애니메이션출력시간변수
 }
 
 void Character::Input()
 {
-	Manual();	//조작 입력
+	switch (color)
+	{
+	case CharacterColor::RED:
+		if (isMoveable)
+		{
+			prevPos = pos;
+			if (GetAsyncKeyState(VK_UP))
+			{
+				dir = Direction::TOP;
+			}
+			if (GetAsyncKeyState(VK_DOWN))
+			{
+				dir = Direction::BOTTOM;
+			}
+			if (GetAsyncKeyState(VK_LEFT))
+			{
+				dir = Direction::LEFT;
+			}
+			if (GetAsyncKeyState(VK_RIGHT))
+			{
+				dir = Direction::RIGHT;
+			}
+			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
+			{
+				if (GetAsyncKeyState(VK_RSHIFT) & 0x8000)		//공격
+				{
+					attack.isColor = CharacterColor::RED;
+					attack.pos.x = pos.x;
+					attack.pos.y = pos.y + imageHeight / 2;
+					SettingAttackPos();		//물풍선 놓는위치 지정
+					if (OverlapCheck())		//물풍선 중복설치금지를 위한 코드
+					{
+						lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
+						waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
+					}
+				}
+			}
+		}
+		break;
+	case CharacterColor::BLUE:
+		if (isMoveable)
+		{
+			prevPos = pos;
+			if (GetAsyncKeyState('W'))
+			{
+				dir = Direction::TOP;
+			}
+			if (GetAsyncKeyState('S'))
+			{
+				dir = Direction::BOTTOM;
+			}
+			if (GetAsyncKeyState('A'))
+			{
+				dir = Direction::LEFT;
+			}
+			if (GetAsyncKeyState('D'))
+			{
+				dir = Direction::RIGHT;
+			}
+			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
+			{
+				if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)		//공격
+				{
+					attack.isColor = CharacterColor::BLUE;
+					attack.pos.x = pos.x;
+					attack.pos.y = pos.y + imageHeight / 2;
+					SettingAttackPos();		//물풍선 놓는위치 지정
+					if (OverlapCheck())		//물풍선 중복설치금지
+					{
+						lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
+						waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
+					}
+				}
+			}
+		}
+		break;
+	}
 }
 
 void Character::Update()
@@ -123,8 +202,9 @@ void Character::Update()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				characterValue.state = State::TRAPPED;
+				state = State::TRAPPED;
 				stats.speed = 1;
+				isAttackPossible = false;
 			}
 		}
 		//우측
@@ -135,8 +215,9 @@ void Character::Update()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				characterValue.state = State::TRAPPED;
+				state = State::TRAPPED;
 				stats.speed = 1;
+				isAttackPossible = false;
 			}
 		}
 		//아래
@@ -147,8 +228,9 @@ void Character::Update()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				characterValue.state = State::TRAPPED;
+				state = State::TRAPPED;
 				stats.speed = 1;
+				isAttackPossible = false;
 			}
 		}
 		//좌측
@@ -159,41 +241,38 @@ void Character::Update()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				characterValue.state = State::TRAPPED;
+				state = State::TRAPPED;
 				stats.speed = 1;
+				isAttackPossible = false;
 			}
 		}
 
 		attackArea = { {-1, -1}, -1, -1, -1, -1 };
 	}
 	
-
-
-
 	//갇힌상태라면 실행
-	if (characterValue.state == State::TRAPPED)
+	if (state == State::TRAPPED)
 	{
 		//if(바늘사용하면)
 		//{
 		//	redValue.state = State::NORMAL;
 		//	redValue.trappedPrinthNumber = 0;
 		//}
-		if (CheckmDelay(characterValue.time, 150))
+		if (CheckmDelay(deathTime, 150))
 		{
 			trappedImage.printHorizontalNumber++;
 			if (trappedImage.printHorizontalNumber > trappedImage.hNumber)
 			{
-				characterValue.state = State::DIE;
-				characterValue.isAttackPossible = false;
+				state = State::DIE;
+				isMoveable = false;
 			}
 		}
 	}
 
 	//죽을상태라면
-	if (characterValue.state == State::DIE)
+	if (state == State::DIE)
 	{
-		characterValue.isMoveable = false;
-		if (CheckmDelay(characterValue.time, 150))
+		if (CheckmDelay(deathTime, 150))
 		{
 			dieImage.printHorizontalNumber++;
 			if (dieImage.printHorizontalNumber > dieImage.hNumber)
@@ -216,7 +295,7 @@ void Character::LateUpdate(const list<Obj*>& inGameObjectVector)
 
 void Character::Render(HDC hDC, HDC memDc)
 {
-	switch (characterValue.state)
+	switch (state)
 	{
 	case State::NORMAL:
 		SelectObject(memDc, hBitmap);
@@ -243,7 +322,7 @@ void Character::Render(HDC hDC, HDC memDc)
 	case State::DIE:
 		SelectObject(memDc, dieImage.hBitmap);
 		TransparentBlt(hDC,
-			pos.x, pos.y,				//출력될 이미지 시작좌표
+			pos.x, pos.y - 20,				//출력될 이미지 시작좌표
 			dieImage.imageWidth, dieImage.imageHeight,	//출력될 이미지크기
 			memDc,
 			dieImage.imageWidth * dieImage.printHorizontalNumber, dieImage.imageHeight * dieImage.printVerticalNumber,		//이미지에서 출력할 시작위치
@@ -294,11 +373,17 @@ void Character::GetDefaultImage(const pImageData trappedImage, const pImageData 
 	{
 	case CharacterName::BAZZI:
 		this->trappedImage.printVerticalNumber = 0;		//trapped 세로 출력될 이미지 번호
-		this->dieImage.printVerticalNumber = 0;			//die 세로 출력될 이미지 번호
+		if(CharacterColor::RED == color)
+			this->dieImage.printVerticalNumber = 0;			//die 세로 출력될 이미지 번호
+		else if (CharacterColor::BLUE == color)
+			this->dieImage.printVerticalNumber = 1;			//die 세로 출력될 이미지 번호
 		break;
 	case CharacterName::DIZNI:
 		this->trappedImage.printVerticalNumber = 1;
-		this->dieImage.printVerticalNumber = 2;
+		if (CharacterColor::RED == color)
+			this->dieImage.printVerticalNumber = 2;			//die 세로 출력될 이미지 번호
+		else if (CharacterColor::BLUE == color)
+			this->dieImage.printVerticalNumber = 3;			//die 세로 출력될 이미지 번호
 		break;
 	}
 }
@@ -325,82 +410,6 @@ void Character::SettingAttackPos()
 	}
 }
 
-void Character::Manual()
-{
-	switch (color)
-	{
-	case CharacterColor::RED:
-		if (characterValue.isMoveable)
-		{
-			characterValue.prevPos = pos;
-			if (GetAsyncKeyState(VK_UP))
-			{
-				dir = Direction::TOP;
-			}
-			if (GetAsyncKeyState(VK_DOWN))
-			{
-				dir = Direction::BOTTOM;
-			}
-			if (GetAsyncKeyState(VK_LEFT))
-			{
-				dir = Direction::LEFT;
-			}
-			if (GetAsyncKeyState(VK_RIGHT))
-			{
-				dir = Direction::RIGHT;
-			}
-			if (characterValue.isAttackPossible && (this->stats.bNum > characterValue.waterBallonNumber))
-			{
-				if (GetAsyncKeyState(VK_RSHIFT) & 0x8000)		//공격
-				{
-					attack.isColor = CharacterColor::RED;
-					attack.pos.x = pos.x;
-					attack.pos.y = pos.y + imageHeight / 2;
-					SettingAttackPos();		//물풍선 놓는위치 지정
-					OverlapCheck();			//물풍선 중복설치금지를 위한 코드
-					characterValue.lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
-					characterValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
-				}
-			}
-		}
-		break;
-	case CharacterColor::BLUE:
-		if (characterValue.isMoveable)
-		{
-			characterValue.prevPos = pos;
-			if (GetAsyncKeyState('W'))
-			{
-				dir = Direction::TOP;
-			}
-			if (GetAsyncKeyState('S'))
-			{
-				dir = Direction::BOTTOM;
-			}
-			if (GetAsyncKeyState('A'))
-			{
-				dir = Direction::LEFT;
-			}
-			if (GetAsyncKeyState('D'))
-			{
-				dir = Direction::RIGHT;
-			}
-			if (characterValue.isAttackPossible && (this->stats.bNum > characterValue.waterBallonNumber))
-			{
-				if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)		//공격
-				{
-					attack.isColor = CharacterColor::BLUE;
-					attack.pos.x = pos.x;
-					attack.pos.y = pos.y + imageHeight / 2;
-					SettingAttackPos();		//물풍선 놓는위치 지정
-					OverlapCheck();			//물풍선 중복설치 금지를 위한
-					characterValue.lastWaterBallonPos = attack.pos;
-					characterValue.waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
-				}
-			}
-		}
-		break;
-	}
-}
 
 bool Character::CheckmDelay(ULONGLONG& animationTick, const int delayTime)
 {
@@ -422,9 +431,9 @@ Attack& Character::GetAttack()
 	return this->attack;
 }
 
-void Character::SettingBallonNumber(int color)
+void Character::SettingBallonNumber()
 {
-	characterValue.waterBallonNumber--;
+	waterBallonNumber--;
 }
 
 const int Character::GetWaterBallonBLength()
@@ -452,7 +461,30 @@ void Character::SetAttackArea(const AttackArea& attackArea)
 	this->attackArea = attackArea;
 }
 
-void Character::OverlapCheck()
+void Character::CheckTrappedCollision(Character* character)
+{
+	if (character == this)
+		return;
+	RECT temp;
+	RECT character1{ this->pos.x, this->pos.y, this->pos.x + BLOCK_X, this->pos.y + BLOCK_Y };
+	RECT character2{ character->pos.x, character->pos.y, character->pos.x + BLOCK_X, character->pos.y + BLOCK_Y };
+	if (IntersectRect(&temp, &character1, &character2) && this->state == State::TRAPPED)
+		this->SetState(State::DIE);
+	else if (IntersectRect(&temp, &character1, &character2) && character->state == State::TRAPPED)
+		character->SetState(State::DIE);
+}
+
+void Character::SetState(int state)
+{
+	state = state;
+}
+
+int Character::GetColor()
+{
+	return this->color;
+}
+
+bool Character::OverlapCheck()
 {
 	if (waterBallonPos.empty())
 		attack.isAttack = true;
@@ -464,12 +496,14 @@ void Character::OverlapCheck()
 			isExist = true;
 	}
 	if (isExist)
-		return;
+		return false;
 
 	attack.isAttack = true;
 
-	if (characterValue.isRevisit == false)
-		characterValue.isRevisit = true;
+	if (isRevisit == false)
+		isRevisit = true;
+	
+	return true;
 }
 
 void Character::MapImmovableArea()
@@ -522,39 +556,39 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 			{
 			case Direction::TOP:
 				if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
-					characterValue.prevPos.x++;
+					prevPos.x++;
 				else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-					characterValue.prevPos.x--;
-				characterValue.prevPos.y = objRect.bottom;
+					prevPos.x--;
+				prevPos.y = objRect.bottom;
 				//위에한줄 들어간 이유는 캐릭터 이동속도에따라서 캐릭터는 +5+6+7이런식으로 이동하는데
 				//staticObject좌표는 20+47*x로 고정되어있어서 20+5하다보면 y좌표가 안맞아서 이동할 수 없음 그걸 맞춰주기위한코드
 				break;
 
 			case Direction::BOTTOM:
 				if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
-					characterValue.prevPos.x++;
+					prevPos.x++;
 				else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-					characterValue.prevPos.x--;
-				characterValue.prevPos.y = objRect.top - BLOCK_Y;
+					prevPos.x--;
+				prevPos.y = objRect.top - BLOCK_Y;
 				break;
 
 			case Direction::LEFT:
 				if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
-					characterValue.prevPos.y++;
+					prevPos.y++;
 				else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-					characterValue.prevPos.y--;
-				characterValue.prevPos.x = objRect.right;
+					prevPos.y--;
+				prevPos.x = objRect.right;
 				break;
 
 			case Direction::RIGHT:
 				if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
-					characterValue.prevPos.y++;
+					prevPos.y++;
 				else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-					characterValue.prevPos.y--;
-				characterValue.prevPos.x = objRect.left - BLOCK_X;
+					prevPos.y--;
+				prevPos.x = objRect.left - BLOCK_X;
 				break;
 			}
-			pos = characterValue.prevPos;
+			pos = prevPos;
 		}
 	}
 }
@@ -567,17 +601,17 @@ void Character::WaterBallonImmovableArea()
 	//물풍선 이동범위 제한
 	for (const auto& wbPos : waterBallonPos)
 	{
-		objRect.left = characterValue.lastWaterBallonPos.x;
-		objRect.top = characterValue.lastWaterBallonPos.y - SIZE_TUNING;
-		objRect.right = characterValue.lastWaterBallonPos.x + BLOCK_X;
-		objRect.bottom = characterValue.lastWaterBallonPos.y + BLOCK_Y - SIZE_TUNING;
+		objRect.left = lastWaterBallonPos.x;
+		objRect.top = lastWaterBallonPos.y - SIZE_TUNING;
+		objRect.right = lastWaterBallonPos.x + BLOCK_X;
+		objRect.bottom = lastWaterBallonPos.y + BLOCK_Y - SIZE_TUNING;
 
-		if (characterValue.isRevisit)
+		if (isRevisit)
 		{
 			if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
 				&& characterRect.top < objRect.bottom && characterRect.bottom > objRect.top))
 			{
-				characterValue.isRevisit = false;
+				isRevisit = false;
 			}
 			else
 				continue;
@@ -589,8 +623,8 @@ void Character::WaterBallonImmovableArea()
 		objRect.bottom = wbPos.y + BLOCK_Y - SIZE_TUNING;
 
 		//캐릭터위에 다른캐릭터가 물풍선을 놓은 경우 처리하는구문
-		if (characterValue.prevPos.x < objRect.right && characterValue.prevPos.x + 40 > objRect.left
-			&& characterValue.prevPos.y < objRect.bottom && characterValue.prevPos.y + 47 > objRect.top)
+		if (prevPos.x < objRect.right && prevPos.x + BLOCK_X > objRect.left
+			&& prevPos.y < objRect.bottom && prevPos.y + BLOCK_Y > objRect.top)
 			continue;
 
 		//비껴서 앞으로나가기 + 이동제한
@@ -602,28 +636,26 @@ void Character::WaterBallonImmovableArea()
 			case Direction::TOP:
 			case Direction::BOTTOM:
 				if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
-					characterValue.prevPos.x++;
+					prevPos.x++;
 				else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
-					characterValue.prevPos.x--;
+					prevPos.x--;
 				break;
 			case Direction::LEFT:
 			case Direction::RIGHT:
 				if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
-					characterValue.prevPos.y++;
+					prevPos.y++;
 				else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
-					characterValue.prevPos.y--;
+					prevPos.y--;
 				break;
 			}
-			pos = characterValue.prevPos;
+			pos = prevPos;
 		}
 	}
 }
 
 void Character::Trapped()
 {
-	//this->characterStats.speed -= 4;		//물풍선 갖히면 속도감소.. 현재는 키 누를때 실행이라 한번에 여려번입력됨
-
-	characterValue.time = GetTickCount64();		//갇히는 시작시간
-	characterValue.state = State::TRAPPED;		//상태바꾸기
-	characterValue.isAttackPossible = false;		//공격불가능
+	deathTime = GetTickCount64();	//갇히는 시작시간
+	state = State::TRAPPED;			//상태바꾸기
+	isAttackPossible = false;		//공격불가능
 }

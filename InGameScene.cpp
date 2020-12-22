@@ -69,6 +69,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		this->CreateWaterBallon(character);
 		character->Update();
 		character->LateUpdate(inGameObjectList);
+		characterList.front()->CheckTrappedCollision(character);
 	}
 
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
@@ -295,11 +296,18 @@ void InGameScene::DeleteWaterBallons()
 			{
 			case CharacterColor::RED:
 				for (const auto& c : characterList)
-					c->SettingBallonNumber(CharacterColor::RED);
+				{
+					if(c->GetColor() == CharacterColor::RED)
+						c->SettingBallonNumber();
+				}
+					
 				break;
 			case CharacterColor::BLUE:
 				for (const auto& c : characterList)
-					c->SettingBallonNumber(CharacterColor::BLUE);
+				{
+					if (c->GetColor() == CharacterColor::BLUE)
+						c->SettingBallonNumber();
+				}
 				break;
 			}
 
