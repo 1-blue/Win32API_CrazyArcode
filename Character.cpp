@@ -413,6 +413,11 @@ void Character::CheckTrappedCollision(Character* character)
 		character->SetState(State::DIE);
 }
 
+const int Character::GetState()
+{
+	return state;
+}
+
 void Character::SetState(int state)
 {
 	this->state = state;
@@ -467,16 +472,16 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 	//블록과 벽이동범위제한..
 	for (const auto& tempObj : inGameObjectVector)
 	{
-		if (tempObj->GetName() == MessageQueue::StringToEnum("background"))
+		if (tempObj->GetName() == EnumObj::background)
 			continue;
-		else if (tempObj->GetName() == MessageQueue::StringToEnum("Block"))
+		else if (tempObj->GetName() == EnumObj::Block)
 		{
 			objRect.left = tempObj->GetPosition().x;
 			objRect.top = tempObj->GetPosition().y - SIZE_TUNING;
 			objRect.right = tempObj->GetPosition().x + BLOCK_X;
 			objRect.bottom = tempObj->GetPosition().y + BLOCK_Y - SIZE_TUNING;
 		}
-		else if (tempObj->GetName() == MessageQueue::StringToEnum("Wall"))
+		else if (tempObj->GetName() == EnumObj::Wall)
 		{
 			objRect.left = tempObj->GetPosition().x;
 			objRect.top = tempObj->GetPosition().y;
@@ -689,8 +694,7 @@ void Character::DieAnimation()
 		dieImage.printHorizontalNumber++;
 		if (dieImage.printHorizontalNumber > dieImage.hNumber)
 		{
-			//게임종료UI띄우기
-			//SceneManager의 sceneState값 변경해야함
+			state = State::DEAD;
 		}
 	}
 }

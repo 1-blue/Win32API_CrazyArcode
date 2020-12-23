@@ -1,5 +1,8 @@
 이름		path				Object종류	출력위치		가로이미지수	세로이미지수
 
+drawUI		image\InGame\draw.bmp		0		0 -1		1		1
+loseUI		image\InGame\lose.bmp		0		0 -1		1		1
+winUI		image\InGame\win.bmp		0		0 -1		1		1
 background	image\InGame\BackGround.bmp	0		0 0		1		1
 Block		image\InGame\Block.bmp		3		20 45		1		1
 Wall		image\InGame\Wall.bmp		3		20 45		1		1

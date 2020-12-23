@@ -11,8 +11,10 @@ map<string, int> MessageQueue::sToEnumMap{ {"background", EnumObj::background },
 {"Wall", EnumObj::Wall } ,{"WaterBallon", EnumObj::WaterBallon },
 {"RedBazzi", EnumObj::RedBazzi } ,{"RedDizni", EnumObj::RedDizni },
 {"BlueBazzi", EnumObj::BlueBazzi } ,{"BlueDizni", EnumObj::BlueDizni } ,
-{"Trapped", EnumObj::Trapped } ,{"Die", EnumObj::Die },
-{"BompUP", EnumObj::BompUP}, {"PowerUP", EnumObj::PowerUP}, {"SpeedUP", EnumObj::SpeedUP} };
+{"Trapped", EnumObj::Trapped } ,{"Die", EnumObj::Die } ,
+{"drawUI",EnumObj::drawUI},{"loseUI",EnumObj::loseUI},{"winUI",EnumObj::winUI},
+{"BompUP", EnumObj::BompUP}, {"PowerUP", EnumObj::PowerUP}, {"SpeedUP", EnumObj::SpeedUP}
+};
 
 void MessageQueue::CharPickEvent(list<Obj*>& objList, bool isRight, int pickEvent)
 {
@@ -34,13 +36,13 @@ void MessageQueue::CharPickEvent(list<Obj*>& objList, bool isRight, int pickEven
 
 	for (auto iterator : objList)
 	{
-		if (iterator->GetName() == StringToEnum("redCharacter") && isRight == false)	//좌클릭
+		if (iterator->GetName() == EnumObj::redCharacter && isRight == false)	//좌클릭
 		{
 			dynamic_cast<DynamicObject*>(iterator)->SetImageNumber(setImageNumber);
 			selectData.redCharacterNumber = setImageNumber;
 		}
 
-		if (iterator->GetName() == StringToEnum("blueCharacter") && isRight == true)	//우클릭
+		if (iterator->GetName() == EnumObj::blueCharacter && isRight == true)	//우클릭
 		{
 			dynamic_cast<DynamicObject*>(iterator)->SetImageNumber(setImageNumber);
 			selectData.blueCharacterNumber = setImageNumber;

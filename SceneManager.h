@@ -27,6 +27,7 @@ public:
 	void Process();
 
 	void InitInGameData();
+	void InitInGamePlayTime();
 
 	const int GetSceneState();
 	void SetSceneState(int sceneState);

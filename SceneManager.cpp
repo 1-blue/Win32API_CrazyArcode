@@ -56,6 +56,11 @@ void SceneManager::InitInGameData()
 	inGameScene->Init();
 }
 
+void SceneManager::InitInGamePlayTime()
+{
+	inGameScene->InitInGamePlayTime();
+}
+
 const int SceneManager::GetSceneState()
 {
 	return sceneState;

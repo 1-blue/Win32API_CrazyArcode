@@ -51,6 +51,11 @@ HBITMAP Obj::GetHBitmap()
 	return hBitmap;
 }
 
+void Obj::SetOrder(const int order)
+{
+	this->order = order;
+}
+
 int Obj::GetOrder() const
 {
 	return this->order;

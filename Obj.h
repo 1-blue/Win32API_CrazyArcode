@@ -34,5 +34,6 @@ public:
 
 	HBITMAP GetHBitmap();
 
+	void SetOrder(const int order);
 	int GetOrder() const;
 };

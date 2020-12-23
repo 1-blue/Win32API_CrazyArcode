@@ -6,7 +6,7 @@ Item::Item(const int name, const ObjectData::POSITION pos, const ObjectData::SIZ
 	srand((unsigned int)time(NULL));
 	printNumber = (rand() * ramdomNumber) % 3;
 
-	this->name = printNumber + 19;		//임시로 +19
+	this->name = printNumber + 22;		//임시로 +22
 }
 
 Item::~Item()

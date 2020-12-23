@@ -48,6 +48,9 @@ namespace EnumObj
 		BlueDizni,
 		Trapped,
 		Die,
+		drawUI,
+		loseUI,
+		winUI,
 		BompUP,
 		PowerUP,
 		SpeedUP
