@@ -45,6 +45,7 @@ void GameMananger::LoadInGameData()
 {
 	sceneManager->LoadInGameImage(imageManager->GetInGameImage());
 	sceneManager->LoadCharacterData(imageManager->GetCharacterImageData(sceneManager->GetSelectData()), imageManager->GetCharacterStatsData(sceneManager->GetSelectData()));
+	sceneManager->LoadItemImageData(imageManager->GetItemImageData());
 	sceneManager->LoadMapData(mapManager->LoadMap(sceneManager->GetSelectData()));
 }
 

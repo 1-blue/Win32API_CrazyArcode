@@ -19,15 +19,17 @@ ImageManager::~ImageManager()
 	for (const auto& bitmap : characterImageData)
 		delete bitmap;
 	characterImageData.clear();
+
+	delete items;
 }
 
 void ImageManager::LoadImageData()
 {
-	//이 텍스트파일 path들도 하나의 텍스트파일에 모아서 읽어서 쓸까??
 	LoadTextImageData("data_char\\LobbyImageData.txt", lobbyBitmap);
 	LoadTextImageData("data_char\\InGameImageData.txt", InGameImageInfo);
 	LoadTextImageData("data_char\\CharacterImageData.txt", characterImageData);
 	LoadTextStatsData("data_char\\CharacterStatsData.txt", characterStatsData);
+	LoadTextImageData("data_char\\items.txt", items);
 }
 
 void ImageManager::LoadTextImageData(string path, vector<pImageData>& data)
@@ -152,6 +154,11 @@ const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectDa
 	character[3] = characterImageData[5];		//Die
 
 	return character;
+}
+
+const pImageData ImageManager::GetItemImageData()
+{
+	return items;
 }
 
 const CharacterStatsData* ImageManager::GetCharacterStatsData(const SelectData& selectData)

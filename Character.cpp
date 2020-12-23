@@ -184,114 +184,44 @@ void Character::Update()
 		break;
 	}
 	order = pos.y;
-
-	POINT boomPosition{ -1, -1 };	//터지는물풍선의 위치
-	POINT boomPoint{ -1, -1 };		//터지는 물풍선 캐릭터와 조건검사할 좌표
-
-	//물풍선 폭팔범위에 캐릭터가 존재하는지 체크
-	if (attackArea.pos.x != -1)
-	{
-		boomPosition.x = attackArea.pos.x * BLOCK_X + 20;
-		boomPosition.y = attackArea.pos.y * BLOCK_Y + 25;
-
-		//위
-		for (int i = 0; i <= attackArea.t; i++)
-		{
-			boomPoint.y = boomPosition.y - (i * BLOCK_Y) + (BLOCK_Y / 2);
-			boomPoint.x = boomPosition.x + (BLOCK_X / 2);
-			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
-				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
-			{
-				state = State::TRAPPED;
-				stats.speed = 1;
-				isAttackPossible = false;
-			}
-		}
-		//우측
-		for (int i = 0; i <= attackArea.r; i++)
-		{
-			boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
-			boomPoint.x = boomPosition.x + (i * BLOCK_X) + (BLOCK_X / 2);
-			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
-				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
-			{
-				state = State::TRAPPED;
-				stats.speed = 1;
-				isAttackPossible = false;
-			}
-		}
-		//아래
-		for (int i = 0; i <= attackArea.b; i++)
-		{
-			boomPoint.y = boomPosition.y + (i * BLOCK_Y) + (BLOCK_Y / 2);
-			boomPoint.x = boomPosition.x + (BLOCK_X / 2);
-			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
-				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
-			{
-				state = State::TRAPPED;
-				stats.speed = 1;
-				isAttackPossible = false;
-			}
-		}
-		//좌측
-		for (int i = 0; i <= attackArea.l; i++)
-		{
-			boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
-			boomPoint.x = boomPosition.x - (i * BLOCK_X) + (BLOCK_X / 2);
-			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
-				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
-			{
-				state = State::TRAPPED;
-				stats.speed = 1;
-				isAttackPossible = false;
-			}
-		}
-
-		attackArea = { {-1, -1}, -1, -1, -1, -1 };
-	}
 	
+	CheckBombArea();		//폭발시 캐릭터존재하는지 체크
+
 	//갇힌상태라면 실행
 	if (state == State::TRAPPED)
-	{
-		//if(바늘사용하면)
-		//{
-		//	redValue.state = State::NORMAL;
-		//	redValue.trappedPrinthNumber = 0;
-		//}
-		if (CheckmDelay(deathTime, 150))
-		{
-			trappedImage.printHorizontalNumber++;
-			if (trappedImage.printHorizontalNumber > trappedImage.hNumber)
-			{
-				state = State::DIE;
-				isMoveable = false;
-			}
-		}
-	}
+		TrappedAnimation();
 
 	//죽을상태라면
 	if (state == State::DIE)
-	{
-		if (CheckmDelay(deathTime, 150))
-		{
-			dieImage.printHorizontalNumber++;
-			if (dieImage.printHorizontalNumber > dieImage.hNumber)
-			{
-				//게임종료UI띄우기
-				//SceneManager의 sceneState값 변경해야함
-			}
-		}
-	}
+		DieAnimation();
 }
 
-//매개변수 이름 바꿔줘야할듯
-void Character::LateUpdate(const list<Obj*>& inGameObjectVector)
+ObjectData::Position Character::LateUpdate(const list<Obj*>& inGameObjects)
 {
 	//이동제한
 	MapImmovableArea();
-	StaticObjectmmovableArea(inGameObjectVector);
+	StaticObjectmmovableArea(inGameObjects);
 	WaterBallonImmovableArea();
 	dir = -1;
+
+	//아이템먹는지여부
+	RECT temp;
+	RECT character{ this->pos.x, this->pos.y, this->pos.x + BLOCK_X, this->pos.y + BLOCK_Y };
+	for (const auto& iterator : itemPos)
+	{
+		RECT item{ iterator.pos.x, iterator.pos.y, iterator.pos.x + BLOCK_X, iterator.pos.y + BLOCK_Y };
+		if (IntersectRect(&temp, &character, &item))
+		{
+			if (iterator.name == MessageQueue::StringToEnum("BompUP"))
+				WaterBallonNumberUP();
+			else if (iterator.name == MessageQueue::StringToEnum("PowerUP"))
+				WaterBallonLengthUP();
+			else if (iterator.name == MessageQueue::StringToEnum("SpeedUP"))
+				SpeedUP();
+			return iterator.pos;
+		}
+	}
+	return { -1, -1 };
 }
 
 void Character::Render(HDC hDC, HDC memDc)
@@ -336,12 +266,12 @@ void Character::Render(HDC hDC, HDC memDc)
 	static char c[255];
 	if (CharacterColor::RED == color)
 	{
-		sprintf_s(c, "RED : %d, %d", pos.x, pos.y);
+		sprintf_s(c, "RED : %d, %d, n:%d, l:%d, s:%d", pos.x, pos.y, stats.bNum, stats.bLength, stats.speed);
 		TextOut(hDC, 10, 10, c, sizeof(c));
 	}
-	if (CharacterColor::BLUE == color)
+	else if (CharacterColor::BLUE == color)
 	{
-		sprintf_s(c, "BLUE : %d, %d", pos.x, pos.y);
+		sprintf_s(c, "BLUE : %d, %d, n:%d, l:%d, s:%d", pos.x, pos.y, stats.bNum, stats.bLength, stats.speed);
 		TextOut(hDC, 10, 50, c, sizeof(c));
 	}
 }
@@ -422,9 +352,14 @@ bool Character::CheckmDelay(ULONGLONG& animationTick, const int delayTime)
 	return false;
 }
 
-void Character::SetWaterBallonList(list<ObjectData::Position> waterBallonPos)
+void Character::SetWaterBallonPos(list<ObjectData::Position> waterBallonPos)
 {
 	this->waterBallonPos = waterBallonPos;
+}
+
+void Character::SetItemPos(list<ItemData> itemPos)
+{
+	this->itemPos = itemPos;
 }
 
 Attack& Character::GetAttack()
@@ -437,24 +372,27 @@ void Character::SettingBallonNumber()
 	waterBallonNumber--;
 }
 
-const int Character::GetWaterBallonBLength()
+const int Character::GetWaterBallonLength()
 {
 	return stats.bLength;
 }
 
-void Character::UPBallonNumber()
+void Character::WaterBallonNumberUP()
 {
-	(stats.bNumMax != stats.bNum + 1) ? ++stats.bNum : stats.bNum = stats.bNumMax;
+	if (stats.bNumMax >= stats.bNum + 1)
+		++stats.bNum;
 }
 
-void Character::UPBallonLength()
+void Character::WaterBallonLengthUP()
 {
-	(stats.bLengthMax != stats.bLength + 1) ? ++stats.bLength : stats.bLength = stats.bLengthMax;
+	if (stats.bLengthMax >= stats.bLength + 1)
+		++stats.bLength;
 }
 
-void Character::UPSetSpeed()
+void Character::SpeedUP()
 {
-	(stats.speedMax != stats.speed + 1) ? ++stats.speed : stats.speed = stats.speedMax;
+	if (stats.speedMax >= stats.speed + 1)
+		++stats.speed;
 }
 
 void Character::SetAttackArea(const AttackArea& attackArea)
@@ -477,7 +415,7 @@ void Character::CheckTrappedCollision(Character* character)
 
 void Character::SetState(int state)
 {
-	state = state;
+	this->state = state;
 }
 
 int Character::GetColor()
@@ -521,9 +459,6 @@ void Character::MapImmovableArea()
 		pos.y = MOVE_MAX_Y;
 }
 
-//벡터를 받는게 아니라, 배열에 저장되어있는 숫자값을 받아가지고 하는게 더 빠를듯
-//바꿀려고 했는데 생각해보면 어차피 참조라 속도차이없을거고 const라 변화할일도없기도하고
-//map[][]을 받아오면 다시 pos값 구해야하는데 또 map크기만큼 연산해야하니까 이게더 낫다고 생각함
 void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 {
 	RECT characterRect{ pos.x, pos.y, pos.x + BLOCK_X, pos.y + BLOCK_Y };
@@ -659,4 +594,103 @@ void Character::Trapped()
 	deathTime = GetTickCount64();	//갇히는 시작시간
 	state = State::TRAPPED;			//상태바꾸기
 	isAttackPossible = false;		//공격불가능
+}
+
+void Character::CheckBombArea()
+{
+	POINT boomPosition{ -1, -1 };	//터지는물풍선의 위치
+	POINT boomPoint{ -1, -1 };		//터지는 물풍선 캐릭터와 조건검사할 좌표
+
+	//물풍선 폭팔범위에 캐릭터가 존재하는지 체크
+	if (attackArea.pos.x != -1)
+	{
+		boomPosition.x = attackArea.pos.x * BLOCK_X + 20;
+		boomPosition.y = attackArea.pos.y * BLOCK_Y + 25;
+
+		//위
+		for (int i = 0; i <= attackArea.t; i++)
+		{
+			boomPoint.y = boomPosition.y - (i * BLOCK_Y) + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				state = State::TRAPPED;
+				stats.speed = 1;
+				isAttackPossible = false;
+			}
+		}
+		//우측
+		for (int i = 0; i <= attackArea.r; i++)
+		{
+			boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x + (i * BLOCK_X) + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				state = State::TRAPPED;
+				stats.speed = 1;
+				isAttackPossible = false;
+			}
+		}
+		//아래
+		for (int i = 0; i <= attackArea.b; i++)
+		{
+			boomPoint.y = boomPosition.y + (i * BLOCK_Y) + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				state = State::TRAPPED;
+				stats.speed = 1;
+				isAttackPossible = false;
+			}
+		}
+		//좌측
+		for (int i = 0; i <= attackArea.l; i++)
+		{
+			boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
+			boomPoint.x = boomPosition.x - (i * BLOCK_X) + (BLOCK_X / 2);
+			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
+				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
+			{
+				state = State::TRAPPED;
+				stats.speed = 1;
+				isAttackPossible = false;
+			}
+		}
+
+		attackArea = { {-1, -1}, -1, -1, -1, -1 };
+	}
+}
+
+void Character::TrappedAnimation()
+{
+	//if(바늘사용하면)
+	//{
+	//	redValue.state = State::NORMAL;
+	//	redValue.trappedPrinthNumber = 0;
+	//}
+	if (CheckmDelay(deathTime, 150))
+	{
+		trappedImage.printHorizontalNumber++;
+		if (trappedImage.printHorizontalNumber > trappedImage.hNumber)
+		{
+			state = State::DIE;
+			isMoveable = false;
+		}
+	}
+}
+
+void Character::DieAnimation()
+{
+	if (CheckmDelay(deathTime, 150))
+	{
+		dieImage.printHorizontalNumber++;
+		if (dieImage.printHorizontalNumber > dieImage.hNumber)
+		{
+			//게임종료UI띄우기
+			//SceneManager의 sceneState값 변경해야함
+		}
+	}
 }

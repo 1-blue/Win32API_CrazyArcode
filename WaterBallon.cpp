@@ -46,7 +46,7 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 		}
 		dirCount++;
 
-		//공격범위값저장,,, 시작위치, 위, 우측, 아래, 좌측범위 return문있어가지고 값안들어갈때 있어서 안에다가 넣음
+		//공격범위값저장
 		attackArea.pos.x = mapPos.x;
 		attackArea.pos.y = mapPos.y;
 		switch (direction)

@@ -37,4 +37,5 @@ public:
 	void LoadInGameImage(const vector<pImageData>& inGameBackGround);
 	void LoadCharacterData(const pImageData* characterImage, const CharacterStatsData* characterStats);
 	void LoadMapData(const MapData& mapData);
+	void LoadItemImageData(const pImageData itemData);
 };

@@ -92,3 +92,8 @@ void SceneManager::LoadMapData(const MapData& mapData)
 	inGameScene->GetMapData(mapData);
 	inGameScene->LoadStaticObjectData();
 }
+
+void SceneManager::LoadItemImageData(const pImageData itemData)
+{
+	inGameScene->LoadItemImage(itemData);
+}

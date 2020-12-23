@@ -3,8 +3,10 @@
 #include "WaterBallon.h"
 #include "Block.h"
 #include "Wall.h"
+#include "Item.h"
 
 ObjectData::POSITION InGameScene::removeWaterBallonPos{ 0,0 };
+ObjectData::POSITION InGameScene::removeItemPos{ 0,0 };
 
 void InGameScene::Init()
 {
@@ -67,7 +69,9 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		character->Input();
 		this->CreateWaterBallon(character);
 		character->Update();
-		character->LateUpdate(inGameObjectList);
+		removeItemPos = character->LateUpdate(inGameObjectList);
+		if (removeItemPos.x != -1)
+			Deleteitem();
 		characterList.front()->CheckTrappedCollision(character);
 	}
 
@@ -151,6 +155,12 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, const pImag
 	characterList.back()->GetDefaultImage(trappedImage, dieImage);
 }
 
+void InGameScene::LoadItemImage(const pImageData itemImage)
+{
+	this->itemData = itemImage;										//아이템관련 데이터 변수에 저장
+	GetObject(itemData->hBitmap, sizeof(BITMAP), &itemBitmap);		//아이템 비트맵정보 저장
+}
+
 void InGameScene::LoadStaticObjectData()
 {
 	for (int h = 0; h < MAP_HEIGHT_SIZE; h++)		//맵세로길이
@@ -188,6 +198,7 @@ void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
 	bool isDeleteBlocks = false;
 	bool isDeleteWaterBallons = false;
 	vector <int> hitObjectIndex;
+	static int ramdomNumber = 0;
 
 	//북서동남, (크기 4)
 	for (int i = 0; i < 4; i++)
@@ -244,6 +255,23 @@ void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
 					return ((tempWaterBallon->GetPosition().x == (*blocks)->GetPosition().x) && (tempWaterBallon->GetPosition().y == (*blocks)->GetPosition().y));
 					});
 
+				//블럭 삭제할때 그좌표에 아이템생성
+				srand((unsigned int)time(NULL));
+				++ramdomNumber;
+				if ((rand() * ramdomNumber) % 3 == 0)
+				{
+					inGameObjectList.emplace_back(new Item(
+						itemData->name,
+						(*blocks)->GetPosition(),
+						{ itemBitmap.bmWidth, itemBitmap.bmHeight },
+						itemData->hNumber, itemData->vNumber,
+						itemData->hBitmap,
+						ramdomNumber
+					));
+					allInGameScene.emplace_back(inGameObjectList.back());
+					itemPos.emplace_back(ItemData{ inGameObjectList.back()->GetName(), (*blocks)->GetPosition() });
+				}
+
 				//inGameObjectList의 블럭 삭제
 				delete* blocks;
 				inGameObjectList.erase(blocks++);
@@ -253,6 +281,9 @@ void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
 				++blocks;
 		}
 	}
+
+	for (const auto& character : characterList)
+		character->SetItemPos(itemPos);
 }
 
 void InGameScene::CreateWaterBallon(Character* character)
@@ -268,7 +299,7 @@ void InGameScene::CreateWaterBallon(Character* character)
 			{ objectsBitmap[2].bmWidth,objectsBitmap[2].bmHeight },
 			objectsData[2]->hNumber, objectsData[2]->vNumber,
 			objectsData[2]->hBitmap,
-			character->GetWaterBallonBLength()
+			character->GetWaterBallonLength()
 		));
 		waterBallon.back()->SetColor(attack.isColor);
 
@@ -278,7 +309,7 @@ void InGameScene::CreateWaterBallon(Character* character)
 		//물풍선위치를 캐릭터에 전송
 		waterBallonPos.emplace_back(ObjectData::Position{ attack.pos.x, attack.pos.y });
 		for (const auto& c : characterList)
-			c->SetWaterBallonList(waterBallonPos);
+			c->SetWaterBallonPos(waterBallonPos);
 
 		allInGameScene.emplace_back(waterBallon.back());
 	}
@@ -322,7 +353,15 @@ void InGameScene::DeleteWaterBallons()
 
 	waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
 	for (const auto& c : characterList)	
-		c->SetWaterBallonList(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화
+		c->SetWaterBallonPos(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화
+}
+
+void InGameScene::Deleteitem()
+{
+	allInGameScene.remove_if(RemoveItemData);	//allInGameScene에서 물풍선데이터삭제
+	itemPos.remove_if(RemoveItemData1);
+	for (const auto& c : characterList)
+		c->SetItemPos(itemPos);			//캐릭터들한테 아이템 위치값 최신화
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
@@ -332,7 +371,6 @@ bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
 
 bool InGameScene::RemoveWaterBallonData(Obj* tempWaterBallon)
 {
-	//if (tempWaterBallon->GetPosition() == removeWaterBallonPos)		//이거 하나는 const고 하나는 const아니라서 직접비교함
 	if (tempWaterBallon->GetPosition().x == removeWaterBallonPos.x && tempWaterBallon->GetPosition().y == removeWaterBallonPos.y)
 		return true;
 	return false;
@@ -341,6 +379,20 @@ bool InGameScene::RemoveWaterBallonData(Obj* tempWaterBallon)
 bool InGameScene::RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon)
 {
 	if (tempWaterBallon == removeWaterBallonPos && tempWaterBallon == removeWaterBallonPos)
+		return true;
+	return false;
+}
+
+bool InGameScene::RemoveItemData(Obj* itemPosition)
+{
+	if (removeItemPos == itemPosition->GetPosition())
+		return true;
+	return false;
+}
+
+bool InGameScene::RemoveItemData1(ItemData itemPosition)
+{
+	if (removeItemPos == itemPosition.pos)
 		return true;
 	return false;
 }

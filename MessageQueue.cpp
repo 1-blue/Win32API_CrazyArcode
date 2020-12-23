@@ -11,7 +11,8 @@ map<string, int> MessageQueue::sToEnumMap{ {"background", EnumObj::background },
 {"Wall", EnumObj::Wall } ,{"WaterBallon", EnumObj::WaterBallon },
 {"RedBazzi", EnumObj::RedBazzi } ,{"RedDizni", EnumObj::RedDizni },
 {"BlueBazzi", EnumObj::BlueBazzi } ,{"BlueDizni", EnumObj::BlueDizni } ,
-{"Trapped", EnumObj::Trapped } ,{"Die", EnumObj::Die } };
+{"Trapped", EnumObj::Trapped } ,{"Die", EnumObj::Die },
+{"BompUP", EnumObj::BompUP}, {"PowerUP", EnumObj::PowerUP}, {"SpeedUP", EnumObj::SpeedUP} };
 
 void MessageQueue::CharPickEvent(list<Obj*>& objList, bool isRight, int pickEvent)
 {

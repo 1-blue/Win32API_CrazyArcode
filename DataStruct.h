@@ -42,7 +42,7 @@ ScreenToClient(hWnd, &point);
 
 typedef struct
 {
-	int name;		//이미지명
+	int name;			//이미지명
 	HBITMAP hBitmap;	//출력할 비트맵
 	int objType;		//오브젝트타입
 	int x;				//임시 출력 x포지션
@@ -275,3 +275,10 @@ typedef struct
 	int b;
 	int l;
 }AttackArea, *pAttackArea;
+
+typedef struct
+{
+	int name;
+	ObjectData::Position pos;	//아이템포지션
+
+}ItemData, * pItemData;
