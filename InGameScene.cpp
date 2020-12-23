@@ -48,26 +48,21 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 	for (const auto& waterBallons : waterBallon)
 	{
-		waterBallons->Input();
 		waterBallons->Update();
 
-		if (waterBallons->GetIsEffect())
+		if (WaterBallonState::EXPLOSION == waterBallons->GetState())
 		{
-			ObjectData::POSITION* pos = waterBallons->GetHitObjectPos();
 			DeleteHitObject(waterBallons->GetHitObjectPos());
 			for (const auto& character : characterList)		//물풍선 터질때 공격범위 전송
 			{
 				character->SetAttackArea(waterBallons->GetAttackArea());
 				this->CheckWaterBallonItem(waterBallons->GetAttackArea());
 			}
-		}
-
-		if (!waterBallons->GetIsAlive())
-			isDeleteWaterBallon = true;
+		}	
 	}
 
-	if(isDeleteWaterBallon)
-		DeleteWaterBallons();
+	//위에서 설정한 값으로 물풍선 삭제처리
+	DeleteWaterBallons();
 
 	for (const auto& character : characterList)
 	{
@@ -100,8 +95,8 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 			GameOver(character->GetColor());
 	}
 
-	//제한시간 2분 경과 시 DRAW 처리
-	if(GetTickCount64() > inGamePlayTime + 120000)
+	//제한시간 3분 경과 시 DRAW 처리
+	if(GetTickCount64() > inGamePlayTime + 180000)
 		GameOver(-1);
 }
 
@@ -222,32 +217,23 @@ void InGameScene::LoadStaticObjectData()
 	}
 }
 
-void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
+void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 {
 	bool isDeleteBlocks = false;
 	bool isDeleteWaterBallons = false;
-	vector <int> hitObjectIndex;
 	static int ramdomNumber = 0;
 
-	//북서동남, (크기 4)
-	for (int i = 0; i < 4; i++)
+	for (auto hitObjects : hitObjectPos)
 	{
-		if (hitObjectPos[i].x == -1)
-			continue;
-		if (hitObjectPos[i].y == -1)
-			continue;
-
-		switch (mapData.data[hitObjectPos[i].y][hitObjectPos[i].x])
+		switch (mapData.data[hitObjects.y][hitObjects.x])
 		{
 		case 1:		// 블럭
 			isDeleteBlocks = true;
-			hitObjectIndex.emplace_back(i);
-			mapData.data[hitObjectPos[i].y][hitObjectPos[i].x] = 0;		//맵에서 오브젝트 삭제
+			mapData.data[hitObjects.y][hitObjects.x] = 0;		//맵에서 오브젝트 삭제
 			continue;
 		case 3:		//물풍선
 			isDeleteWaterBallons = true;
-			hitObjectIndex.emplace_back(i);
-			mapData.data[hitObjectPos[i].y][hitObjectPos[i].x] = 0;		//맵에서 오브젝트 삭제
+			mapData.data[hitObjects.y][hitObjects.x] = 0;		//맵에서 오브젝트 삭제
 			continue;
 		}
 	}
@@ -258,10 +244,10 @@ void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
 		//삭제부분
 		for (auto waterBallons : waterBallon)
 		{
-			for (auto hitObjects : hitObjectIndex)
+			for (auto hitObjects : hitObjectPos)
 			{
-				if (waterBallons->GetMapPos() == hitObjectPos[hitObjects])
-					waterBallons->SetIsEffect(true);
+				if (waterBallons->GetMapPos() == hitObjects)
+					waterBallons->SetIExplosionState();
 			}
 		}
 	}
@@ -271,14 +257,16 @@ void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
 
 	ObjectData::POSITION mapPos{ 0 };
 
-	for (int i = 0; i < hitObjectIndex.size(); i++)
+	for (auto hitObjects : hitObjectPos)
 	{
 		for (auto blocks = inGameObjectList.begin(); blocks != inGameObjectList.end();)
 		{
+			//오브젝트 좌표값을 맵의 좌표값으로 변환
 			mapPos.x = (((*blocks)->GetPosition().x + 20) / BLOCK_X) - 1;
 			mapPos.y = (((*blocks)->GetPosition().y + 2) / BLOCK_Y) - 1;
 
-			if ((mapPos.x == hitObjectPos[hitObjectIndex[i]].x) && (mapPos.y == hitObjectPos[hitObjectIndex[i]].y))
+
+			if ((mapPos.x == hitObjects.x) && (mapPos.y == hitObjects.y))
 			{	//allInGameScene에 있는 값 먼저 삭제하고
 				allInGameScene.remove_if([=](Obj* tempWaterBallon)->bool {
 					return ((tempWaterBallon->GetPosition().x == (*blocks)->GetPosition().x) && (tempWaterBallon->GetPosition().y == (*blocks)->GetPosition().y));
@@ -345,7 +333,7 @@ void InGameScene::DeleteWaterBallons()
 {
 	for (auto iterator = waterBallon.begin(); iterator != waterBallon.end();)
 	{
-		if (!(*iterator)->GetIsAlive())
+		if (WaterBallonState::DIE == (*iterator)->GetState())
 		{
 			switch ((*iterator)->GetColor())
 			{
@@ -368,6 +356,7 @@ void InGameScene::DeleteWaterBallons()
 
 			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
 			allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
+			waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
 			delete* iterator;
 			waterBallon.erase(iterator++);
 		}
@@ -375,9 +364,6 @@ void InGameScene::DeleteWaterBallons()
 			iterator++;
 	}
 
-	isDeleteWaterBallon = false;
-
-	waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
 	for (const auto& c : characterList)	
 		c->SetWaterBallonPos(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화
 }

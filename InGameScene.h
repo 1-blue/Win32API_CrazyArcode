@@ -16,7 +16,6 @@ private:
 	list <Obj*> inGameObjectList;		//INGAME Scene Data
 	list <Character*> characterList;	//캐릭터들저장	//obj를 바꾸기
 	list <WaterBallon*> waterBallon;	//물풍선들저장
-	bool isDeleteWaterBallon{ false };
 
 	MapData mapData;	//맵정보
 	ULONGLONG inGamePlayTime;	//게임 시작 시간
@@ -51,7 +50,7 @@ public:
 	void LoadStaticObjectData();
 
 private:
-	void DeleteHitObject(const ObjectData::POSITION* hitObjectPos);
+	void DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos);
 
 	void CreateWaterBallon(Character* character);
 	void DeleteWaterBallons();

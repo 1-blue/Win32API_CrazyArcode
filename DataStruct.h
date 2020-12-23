@@ -92,6 +92,17 @@ namespace ObjectData
 		VERTICAL
 	};
 }
+
+namespace WaterBallonState
+{
+	enum
+	{
+		DEFAULT,
+		EXPLOSION,
+		DIE
+	};
+}
+
 namespace GameStage
 {
 	enum

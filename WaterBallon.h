@@ -7,20 +7,19 @@ private:
 	int waterLength { 1 };	//물줄기
 	int color{ -1 };
 
-	ULONGLONG charAnimationTick;
-	ULONGLONG deadlineTick{ 0 };
+	ULONGLONG charAnimationTick;		//풍선 애니메이션 교체용 변수
+	ULONGLONG deadlineTick{ 0 };		//풍선 비활성화용 변수
 
 	MapData* mapData{ nullptr };
 
-	Direction::DirectionVar printDirCount{ 0,0,0,0 };
-	ObjectData::POSITION hitObjectPos[4] = { {-1,-1},{-1,-1},{-1,-1},{-1,-1} };	//피격 오브젝트 위치 (북,서,동,남)
+	Direction::DirectionVar printDirCount{ 0,0,0,0 };	//방향에 따른 물줄기 길이
+	vector<ObjectData::POSITION> hitObjectPos;	//피격 오브젝트 위치
 
-	ObjectData::POSITION mapPos{ 0 };
+	ObjectData::POSITION mapPos{ 0 };		//맵 정보
 
 	AttackArea attackArea{ {-1,-1}, -1, -1, -1, -1 };	//공격범위에대한 정보
 
-	bool isEffect{ false };
-	bool isAlive{ true };
+	int state{ WaterBallonState::DEFAULT };		//물풍선의 상태값
 
 	//물줄기 길이 설정
 	void SetEffectDir(const int x, const int y, const int dir, int& dirCount);	//폭발범위 설정
@@ -35,13 +34,12 @@ public:
 	
 	void GetMapData(MapData* mapData);
 
-	const bool GetIsEffect();
-	const bool GetIsAlive();
+	const int GetState();
 
-	void SetIsEffect(const bool isEffect);
+	void SetIExplosionState();
 
 	ObjectData::POSITION GetMapPos();
-	ObjectData::pPOSITION GetHitObjectPos();
+	vector<ObjectData::POSITION> GetHitObjectPos();
 
 	void SetColor(int color);
 	const int& GetColor() const;

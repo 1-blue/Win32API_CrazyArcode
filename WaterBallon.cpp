@@ -4,66 +4,60 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 {
 	int xCount = 0;		
 	int yCount = 0;		
-	int direction = 0;	
 
+	//SetEffectDir 코드를 4번실행, 동서남북에 따라 물줄기 길이 체크 관련 변수 세팅
 	switch (dir)
 	{
 	case Direction::TOP:
-		yCount = -1;
-		direction = Direction::TOP;
-		break;
+		yCount = -1;	break;
 	case Direction::BOTTOM:
-		yCount = 1;
-		direction = Direction::BOTTOM;
-		break;
+		yCount = 1;		break;
 	case Direction::RIGHT:
-		xCount = 1;
-		direction = Direction::RIGHT;
-		break;
+		xCount = 1;		break;
 	case Direction::LEFT:
-		xCount = -1;
-		direction = Direction::LEFT;
-		break;
+		xCount = -1;	break;
 	}
 
 	for (int n = 1; n <= waterLength; n++)
 	{
-		//범위 제한
+		//맵밖으로 물줄기 안나가게 맵크기 이상은 실행 안되게 설정
 		if (((y + (yCount * n)) < 0) || ((y + (yCount * n)) > 10))
 			return;
 		else if (((x + (xCount * n)) < 0) || ((x + (xCount * n)) > 14))
 			return;
 
-
+		//맵 정보를 가지고 물줄기 길이 설정
 		if (mapData->data[y + (yCount * n)][x + (xCount * n)] != 0)
 		{
-			hitObjectPos[direction].x = (x + (xCount * n));
-			hitObjectPos[direction].y = (y + (yCount * n));
+			ObjectData::POSITION pos;
+			pos.x = (x + (xCount * n));
+			pos.y = (y + (yCount * n));
 
-			//피격당한 오브젝트가 물풍선이 아니면 (벽, 블럭)이면 길이 제한
-			if(mapData->data[y + (yCount * n)][x + (xCount * n)] != 3)
-				return;
+			//피격 오브젝트 위치 저장
+			hitObjectPos.emplace_back(pos);
+
+			//피격당한 오브젝트가 물풍선이 아니면 (벽, 블럭)이면
+			if (mapData->data[y + (yCount * n)][x + (xCount * n)] != 3)
+				return; //길이 제한
 		}
+
+		//물줄기 길이 증가
 		dirCount++;
-
-		//공격범위값저장
-		attackArea.pos.x = mapPos.x;
-		attackArea.pos.y = mapPos.y;
-		switch (direction)
-		{
-		case Direction::TOP:
-			attackArea.t = dirCount;
-			break;
-		case Direction::RIGHT:
-			attackArea.r = dirCount;
-			break;
-		case Direction::BOTTOM:
-			attackArea.b = dirCount;
-			break;
-		case Direction::LEFT:
-			attackArea.l = dirCount;
-			break;
-		}
+	}
+		
+	//공격범위값저장
+	attackArea.pos.x = mapPos.x;
+	attackArea.pos.y = mapPos.y;
+	switch (dir)
+	{
+	case Direction::TOP:
+		attackArea.t = dirCount;	break;
+	case Direction::RIGHT:
+		attackArea.r = dirCount;	break;
+	case Direction::BOTTOM:
+		attackArea.b = dirCount;	break;
+	case Direction::LEFT:
+		attackArea.l = dirCount;	break;
 	}
 }
 
@@ -88,13 +82,12 @@ void WaterBallon::Input()
 
 void WaterBallon::Update()
 {
-	if (!isAlive)
+	if (WaterBallonState::DIE == state)
 		return;
-
-	if (isEffect)
+	if (WaterBallonState::EXPLOSION == state)
 	{
 		if (CheckmDelay(600, deadlineTick))
-			isAlive = false;
+			state = WaterBallonState::DIE;
 
 		if (!CheckmDelay(50, charAnimationTick))
 			return;
@@ -111,14 +104,14 @@ void WaterBallon::Update()
 
 	printhNumber++;					//시간지나면 모양변경
 	if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
-		SetIsEffect(true);
+		SetIExplosionState();
 }
 
 void WaterBallon::Render(HDC hDC, HDC memDc)
 {
 	SelectObject(memDc, hBitmap);
 
-	if (!isEffect)	//일반 출력
+	if (WaterBallonState::EXPLOSION != state)	//일반 출력
 	{
 		TransparentBlt(hDC,
 			pos.x, pos.y,					//출력될 이미지 시작좌표
@@ -196,19 +189,14 @@ void WaterBallon::GetMapData(MapData* mapData)
 	mapData->data[mapPos.y][mapPos.x] = 3;
 }
 
-const bool WaterBallon::GetIsEffect()
+const int WaterBallon::GetState()
 {
-	return isEffect;
+	return state;
 }
 
-const bool WaterBallon::GetIsAlive()
+void WaterBallon::SetIExplosionState()
 {
-	return isAlive;
-}
-
-void WaterBallon::SetIsEffect(const bool isEffect)
-{
-	this->isEffect = isEffect;
+	state = WaterBallonState::EXPLOSION;
 	printhNumber = 0;
 	mapData->data[mapPos.y][mapPos.x] = 0;	//물풍선 맵에서 제거
 
@@ -225,7 +213,7 @@ ObjectData::POSITION WaterBallon::GetMapPos()
 	return mapPos;
 }
 
-ObjectData::pPOSITION WaterBallon::GetHitObjectPos()
+vector<ObjectData::POSITION> WaterBallon::GetHitObjectPos()
 {
 	return hitObjectPos;
 }
