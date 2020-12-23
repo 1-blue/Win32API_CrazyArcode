@@ -196,32 +196,13 @@ void Character::Update()
 		DieAnimation();
 }
 
-ObjectData::Position Character::LateUpdate(const list<Obj*>& inGameObjects)
+void Character::LateUpdate(const list<Obj*>& inGameObjects)
 {
 	//이동제한
 	MapImmovableArea();
 	StaticObjectmmovableArea(inGameObjects);
 	WaterBallonImmovableArea();
 	dir = -1;
-
-	//아이템먹는지여부
-	RECT temp;
-	RECT character{ this->pos.x, this->pos.y, this->pos.x + BLOCK_X, this->pos.y + BLOCK_Y };
-	for (const auto& iterator : itemPos)
-	{
-		RECT item{ iterator.pos.x, iterator.pos.y, iterator.pos.x + BLOCK_X, iterator.pos.y + BLOCK_Y };
-		if (IntersectRect(&temp, &character, &item))
-		{
-			if (iterator.name == MessageQueue::StringToEnum("BompUP"))
-				WaterBallonNumberUP();
-			else if (iterator.name == MessageQueue::StringToEnum("PowerUP"))
-				WaterBallonLengthUP();
-			else if (iterator.name == MessageQueue::StringToEnum("SpeedUP"))
-				SpeedUP();
-			return iterator.pos;
-		}
-	}
-	return { -1, -1 };
 }
 
 void Character::Render(HDC hDC, HDC memDc)
@@ -357,10 +338,10 @@ void Character::SetWaterBallonPos(list<ObjectData::Position> waterBallonPos)
 	this->waterBallonPos = waterBallonPos;
 }
 
-void Character::SetItemPos(list<ItemData> itemPos)
-{
-	this->itemPos = itemPos;
-}
+//void Character::SetItemPos(list<ItemData> itemPos)
+//{
+//	this->itemPos = itemPos;
+//}
 
 Attack& Character::GetAttack()
 {

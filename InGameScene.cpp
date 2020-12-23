@@ -6,7 +6,7 @@
 #include "Item.h"
 
 ObjectData::POSITION InGameScene::removeWaterBallonPos{ 0,0 };
-ObjectData::POSITION InGameScene::removeItemPos{ 0,0 };
+ObjectData::POSITION InGameScene::removeItemPos{ -1,-1 };
 
 void InGameScene::Init()
 {
@@ -56,7 +56,10 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 			ObjectData::POSITION* pos = waterBallons->GetHitObjectPos();
 			DeleteHitObject(waterBallons->GetHitObjectPos());
 			for (const auto& character : characterList)		//물풍선 터질때 공격범위 전송
+			{
 				character->SetAttackArea(waterBallons->GetAttackArea());
+				this->CheckWaterBallonItem(waterBallons->GetAttackArea());
+			}
 		}
 
 		if (!waterBallons->GetIsAlive())
@@ -71,11 +74,11 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		character->Input();
 		this->CreateWaterBallon(character);
 		character->Update();
-		removeItemPos = character->LateUpdate(inGameObjectList);
-		if (removeItemPos.x != -1)
-			Deleteitem();
+		character->LateUpdate(inGameObjectList);
 		characterList.front()->CheckTrappedCollision(character);
 	}
+
+	CheckCharacterItem();
 
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
 	allInGameScene.sort(SortObject);
@@ -307,9 +310,6 @@ void InGameScene::DeleteHitObject(const ObjectData::POSITION* hitObjectPos)
 				++blocks;
 		}
 	}
-
-	for (const auto& character : characterList)
-		character->SetItemPos(itemPos);
 }
 
 void InGameScene::CreateWaterBallon(Character* character)
@@ -382,12 +382,101 @@ void InGameScene::DeleteWaterBallons()
 		c->SetWaterBallonPos(waterBallonPos);			//캐릭터들한테 물풍선 위치값 최신화
 }
 
-void InGameScene::Deleteitem()
+void InGameScene::CheckCharacterItem()
 {
-	allInGameScene.remove_if(RemoveItemData);	//allInGameScene에서 물풍선데이터삭제
-	itemPos.remove_if(RemoveItemData1);
-	for (const auto& c : characterList)
-		c->SetItemPos(itemPos);			//캐릭터들한테 아이템 위치값 최신화
+	RECT temp;
+	for (const auto& character : characterList)
+	{
+		RECT characterRect{ character->GetPosition().x, character->GetPosition().y, character->GetPosition().x + BLOCK_X, character->GetPosition().y + BLOCK_Y };
+		for (const auto& item : itemPos)
+		{
+			RECT itemRect{ item.pos.x, item.pos.y, item.pos.x + BLOCK_X, item.pos.y + BLOCK_Y };
+			if (IntersectRect(&temp, &characterRect, &itemRect))
+			{
+				if (item.name == MessageQueue::StringToEnum("BompUP"))
+					character->WaterBallonNumberUP();
+				else if (item.name == MessageQueue::StringToEnum("PowerUP"))
+					character->WaterBallonLengthUP();
+				else if (item.name == MessageQueue::StringToEnum("SpeedUP"))
+					character->SpeedUP();
+				removeItemPos = item.pos;
+			}
+		}
+	}
+
+	if (removeItemPos.x != -1)
+	{
+		allInGameScene.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
+		itemPos.remove_if(RemoveItemData1);			//item포지션리스트에서 아이템삭제
+		removeItemPos.x = -1;
+	}
+}
+
+void InGameScene::CheckWaterBallonItem(const AttackArea& attackArea)
+{
+	POINT boomPosition{ -1, -1 };	//터지는 물풍선의 위치
+	POINT boomPoint{ -1, -1 };		//터지는 물줄기와 아이템 조건검사할 좌표
+
+	for (const auto& item : itemPos)
+	{
+		if (attackArea.pos.x != -1)
+		{
+			boomPosition.x = attackArea.pos.x * BLOCK_X + 20;
+			boomPosition.y = attackArea.pos.y * BLOCK_Y + 25;
+
+			//위
+			for (int i = 0; i <= attackArea.t; i++)
+			{
+				boomPoint.y = boomPosition.y - (i * BLOCK_Y) + (BLOCK_Y / 2);
+				boomPoint.x = boomPosition.x + (BLOCK_X / 2);
+				if (item.pos.y <= boomPoint.y && item.pos.y + BLOCK_Y >= boomPoint.y
+					&& item.pos.x <= boomPoint.x && item.pos.x + BLOCK_X >= boomPoint.x)
+				{
+					removeItemPos = item.pos;
+				}
+			}
+			//우측
+			for (int i = 0; i <= attackArea.r; i++)
+			{
+				boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
+				boomPoint.x = boomPosition.x + (i * BLOCK_X) + (BLOCK_X / 2);
+				if (item.pos.y <= boomPoint.y && item.pos.y + BLOCK_Y >= boomPoint.y
+					&& item.pos.x <= boomPoint.x && item.pos.x + BLOCK_X >= boomPoint.x)
+				{
+					removeItemPos = item.pos;
+				}
+			}
+			//아래
+			for (int i = 0; i <= attackArea.b; i++)
+			{
+				boomPoint.y = boomPosition.y + (i * BLOCK_Y) + (BLOCK_Y / 2);
+				boomPoint.x = boomPosition.x + (BLOCK_X / 2);
+				if (item.pos.y <= boomPoint.y && item.pos.y + BLOCK_Y >= boomPoint.y
+					&& item.pos.x <= boomPoint.x && item.pos.x + BLOCK_X >= boomPoint.x)
+				{
+					removeItemPos = item.pos;
+				}
+			}
+			//좌측
+			for (int i = 0; i <= attackArea.l; i++)
+			{
+				boomPoint.y = boomPosition.y + (BLOCK_Y / 2);
+				boomPoint.x = boomPosition.x - (i * BLOCK_X) + (BLOCK_X / 2);
+				if (item.pos.y <= boomPoint.y && item.pos.y + BLOCK_Y >= boomPoint.y
+					&& item.pos.x <= boomPoint.x && item.pos.x + BLOCK_X >= boomPoint.x)
+				{
+					removeItemPos = item.pos;
+				}
+			}
+		}
+	}
+
+	if (removeItemPos.x != -1)
+	{
+		allInGameScene.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
+		itemPos.remove_if(RemoveItemData1);			//item포지션리스트에서 아이템삭제
+		removeItemPos.x = -1;
+	}
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)

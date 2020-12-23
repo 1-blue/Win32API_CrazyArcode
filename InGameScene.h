@@ -33,6 +33,7 @@ private:
 	static ObjectData::POSITION removeItemPos;			//삭제한아이템좌표 전체 업데이트해주는데 사용
 
 	bool isEndGame{ false };
+
 public:
 	void Init();
 	~InGameScene();
@@ -54,12 +55,13 @@ private:
 
 	void CreateWaterBallon(Character* character);
 	void DeleteWaterBallons();
-	void Deleteitem();
+	void CheckCharacterItem();
+	void CheckWaterBallonItem(const AttackArea& attackArea);
+
 	static bool SortObject(Obj* obj1, Obj* obj2);			//출력순서정렬을 위한 정렬함수
 	static bool RemoveWaterBallonData(Obj* tempWaterBallon);					//모든 물풍선사용하는 자료구조들 초기화해주기위해 사용
 	static bool RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon);	//함수 오버로딩이 안되가지고 두개만듦
 	void GameOver(const int playerColor);
-
 	static bool RemoveItemData(Obj* itemPosition);
 	static bool RemoveItemData1(ItemData itemPosition);
 };
