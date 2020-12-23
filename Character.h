@@ -28,7 +28,6 @@ private:
 	ULONGLONG deathTime;			//죽음애니메이션 변수
 
 	list<ObjectData::Position> waterBallonPos;
-	//list<ItemData> itemPos;
 
 	AttackArea attackArea{ {-1, -1}, -1, -1, -1, -1 };	//터지는 물풍선에 대한 정보,, 좌표, top, right, bottom, left
 
@@ -45,7 +44,6 @@ public:
 
 	bool CheckmDelay(ULONGLONG& animationTick, const int delayTime);
 	void SetWaterBallonPos(list<ObjectData::Position> waterBallonPos);	//물풍선 위치 가져오기
-	//void SetItemPos(list<ItemData> itemPos);				//아이템 위치 가져오기
 	Attack& GetAttack();			//공격관련 데이터전송
 	void SettingBallonNumber();
 

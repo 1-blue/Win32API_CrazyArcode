@@ -71,7 +71,7 @@ void Character::Input()
 			}
 			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
 			{
-				if (GetAsyncKeyState(VK_RSHIFT) & 0x8000)		//공격
+				if ((GetAsyncKeyState(VK_RSHIFT) & 0x0001))		//공격
 				{
 					attack.isColor = CharacterColor::RED;
 					attack.pos.x = pos.x;
@@ -108,7 +108,7 @@ void Character::Input()
 			}
 			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
 			{
-				if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)		//공격
+				if (GetAsyncKeyState(VK_LSHIFT) & 0x0001)		//공격
 				{
 					attack.isColor = CharacterColor::BLUE;
 					attack.pos.x = pos.x;
@@ -337,11 +337,6 @@ void Character::SetWaterBallonPos(list<ObjectData::Position> waterBallonPos)
 {
 	this->waterBallonPos = waterBallonPos;
 }
-
-//void Character::SetItemPos(list<ItemData> itemPos)
-//{
-//	this->itemPos = itemPos;
-//}
 
 Attack& Character::GetAttack()
 {

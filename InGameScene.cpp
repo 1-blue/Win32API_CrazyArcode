@@ -387,10 +387,13 @@ void InGameScene::CheckCharacterItem()
 	RECT temp;
 	for (const auto& character : characterList)
 	{
+		if (character->GetState() != State::NORMAL)
+			return;
+
 		RECT characterRect{ character->GetPosition().x, character->GetPosition().y, character->GetPosition().x + BLOCK_X, character->GetPosition().y + BLOCK_Y };
 		for (const auto& item : itemPos)
 		{
-			RECT itemRect{ item.pos.x, item.pos.y, item.pos.x + BLOCK_X, item.pos.y + BLOCK_Y };
+			RECT itemRect{ item.pos.x + 10, item.pos.y + 10, item.pos.x + BLOCK_X - 10, item.pos.y + BLOCK_Y - 10 };
 			if (IntersectRect(&temp, &characterRect, &itemRect))
 			{
 				if (item.name == MessageQueue::StringToEnum("BompUP"))
