@@ -17,6 +17,8 @@ void InGameScene::Init()
 	characterList.clear();
 	waterBallon.clear();
 	waterBallonPos.clear();
+
+	isEndGame = false;
 }
 
 InGameScene::~InGameScene()
@@ -75,11 +77,35 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	allInGameScene.sort(SortObject);
 	for (const auto& ts : allInGameScene)
 		ts->Render(memDCBack, memDC);
+
+	if (isEndGame)
+	{
+		if(GetTickCount64() > endGameTime + 2000)
+			MessageQueue::AddEventQueue({ EnumObj::exit, false });
+
+		return;
+	}
+
+	//1명이 죽었을 때 게임오버 처리
+	for (const auto& character : characterList)
+	{
+		if (character->GetState() == State::DEAD)
+			GameOver(character->GetColor());
+	}
+
+	//제한시간 2분 경과 시 DRAW 처리
+	if(GetTickCount64() > inGamePlayTime + 120000)
+		GameOver(-1);
 }
 
 void InGameScene::LoadData(const vector<pImageData>& inGameData)
 {
 	this->LoadInGameImage(inGameData);
+}
+
+void InGameScene::InitInGamePlayTime()
+{
+	inGamePlayTime = GetTickCount64();
 }
 
 list<Obj*>& InGameScene::GetInGameObjList()
@@ -343,4 +369,63 @@ bool InGameScene::RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon)
 	if (tempWaterBallon == removeWaterBallonPos && tempWaterBallon == removeWaterBallonPos)
 		return true;
 	return false;
+}
+
+void InGameScene::GameOver(const int playerColor)
+{
+	ObjectData::POSITION winUIPos{0,0};
+	ObjectData::POSITION loseUIPos{0,0};
+
+	bool isDraw = false;
+
+	switch (playerColor)
+	{
+	case CharacterColor::RED:
+		winUIPos = { 20,100 };
+		loseUIPos = { 300,100 };
+		break;
+	case CharacterColor::BLUE:
+		winUIPos = { 370,100 };
+		loseUIPos = { 15,100 };
+		break;
+	default:
+		winUIPos = { 170,100 };
+		isDraw = true;
+		break;
+	}
+	
+	if (isDraw)	//draw일 경우
+	{
+		for (auto inGameObjects : inGameObjectList)
+		{
+			if (inGameObjects->GetName() == EnumObj::drawUI)
+			{
+				inGameObjects->SetPosition(winUIPos);
+				inGameObjects->SetOrder(255);
+			}
+		}
+		isEndGame = true;
+		endGameTime = GetTickCount64();
+
+		return;
+	}
+
+	//UI 위치와 출력순서 수정해서 화면에 출력
+	for (auto inGameObjects : inGameObjectList)
+	{
+		switch (inGameObjects->GetName())
+		{
+		case EnumObj::winUI:
+			inGameObjects->SetPosition(winUIPos);
+			inGameObjects->SetOrder(255);
+			break;
+		case EnumObj::loseUI:
+			inGameObjects->SetPosition(loseUIPos);
+			inGameObjects->SetOrder(254);
+			break;
+		}
+	}
+
+	isEndGame = true;
+	endGameTime = GetTickCount64();
 }

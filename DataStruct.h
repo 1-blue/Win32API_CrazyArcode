@@ -262,7 +262,8 @@ namespace State
 	{
 		NORMAL,
 		TRAPPED,
-		DIE
+		DIE,
+		DEAD
 	};
 }
 

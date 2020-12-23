@@ -54,6 +54,7 @@ public:
 
 	void SetAttackArea(const AttackArea& attackArea);
 	void CheckTrappedCollision(Character* character);	//trapped상태에서 충돌했는지검사
+	const int GetState();
 	void SetState(int state);
 	int GetColor();
 

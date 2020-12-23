@@ -47,6 +47,9 @@ namespace EnumObj
 		BlueBazzi,
 		BlueDizni,
 		Trapped,
-		Die
+		Die,
+		drawUI,
+		loseUI,
+		winUI
 	};
 }

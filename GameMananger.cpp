@@ -27,6 +27,7 @@ void GameMananger::Run()
 	case GameStage::INGAME_LOADING:
 		LoadInGameData();
 		sceneManager->SetSceneState(GameStage::INGAME);
+		sceneManager->InitInGamePlayTime();
 		break;
 	case GameStage::INGAME_EXITING: 
 		sceneManager->InitInGameData();

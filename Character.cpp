@@ -277,8 +277,7 @@ void Character::Update()
 			dieImage.printHorizontalNumber++;
 			if (dieImage.printHorizontalNumber > dieImage.hNumber)
 			{
-				//게임종료UI띄우기
-				//SceneManager의 sceneState값 변경해야함
+				state = State::DEAD;
 			}
 		}
 	}
@@ -475,6 +474,11 @@ void Character::CheckTrappedCollision(Character* character)
 		character->SetState(State::DIE);
 }
 
+const int Character::GetState()
+{
+	return state;
+}
+
 void Character::SetState(int state)
 {
 	state = state;
@@ -521,9 +525,6 @@ void Character::MapImmovableArea()
 		pos.y = MOVE_MAX_Y;
 }
 
-//벡터를 받는게 아니라, 배열에 저장되어있는 숫자값을 받아가지고 하는게 더 빠를듯
-//바꿀려고 했는데 생각해보면 어차피 참조라 속도차이없을거고 const라 변화할일도없기도하고
-//map[][]을 받아오면 다시 pos값 구해야하는데 또 map크기만큼 연산해야하니까 이게더 낫다고 생각함
 void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 {
 	RECT characterRect{ pos.x, pos.y, pos.x + BLOCK_X, pos.y + BLOCK_Y };
@@ -532,16 +533,16 @@ void Character::StaticObjectmmovableArea(const list<Obj*>& inGameObjectVector)
 	//블록과 벽이동범위제한..
 	for (const auto& tempObj : inGameObjectVector)
 	{
-		if (tempObj->GetName() == MessageQueue::StringToEnum("background"))
+		if (tempObj->GetName() == EnumObj::background)
 			continue;
-		else if (tempObj->GetName() == MessageQueue::StringToEnum("Block"))
+		else if (tempObj->GetName() == EnumObj::Block)
 		{
 			objRect.left = tempObj->GetPosition().x;
 			objRect.top = tempObj->GetPosition().y - SIZE_TUNING;
 			objRect.right = tempObj->GetPosition().x + BLOCK_X;
 			objRect.bottom = tempObj->GetPosition().y + BLOCK_Y - SIZE_TUNING;
 		}
-		else if (tempObj->GetName() == MessageQueue::StringToEnum("Wall"))
+		else if (tempObj->GetName() == EnumObj::Wall)
 		{
 			objRect.left = tempObj->GetPosition().x;
 			objRect.top = tempObj->GetPosition().y;
