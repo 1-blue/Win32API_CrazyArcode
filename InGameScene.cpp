@@ -281,7 +281,8 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 				//블럭 삭제할때 그좌표에 아이템생성
 				srand((unsigned int)time(NULL));
 				++ramdomNumber;
-				if ((rand() * ramdomNumber + ramdomNumber) % 3 == 0)
+				//if ((rand() * ramdomNumber + ramdomNumber) % 3 == 0)
+				if (true)
 				{
 					inGameObjectList.emplace_back(new Item(
 						itemData->name,
@@ -376,7 +377,6 @@ void InGameScene::DeleteWaterBallons()
 
 void InGameScene::CheckCharacterItem()
 {
-	RECT temp;
 	for (const auto& character : characterList)
 	{
 		if (character->GetState() != State::NORMAL)
@@ -385,8 +385,9 @@ void InGameScene::CheckCharacterItem()
 		RECT characterRect{ character->GetPosition().x, character->GetPosition().y, character->GetPosition().x + BLOCK_X, character->GetPosition().y + BLOCK_Y };
 		for (const auto& item : itemPos)
 		{
-			RECT itemRect{ item.pos.x + 10, item.pos.y + 10, item.pos.x + BLOCK_X - 10, item.pos.y + BLOCK_Y - 10 };
-			if (IntersectRect(&temp, &characterRect, &itemRect))
+			RECT itemRect{ item.pos.x + 20, item.pos.y + 20, item.pos.x + BLOCK_X - 20, item.pos.y + BLOCK_Y - 20 };
+			if(characterRect.right > itemRect.left && characterRect.left < itemRect.right
+				&& characterRect.bottom > itemRect.top && characterRect.top < itemRect.bottom)
 			{
 				if (item.name == MessageQueue::StringToEnum("BompUP"))
 					character->WaterBallonNumberUP();

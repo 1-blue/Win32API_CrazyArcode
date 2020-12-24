@@ -46,22 +46,23 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 
 		//물줄기 길이 증가
 		dirCount++;
+
+		//공격범위값저장
+		attackArea.pos.x = mapPos.x;
+		attackArea.pos.y = mapPos.y;
+		switch (dir)
+		{
+		case Direction::TOP:
+			attackArea.t = dirCount;	break;
+		case Direction::RIGHT:
+			attackArea.r = dirCount;	break;
+		case Direction::BOTTOM:
+			attackArea.b = dirCount;	break;
+		case Direction::LEFT:
+			attackArea.l = dirCount;	break;
+		}
 	}
 		
-	//공격범위값저장
-	attackArea.pos.x = mapPos.x;
-	attackArea.pos.y = mapPos.y;
-	switch (dir)
-	{
-	case Direction::TOP:
-		attackArea.t = dirCount;	break;
-	case Direction::RIGHT:
-		attackArea.r = dirCount;	break;
-	case Direction::BOTTOM:
-		attackArea.b = dirCount;	break;
-	case Direction::LEFT:
-		attackArea.l = dirCount;	break;
-	}
 }
 
 WaterBallon::WaterBallon(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap,const int& waterLength)

@@ -41,12 +41,18 @@ void Character::Init()
 	state = State::NORMAL;		//현재상태
 	isAttackPossible = true;	//공격가능여부
 	isMoveable = true;			//이동가능여부
+	isOneClick = true;			//공격키 한번만 누르는지 체크
 	waterBallonNumber = 0;		//현재 놓은 물풍선 개수
 	charAnimationTick = GetTickCount64();	//애니메이션출력시간변수
 }
 
 void Character::Input()
 {
+	if (GetAsyncKeyState(VK_F1))
+		test = false;
+	if (GetAsyncKeyState(VK_F2))
+		test = true;
+
 	switch (color)
 	{
 	case CharacterColor::RED:
@@ -71,7 +77,7 @@ void Character::Input()
 			}
 			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
 			{
-				if ((GetAsyncKeyState(VK_RSHIFT) & 0x0001))		//공격
+				if ((GetAsyncKeyState(VK_RSHIFT) & 0x0001) && isOneClick)		//공격
 				{
 					attack.isColor = CharacterColor::RED;
 					attack.pos.x = pos.x;
@@ -82,7 +88,10 @@ void Character::Input()
 						lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
 						waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 					}
+					isOneClick = false;
 				}
+				else
+					isOneClick = true;
 			}
 		}
 		break;
@@ -108,18 +117,21 @@ void Character::Input()
 			}
 			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
 			{
-				if (GetAsyncKeyState(VK_LSHIFT) & 0x0001)		//공격
+				if ((GetAsyncKeyState(VK_LSHIFT) & 0x0001) && isOneClick)		//공격
 				{
 					attack.isColor = CharacterColor::BLUE;
 					attack.pos.x = pos.x;
 					attack.pos.y = pos.y + imageHeight / 2;
 					SettingAttackPos();		//물풍선 놓는위치 지정
-					if (OverlapCheck())		//물풍선 중복설치금지
+					if (OverlapCheck())		//물풍선 중복설치금지를 위한 코드
 					{
 						lastWaterBallonPos = attack.pos;	//마지막물풍선위치저장
 						waterBallonNumber++;				//캐릭터가 놓은 물풍선 수 증가
 					}
+					isOneClick = false;
 				}
+				else
+					isOneClick = true;
 			}
 		}
 		break;
@@ -185,7 +197,8 @@ void Character::Update()
 	}
 	order = pos.y;
 	
-	CheckBombArea();		//폭발시 캐릭터존재하는지 체크
+	if(test)	//if문 테스트 완료후 삭제
+		CheckBombArea();		//폭발시 캐릭터존재하는지 체크
 
 	//갇힌상태라면 실행
 	if (state == State::TRAPPED)

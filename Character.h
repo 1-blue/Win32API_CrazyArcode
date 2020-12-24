@@ -3,6 +3,10 @@
 
 class Character : public DynamicObject
 {
+public:
+	//임시추가 테스트용
+	bool test = true;		//테스트용캐릭터무적 F1누르면 무적 F2누르면 해제
+
 private:
 	CharacterStatsData stats{ 0 };	//캐릭터의 정보.. 물풍선개수, 속도 등을 가지고있음
 	Img trappedImage;				//trapped이미지 관련 변수들 저장
@@ -18,6 +22,7 @@ private:
 	bool isRevisit;				//마지막물풍선에서 범위밖으로 나갔는지 여부
 	bool isAttackPossible;		//공격가능여부
 	bool isMoveable;			//이동가능여부
+	bool isOneClick;			//공격키 한번만 눌렀는지 체크할 변수
 
 	POINT printPos{ 0, 0 };						//여러개 이미지중에서 출력할 위치
 	ObjectData::Position prevPos;				//이전위치
