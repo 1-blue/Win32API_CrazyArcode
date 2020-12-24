@@ -425,16 +425,15 @@ bool Character::OverlapCheck()
 	bool isExist = false;
 	for (const auto& wbPos : waterBallonPos)
 	{
-		if (attack.pos.x == wbPos.x && attack.pos.y == wbPos.y)
+		if (attack.pos.x == wbPos.x && attack.pos.y == wbPos.y)		//놓는위치에 물풍선이 존재하면 실행
 			isExist = true;
 	}
-	if (isExist)
+	if (isExist)		//물풍선존재시 false리턴
 		return false;
 
-	attack.isAttack = true;
+	attack.isAttack = true;		//공격가능
 
-	if (isRevisit == false)
-		isRevisit = true;
+	isRevisit = true;		//새로운 물풍선이 생성되면 isRevisit값 초기화
 	
 	return true;
 }
@@ -552,10 +551,13 @@ void Character::WaterBallonImmovableArea()
 		objRect.right = wbPos.x + BLOCK_X;
 		objRect.bottom = wbPos.y + BLOCK_Y - SIZE_TUNING;
 
-		//캐릭터위에 다른캐릭터가 물풍선을 놓은 경우 처리하는구문
+		//밑에 조건을 바꿔서 다른색의 마지막물풍선좌표가 필요하고 그 마지막물풍선만 무시하도록 만들어야함
+		//캐릭터위에 다른캐릭터가 물풍선을 놓은 경우 물풍선무시
 		if (prevPos.x < objRect.right && prevPos.x + BLOCK_X > objRect.left
 			&& prevPos.y < objRect.bottom && prevPos.y + BLOCK_Y > objRect.top)
+		{
 			continue;
+		}
 
 		//비껴서 앞으로나가기 + 이동제한
 		if (characterRect.left < objRect.right && characterRect.right > objRect.left
@@ -564,18 +566,32 @@ void Character::WaterBallonImmovableArea()
 			switch (dir)
 			{
 			case Direction::TOP:
+				if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
+					prevPos.x++;
+				else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
+					prevPos.x--;
+				prevPos.y = objRect.bottom;
+				break;
 			case Direction::BOTTOM:
 				if (objRect.right > characterRect.left&& objRect.right - characterRect.left <= PERMIT_RANGE)
 					prevPos.x++;
 				else if (objRect.left < characterRect.right && characterRect.right - objRect.left <= PERMIT_RANGE)
 					prevPos.x--;
+				prevPos.y = objRect.top - BLOCK_Y;
 				break;
 			case Direction::LEFT:
+				if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
+					prevPos.y++;
+				else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
+					prevPos.y--;
+				prevPos.x = objRect.right;
+				break;
 			case Direction::RIGHT:
 				if (objRect.bottom > characterRect.top&& objRect.bottom - characterRect.top <= PERMIT_RANGE)
 					prevPos.y++;
 				else if (objRect.top < characterRect.bottom && characterRect.bottom - objRect.top <= PERMIT_RANGE)
 					prevPos.y--;
+				prevPos.x = objRect.left - BLOCK_X;
 				break;
 			}
 			pos = prevPos;

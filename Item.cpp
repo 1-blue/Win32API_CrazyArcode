@@ -3,8 +3,8 @@
 Item::Item(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap, int ramdomNumber)
 	: DynamicObject(name, pos, size, hNumber, vNumber, hBitmap)
 {
-	srand((unsigned int)time(NULL));
-	printNumber = (rand() * ramdomNumber) % 3;
+	srand((unsigned int)time(NULL) / ramdomNumber);
+	printNumber = (rand()* ramdomNumber) % 3;
 
 	this->name = printNumber + 22;		//임시로 +22
 }

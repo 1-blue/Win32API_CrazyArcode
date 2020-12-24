@@ -282,7 +282,7 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 
 				//블럭 삭제할때 그좌표에 아이템생성
 				++ramdomNumber;
-				if (true)
+				if ((rand() * ramdomNumber + ramdomNumber) % 3 == 0)
 				{
 					inGameObjectList.emplace_back(new Item(
 						itemData->name,
@@ -391,11 +391,11 @@ void InGameScene::CheckCharacterItem()
 			if(characterRect.right > itemRect.left && characterRect.left < itemRect.right
 				&& characterRect.bottom > itemRect.top && characterRect.top < itemRect.bottom)
 			{
-				if (item.name == MessageQueue::StringToEnum("BompUP"))
+				if (item.name == EnumObj::BompUP)
 					character->WaterBallonNumberUP();
-				else if (item.name == MessageQueue::StringToEnum("PowerUP"))
+				else if (item.name == EnumObj::PowerUP)
 					character->WaterBallonLengthUP();
-				else if (item.name == MessageQueue::StringToEnum("SpeedUP"))
+				else if (item.name == EnumObj::SpeedUP)
 					character->SpeedUP();
 				removeItemPos = item.pos;
 			}
@@ -486,7 +486,7 @@ void InGameScene::PrintAndUpdateInGameTime(HDC hdc)
 	int minute = (second / 60);
 
 	sprintf_s(printInGamePlayTimeChar, "%d:%d", 2-minute, 59-(second%60));
-	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar)-1);
+	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar) - 1);
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
