@@ -87,12 +87,8 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	for (const auto& ts : totalInGameObjects)
 		ts->Render(memDCBack, memDC);
 
-	//플레이 시간 출력
-	if(!(GetTickCount64() > inGamePlayTime + 180000))
-		PrintAndUpdateInGameTime(memDCBack);
-
 	if (isEndGame)
-	{
+	{	//게임 끝나면 2초 후 종료
 		if(GetTickCount64() > endGameTime + 2000)
 			MessageQueue::AddEventQueue({ EnumObj::exit, false });
 
@@ -105,6 +101,10 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		if (character->GetState() == State::DEAD)
 			GameOver(character->GetColor());
 	}
+
+	//플레이 시간 출력
+	if (!(GetTickCount64() > inGamePlayTime + 180000))
+		PrintAndUpdateInGameTime(memDCBack);
 
 	//제한시간 3분 경과 시 DRAW 처리
 	if(GetTickCount64() > inGamePlayTime + 180000)
@@ -484,9 +484,15 @@ void InGameScene::PrintAndUpdateInGameTime(HDC hdc)
 
 	int second = ((GetTickCount64() - inGamePlayTime)/1000);
 	int minute = (second / 60);
+	int deletePrintCharSize = 0;
+
+	if (59 - (second % 60) < 10)
+		deletePrintCharSize = 2;
+	else
+		deletePrintCharSize = 1;
 
 	sprintf_s(printInGamePlayTimeChar, "%d:%d", 2-minute, 59-(second%60));
-	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar) - 1);
+	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar) - deletePrintCharSize);
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
