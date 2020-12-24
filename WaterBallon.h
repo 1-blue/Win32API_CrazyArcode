@@ -13,7 +13,8 @@ private:
 	MapData* mapData{ nullptr };
 
 	Direction::DirectionVar printDirCount{ 0,0,0,0 };	//방향에 따른 물줄기 길이
-	vector<ObjectData::POSITION> hitObjectPos;	//피격 오브젝트 위치
+	vector<ObjectData::POSITION> hitObjectPos;			//피격 오브젝트 위치
+	vector<ObjectData::POSITION> hitWaterBallonstPos;	//피격 물풍선 위치
 
 	ObjectData::POSITION mapPos{ 0 };		//맵 정보
 
@@ -36,10 +37,11 @@ public:
 
 	const int GetState();
 
-	void SetIExplosionState();
+	void SetExplosionState();
 
 	ObjectData::POSITION GetMapPos();
 	vector<ObjectData::POSITION> GetHitObjectPos();
+	vector<ObjectData::POSITION> GetHitWaterBallonsPos();
 
 	void SetColor(int color);
 	const int& GetColor() const;

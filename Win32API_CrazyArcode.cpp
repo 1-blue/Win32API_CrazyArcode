@@ -46,7 +46,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     GameMananger gameManager(hWnd);
     gameManager.LoadLobbyData();
     gameManager.LoadMapData();
-
+  
     // 기본 메시지 루프입니다:
     while (true)
     {
@@ -156,7 +156,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-          
 
             EndPaint(hWnd, &ps);
         }

@@ -197,7 +197,9 @@ namespace Objects
 	{
 		BLANK,
 		BLOCK,
-		WALL
+		WALL,
+		WATERBALLON,
+		ITEM
 	};
 	enum
 	{

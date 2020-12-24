@@ -33,12 +33,15 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 			pos.x = (x + (xCount * n));
 			pos.y = (y + (yCount * n));
 
-			//피격 오브젝트 위치 저장
-			hitObjectPos.emplace_back(pos);
+			if (mapData->data[y + (yCount * n)][x + (xCount * n)] == 3)
+				hitWaterBallonstPos.emplace_back(pos);
 
 			//피격당한 오브젝트가 물풍선이 아니면 (벽, 블럭)이면
 			if (mapData->data[y + (yCount * n)][x + (xCount * n)] != 3)
+			{
+				hitObjectPos.emplace_back(pos);		//피격 오브젝트 위치 저장
 				return; //길이 제한
+			}
 		}
 
 		//물줄기 길이 증가
@@ -86,10 +89,10 @@ void WaterBallon::Update()
 		return;
 	if (WaterBallonState::EXPLOSION == state)
 	{
-		if (CheckmDelay(600, deadlineTick))
+		if (CheckmDelay(640, deadlineTick))
 			state = WaterBallonState::DIE;
 
-		if (!CheckmDelay(50, charAnimationTick))
+		if (!CheckmDelay(80, charAnimationTick))
 			return;
 		printhNumber++;
 
@@ -104,7 +107,7 @@ void WaterBallon::Update()
 
 	printhNumber++;					//시간지나면 모양변경
 	if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
-		SetIExplosionState();
+		SetExplosionState();
 }
 
 void WaterBallon::Render(HDC hDC, HDC memDc)
@@ -194,7 +197,7 @@ const int WaterBallon::GetState()
 	return state;
 }
 
-void WaterBallon::SetIExplosionState()
+void WaterBallon::SetExplosionState()
 {
 	state = WaterBallonState::EXPLOSION;
 	printhNumber = 0;
@@ -216,6 +219,11 @@ ObjectData::POSITION WaterBallon::GetMapPos()
 vector<ObjectData::POSITION> WaterBallon::GetHitObjectPos()
 {
 	return hitObjectPos;
+}
+
+vector<ObjectData::POSITION> WaterBallon::GetHitWaterBallonsPos()
+{
+	return hitWaterBallonstPos;
 }
 
 void WaterBallon::SetColor(int color)
