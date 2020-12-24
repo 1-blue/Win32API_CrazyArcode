@@ -272,7 +272,7 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 			mapPos.x = (((*blocks)->GetPosition().x + 20) / BLOCK_X) - 1;
 			mapPos.y = (((*blocks)->GetPosition().y + 2) / BLOCK_Y) - 1;
 
-			if ((mapPos.x == hitObjects.x) && (mapPos.y == hitObjects.y))
+			if ((mapPos.x == hitObjects.x) && (mapPos.y == hitObjects.y) && (*blocks)->GetName() == EnumObj::Block)
 			{	//allInGameScene에 있는 값 먼저 삭제하고
 				allInGameScene.remove_if([=](Obj* tempWaterBallon)->bool {
 					return ((tempWaterBallon->GetPosition().x == (*blocks)->GetPosition().x) && (tempWaterBallon->GetPosition().y == (*blocks)->GetPosition().y));
@@ -281,8 +281,7 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 				//블럭 삭제할때 그좌표에 아이템생성
 				srand((unsigned int)time(NULL));
 				++ramdomNumber;
-				//if ((rand() * ramdomNumber + ramdomNumber) % 3 == 0)
-				if (true)
+				if ((rand() * ramdomNumber + ramdomNumber) % 3 == 0)
 				{
 					inGameObjectList.emplace_back(new Item(
 						itemData->name,
@@ -389,11 +388,11 @@ void InGameScene::CheckCharacterItem()
 			if(characterRect.right > itemRect.left && characterRect.left < itemRect.right
 				&& characterRect.bottom > itemRect.top && characterRect.top < itemRect.bottom)
 			{
-				if (item.name == MessageQueue::StringToEnum("BompUP"))
+				if (item.name == EnumObj::BompUP)
 					character->WaterBallonNumberUP();
-				else if (item.name == MessageQueue::StringToEnum("PowerUP"))
+				else if (item.name == EnumObj::PowerUP)
 					character->WaterBallonLengthUP();
-				else if (item.name == MessageQueue::StringToEnum("SpeedUP"))
+				else if (item.name == EnumObj::SpeedUP)
 					character->SpeedUP();
 				removeItemPos = item.pos;
 			}
@@ -484,7 +483,7 @@ void InGameScene::PrintAndUpdateInGameTime(HDC hdc)
 	int minute = (second / 60);
 
 	sprintf_s(printInGamePlayTimeChar, "%d:%d", 2-minute, 59-(second%60));
-	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar));
+	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar) - 1);
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
