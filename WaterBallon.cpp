@@ -1,6 +1,6 @@
 ﻿#include "WaterBallon.h"
 
-void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dirCount)
+void WaterBallon::SetExplosiontDir(const int x, const int y, const int dir, int& dirCount)
 {
 	int xCount = 0;		
 	int yCount = 0;		
@@ -26,27 +26,22 @@ void WaterBallon::SetEffectDir(const int x, const int y, const int dir, int& dir
 		else if (((x + (xCount * n)) < 0) || ((x + (xCount * n)) > 14))
 			return;
 
-		//맵 정보를 가지고 물줄기 길이 설정
-		if (mapData->data[y + (yCount * n)][x + (xCount * n)] != 0)
+		ObjectData::POSITION pos;
+		pos.x = (x + (xCount * n));
+		pos.y = (y + (yCount * n));
+
+		switch ((mapData->data[y + (yCount * n)][x + (xCount * n)]))
 		{
-			ObjectData::POSITION pos;
-			pos.x = (x + (xCount * n));
-			pos.y = (y + (yCount * n));
-
-			if (mapData->data[y + (yCount * n)][x + (xCount * n)] == 3)
-				hitWaterBallonstPos.emplace_back(pos);
-
-			//피격당한 오브젝트가 물풍선이 아니면 (벽, 블럭)이면
-			if (mapData->data[y + (yCount * n)][x + (xCount * n)] != 3)
-			{
-				hitObjectPos.emplace_back(pos);		//피격 오브젝트 위치 저장
-				return; //길이 제한
-			}
+		case Objects::BLANK:
+			++dirCount;		break;
+		case Objects::BLOCK:
+			hitObjectPos.emplace_back(pos);		return;
+		case Objects::WALL:	return;;
+		case Objects::WATERBALLON:
+			hitWaterBallonstPos.emplace_back(pos);
+			++dirCount;
+			break;
 		}
-
-		//물줄기 길이 증가
-		dirCount++;
-
 		//공격범위값저장
 		attackArea.pos.x = mapPos.x;
 		attackArea.pos.y = mapPos.y;
@@ -90,15 +85,12 @@ void WaterBallon::Update()
 		return;
 	if (WaterBallonState::EXPLOSION == state)
 	{
-		if (CheckmDelay(640, deadlineTick))
-			state = WaterBallonState::DIE;
-
 		if (!CheckmDelay(80, charAnimationTick))
 			return;
 		printhNumber++;
 
 		if (printhNumber == hNumber)	//시간지나면,, 현재조건 : 8번반복하면
-			printhNumber = 0;
+			state = WaterBallonState::DIE;
 
 		return;
 	}
@@ -204,12 +196,10 @@ void WaterBallon::SetExplosionState()
 	printhNumber = 0;
 	mapData->data[mapPos.y][mapPos.x] = 0;	//물풍선 맵에서 제거
 
-	SetEffectDir(mapPos.x, mapPos.y, Direction::TOP, printDirCount.north);
-	SetEffectDir(mapPos.x, mapPos.y, Direction::BOTTOM, printDirCount.south);
-	SetEffectDir(mapPos.x, mapPos.y, Direction::RIGHT, printDirCount.east);
-	SetEffectDir(mapPos.x, mapPos.y, Direction::LEFT, printDirCount.west);
-
-	deadlineTick = GetTickCount64(); // 이펙트 시작 타임부터 죽음까지 시간 체크
+	SetExplosiontDir(mapPos.x, mapPos.y, Direction::TOP, printDirCount.north);
+	SetExplosiontDir(mapPos.x, mapPos.y, Direction::BOTTOM, printDirCount.south);
+	SetExplosiontDir(mapPos.x, mapPos.y, Direction::RIGHT, printDirCount.east);
+	SetExplosiontDir(mapPos.x, mapPos.y, Direction::LEFT, printDirCount.west);
 }
 
 ObjectData::POSITION WaterBallon::GetMapPos()

@@ -1,16 +1,24 @@
 ﻿#pragma once
 #include "DynamicObject.h"
 
+namespace ClickedState
+{
+	enum
+	{
+		DEFAULT,
+		LMOUSEDOWN,
+		RMOUSEDOWN,
+	};
+}
+
 class BtnObj : public DynamicObject
 {
 private:
 	POINT cursorPos{ 0,0 };
 
 	bool isOverlap{ false };
-	bool isLClicked{ false };
-	bool isRClicked{ false };
-
-	ULONGLONG clickDelayTick{ 0 };
+	bool playingSound{ false };
+	int state{ ClickedState::DEFAULT };
 public:
 	BtnObj();
 	BtnObj(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap);
@@ -18,7 +26,4 @@ public:
 
 	virtual void Input();
 	virtual void Update();
-
-	const bool CheckmDelay(const int delayTime);
 };
-

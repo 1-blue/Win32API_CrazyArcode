@@ -4,6 +4,7 @@
 #include "Block.h"
 #include "Wall.h"
 #include "Item.h"
+#include "SoundManager.h"
 #include <stdio.h>
 
 ObjectData::POSITION InGameScene::removeWaterBallonPos{ 0,0 };
@@ -11,11 +12,11 @@ ObjectData::POSITION InGameScene::removeItemPos{ -1,-1 };
 
 void InGameScene::Init()
 {
-	for (auto& scene : allInGameScene)		//여기서 사용하던 모든 오브젝트들 delete
+	for (auto& scene : totalInGameObjects)		//여기서 사용하던 모든 오브젝트들 delete
 		delete scene;
 
 	//list들 clear
-	allInGameScene.clear();		
+	totalInGameObjects.clear();		
 	inGameObjectList.clear();
 	characterList.clear();
 	waterBallon.clear();
@@ -26,17 +27,17 @@ void InGameScene::Init()
 
 InGameScene::~InGameScene()
 {
-	for (auto& scene : allInGameScene)		//여기서 사용하던 모든 오브젝트들 delete
+	for (auto& scene : totalInGameObjects)		//여기서 사용하던 모든 오브젝트들 delete
 		delete scene;
 
 	//data와 bitmap가진 list까지 모두 clear
-	allInGameScene.clear();
+	totalInGameObjects.clear();
 	inGameObjectList.clear();
 	characterList.clear();
 	waterBallon.clear();
 	objectsData.clear();
 	objectsBitmap.clear();
-	allInGameScene.clear();
+	totalInGameObjects.clear();
 }
 
 void InGameScene::Process(HDC memDCBack, HDC memDC)
@@ -46,6 +47,9 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		inGameObj->Input();
 		inGameObj->Update();
 	}
+
+	//위에서 설정한 값으로 물풍선 삭제처리
+	DeleteWaterBallons();
 
 	for (const auto& waterBallons : waterBallon)
 	{
@@ -67,9 +71,6 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 			DeleteHitObject(waterBallons->GetHitObjectPos());
 	}
 
-	//위에서 설정한 값으로 물풍선 삭제처리
-	DeleteWaterBallons();
-
 	for (const auto& character : characterList)
 	{
 		character->Input();
@@ -82,8 +83,8 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	CheckCharacterItem();
 
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
-	allInGameScene.sort(SortObject);
-	for (const auto& ts : allInGameScene)
+	totalInGameObjects.sort(SortObject);
+	for (const auto& ts : totalInGameObjects)
 		ts->Render(memDCBack, memDC);
 
 	//플레이 시간 출력
@@ -118,6 +119,7 @@ void InGameScene::LoadData(const vector<pImageData>& inGameData)
 void InGameScene::InitInGamePlayTime()
 {
 	inGamePlayTime = GetTickCount64();
+	srand((unsigned int)time(NULL));
 }
 
 list<Obj*>& InGameScene::GetInGameObjList()
@@ -145,7 +147,7 @@ void InGameScene::LoadInGameImage(const vector<pImageData>& inGameImage)
 				{ inGameObj->x,inGameObj->y },
 				{ bitMap.bmWidth ,bitMap.bmHeight },
 				inGameObj->hBitmap));
-			allInGameScene.emplace_back(inGameObjectList.back());		//allInGameScene에 백그라운드
+			totalInGameObjects.emplace_back(inGameObjectList.back());		//allInGameScene에 백그라운드
 			break;
 		case Objects::DYNAMIC:					//dynamic
 			inGameObjectList.emplace_back(new DynamicObject(inGameObj->name,
@@ -183,7 +185,7 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, const pImag
 		characterImage->hBitmap,
 		characterStats));
 
-	allInGameScene.emplace_back(characterList.back());
+	totalInGameObjects.emplace_back(characterList.back());
 
 	//die, trapped추가
 	characterList.back()->GetDefaultImage(trappedImage, dieImage);
@@ -211,7 +213,7 @@ void InGameScene::LoadStaticObjectData()
 					{ objectsBitmap[0].bmWidth, objectsBitmap[0].bmHeight },
 					objectsData[0]->hBitmap
 					));
-				allInGameScene.emplace_back(inGameObjectList.back());
+				totalInGameObjects.emplace_back(inGameObjectList.back());
 				break;
 			case Objects::WALL:		//벽생성.. 벽이랑 블럭이랑 사이즈가 달라가지고 놓는 위치 지정할때 블럭사이즈이용하고, -20함
 				inGameObjectList.emplace_back(new Wall(
@@ -220,7 +222,7 @@ void InGameScene::LoadStaticObjectData()
 					{ objectsBitmap[1].bmWidth, objectsBitmap[1].bmHeight },
 					objectsData[1]->hBitmap
 				));
-				allInGameScene.emplace_back(inGameObjectList.back());
+				totalInGameObjects.emplace_back(inGameObjectList.back());
 				break;
 			}
 		}
@@ -272,16 +274,14 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 			mapPos.x = (((*blocks)->GetPosition().x + 20) / BLOCK_X) - 1;
 			mapPos.y = (((*blocks)->GetPosition().y + 2) / BLOCK_Y) - 1;
 
-			if ((mapPos.x == hitObjects.x) && (mapPos.y == hitObjects.y))
+			if ((mapPos.x == hitObjects.x) && (mapPos.y == hitObjects.y) && (*blocks)->GetName() == EnumObj::Block)
 			{	//allInGameScene에 있는 값 먼저 삭제하고
-				allInGameScene.remove_if([=](Obj* tempWaterBallon)->bool {
+				totalInGameObjects.remove_if([=](Obj* tempWaterBallon)->bool {
 					return ((tempWaterBallon->GetPosition().x == (*blocks)->GetPosition().x) && (tempWaterBallon->GetPosition().y == (*blocks)->GetPosition().y));
 					});
 
 				//블럭 삭제할때 그좌표에 아이템생성
-				srand((unsigned int)time(NULL));
 				++ramdomNumber;
-				//if ((rand() * ramdomNumber + ramdomNumber) % 3 == 0)
 				if (true)
 				{
 					inGameObjectList.emplace_back(new Item(
@@ -292,7 +292,7 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 						itemData->hBitmap,
 						ramdomNumber
 					));
-					allInGameScene.emplace_back(inGameObjectList.back());
+					totalInGameObjects.emplace_back(inGameObjectList.back());
 					itemPos.emplace_back(ItemData{ inGameObjectList.back()->GetName(), (*blocks)->GetPosition() });
 				}
 
@@ -332,7 +332,9 @@ void InGameScene::CreateWaterBallon(Character* character)
 		for (const auto& c : characterList)
 			c->SetWaterBallonPos(waterBallonPos);
 
-		allInGameScene.emplace_back(waterBallon.back());
+		totalInGameObjects.emplace_back(waterBallon.back());
+
+		SoundManager::GetInstance()->PlayEffectSound(1);
 	}
 }
 
@@ -362,7 +364,7 @@ void InGameScene::DeleteWaterBallons()
 			}
 
 			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
-			allInGameScene.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
+			totalInGameObjects.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
 			waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
 			delete* iterator;
 			waterBallon.erase(iterator++);
@@ -402,7 +404,7 @@ void InGameScene::CheckCharacterItem()
 
 	if (removeItemPos.x != -1)
 	{
-		allInGameScene.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
+		totalInGameObjects.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
 		itemPos.remove_if(RemoveItemData1);			//item포지션리스트에서 아이템삭제
 		removeItemPos.x = -1;
 	}
@@ -469,7 +471,7 @@ void InGameScene::CheckWaterBallonItem(const AttackArea& attackArea)
 
 	if (removeItemPos.x != -1)
 	{
-		allInGameScene.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
+		totalInGameObjects.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
 		itemPos.remove_if(RemoveItemData1);			//item포지션리스트에서 아이템삭제
 		removeItemPos.x = -1;
 	}
@@ -484,7 +486,7 @@ void InGameScene::PrintAndUpdateInGameTime(HDC hdc)
 	int minute = (second / 60);
 
 	sprintf_s(printInGamePlayTimeChar, "%d:%d", 2-minute, 59-(second%60));
-	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar));
+	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar)-1);
 }
 
 bool InGameScene::SortObject(Obj* obj1, Obj* obj2)

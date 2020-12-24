@@ -1,5 +1,6 @@
 ﻿#include "BtnObj.h"
 #include "MessageQueue.h"
+#include "SoundManager.h"
 
 extern HWND hWnd;
 
@@ -25,55 +26,50 @@ void BtnObj::Input()
 		&& (cursorPos.y >= pos.y && cursorPos.y <= pos.y + size.height / vNumber))
 	{
 		isOverlap = true;
-		//버튼클릭하면
 
-		if (GetAsyncKeyState(MK_LBUTTON) & 0x8000)
-			isLClicked = true;
-		else if(GetAsyncKeyState(MK_RBUTTON) & 0x8000)
-			isRClicked = true;
-
-		if (!CheckmDelay(100))
-			return;
-
-		if (isLClicked == true)
+		if (!playingSound)
 		{
-			MessageQueue::AddEventQueue({name,false});
+			SoundManager::GetInstance()->PlayEffectSound(2);
+			playingSound = true;
 		}
-		else if (isRClicked == true)
-		{
-			MessageQueue::AddEventQueue({name,true});
-		}
-
-		isLClicked = false;
-		isRClicked = false;
 	}
 	else //화면 밖으로 나가면 원상복구
 	{
 		isOverlap = false;
-		isLClicked = false;
-		isRClicked = false;
+		playingSound = false;
+		state = ClickedState::DEFAULT;
+	}
+
+	if (!isOverlap)
+		return;
+
+	if (GetAsyncKeyState(MK_LBUTTON) & 0x8000)
+		state = ClickedState::LMOUSEDOWN;
+	else if (GetAsyncKeyState(MK_RBUTTON) & 0x8000)
+		state = ClickedState::RMOUSEDOWN;
+
+	if (ClickedState::LMOUSEDOWN == state)
+	{
+		if (!(GetAsyncKeyState(MK_LBUTTON) & 0x8000))
+		{
+			MessageQueue::AddEventQueue({ name,false });
+			state = ClickedState::DEFAULT;
+		}
+	}
+	else if (ClickedState::RMOUSEDOWN == state)
+	{
+		if (!(GetAsyncKeyState(MK_RBUTTON) & 0x8000))
+		{
+			MessageQueue::AddEventQueue({ name,true });
+			state = ClickedState::DEFAULT;
+		}
 	}
 }
 
 void BtnObj::Update()
 {
-	if (isOverlap == false)
-	{
+	if (!isOverlap)
 		imageNumber = 0;
-	}
-	else if (isOverlap == true)
-	{
+	else
 		imageNumber = 1;
-	}
 }
-
-const bool BtnObj::CheckmDelay(const int delayTime)
-{
-	if (GetTickCount64() > clickDelayTick + delayTime)
-	{
-		clickDelayTick = GetTickCount64();
-		return true;
-	}
-	return false;
-}
-

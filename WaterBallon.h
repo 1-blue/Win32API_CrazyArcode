@@ -8,7 +8,6 @@ private:
 	int color{ -1 };
 
 	ULONGLONG charAnimationTick;		//풍선 애니메이션 교체용 변수
-	ULONGLONG deadlineTick{ 0 };		//풍선 비활성화용 변수
 
 	MapData* mapData{ nullptr };
 
@@ -23,7 +22,7 @@ private:
 	int state{ WaterBallonState::DEFAULT };		//물풍선의 상태값
 
 	//물줄기 길이 설정
-	void SetEffectDir(const int x, const int y, const int dir, int& dirCount);	//폭발범위 설정
+	void SetExplosiontDir(const int x, const int y, const int dir, int& dirCount);	//폭발범위 설정
 public:
 	WaterBallon(const int name, const ObjectData::POSITION pos, const ObjectData::SIZE size, int hNumber, int vNumber, HBITMAP hBitmap,const int& waterLength);
 	~WaterBallon();

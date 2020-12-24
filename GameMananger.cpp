@@ -3,12 +3,16 @@
 #include "ImageManager.h"
 #include "MapManager.h"
 #include "MessageQueue.h"
+#include "SoundManager.h"
 
 GameMananger::GameMananger(HWND hWnd)
 {
 	sceneManager = new SceneManager(hWnd);
 	imageManager = new ImageManager();
 	mapManager = new MapManager();
+	soundManager = SoundManager::GetInstance();
+
+	soundManager->PlaySoundTrack(1);
 }
 
 GameMananger::~GameMananger()
@@ -16,6 +20,7 @@ GameMananger::~GameMananger()
 	delete sceneManager;
 	delete imageManager;
 	delete mapManager;
+	SoundManager::ReleaseInstance();
 }
 
 void GameMananger::Run()
@@ -28,10 +33,12 @@ void GameMananger::Run()
 		LoadInGameData();
 		sceneManager->SetSceneState(GameStage::INGAME);
 		sceneManager->InitInGamePlayTime();
+		soundManager->PlaySoundTrack(2);
 		break;
 	case GameStage::INGAME_EXITING: 
 		sceneManager->InitInGameData();
 		sceneManager->SetSceneState(GameStage::LOBBY);
+		soundManager->PlaySoundTrack(1);
 		break;	
 	}
 }

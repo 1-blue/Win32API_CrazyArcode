@@ -4,12 +4,14 @@
 class SceneManager;
 class ImageManager;
 class MapManager;
+class SoundManager;
 class GameMananger
 {
 private:
 	SceneManager* sceneManager{ NULL };
 	ImageManager* imageManager{ NULL };
 	MapManager* mapManager{ NULL };
+	SoundManager* soundManager{ NULL };
 
 public:
 	GameMananger(HWND hWnd);
