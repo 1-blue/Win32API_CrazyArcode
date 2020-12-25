@@ -217,12 +217,12 @@ vector<ObjectData::POSITION> WaterBallon::GetHitWaterBallonsPos()
 	return hitWaterBallonstPos;
 }
 
-void WaterBallon::SetColor(int color)
+void WaterBallon::SetColor(CharacterColor color)
 {
 	this->color = color;
 }
 
-const int& WaterBallon::GetColor() const
+CharacterColor WaterBallon::GetColor() const
 {
 	return color;
 }

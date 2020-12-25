@@ -33,8 +33,6 @@ constexpr auto SIZE_TUNING = 20;	//이거는 블록위치에 덮어서 출력되
 //오차범위 (비껴서 앞으로 갈때)
 constexpr auto PERMIT_RANGE = 15;
 
-//사용이유 : 이미지로 마우스 선택하면 클릭위치가 이미지 좌측하단이라 맞춰주기위함
-//마우스 위치가져오는것은 여러군데 사용할거고 사용할때마다 적는것보단 적어야할코드가 어느정도 정해져있어서 매크로로 만들고 사용
 #define GET_CURSOR_POSITION(point) \
 GetCursorPos(&point);\
 ScreenToClient(hWnd, &point);
@@ -124,23 +122,18 @@ namespace CharacterSelect
 	};
 }
 
-namespace CharacterColor
+enum class CharacterColor
 {
-	enum
-	{
-		RED,
-		BLUE
-	};
-}
+	NONE,
+	RED,
+	BLUE
+};
 
-namespace CharacterName
+enum class CharacterName
 {
-	enum
-	{
-		BAZZI,
-		DIZNI
-	};
-}
+	BAZZI,
+	DIZNI
+};
 
 namespace Direction
 {
@@ -163,15 +156,6 @@ namespace Direction
 	} DirectionVar;
 }
 
-namespace MapSelect
-{
-	enum
-	{
-		MAP1,
-		MAP2
-	};
-}
-
 typedef struct
 {
 	int redCharacterNumber;
@@ -185,11 +169,6 @@ typedef struct
 	string path;
 	int data[MAP_HEIGHT_SIZE][MAP_WIDTH_SIZE];
 }MapData, * pMapData;
-
-typedef struct
-{
-	int mapWidth[MAP_HEIGHT_SIZE][MAP_WIDTH_SIZE];
-}Map, *pMap;
 
 namespace Objects
 {
@@ -229,10 +208,10 @@ namespace WaterBallonKinds
 typedef struct
 {
 	bool isAttack;
-	int isColor;
+	CharacterColor color;
 	ObjectData::Position pos;
 
-}Attack, *pAttack;
+}AttackValue, *pAttackValue;
 
 typedef struct ClickEventStruct
 {
@@ -240,21 +219,6 @@ typedef struct ClickEventStruct
 	bool isRight;
 
 }ClickEvent, * pClickEvent;
-
-/*
-물풍선 이미지 저장순서
-
-풍선
-center
-left end
-left mid
-top end
-top mid
-right end
-right mid
-bottom end
-bottom mid
-*/
 
 typedef struct
 {
@@ -268,17 +232,6 @@ typedef struct
 	int printHorizontalNumber;	//출력할 세로이미지번호
 
 }Img, * pImg;
-
-namespace State
-{
-	enum
-	{
-		NORMAL,
-		TRAPPED,
-		DIE,
-		DEAD
-	};
-}
 
 //물풍선 공격범위.. 물풍선에서 캐릭터에게 넘겨줄값
 typedef struct
@@ -295,4 +248,30 @@ typedef struct
 	int name;
 	ObjectData::Position pos;	//아이템포지션
 
-}ItemData, * pItemData;
+}ItemValue, * pItemValue;
+
+
+enum class CharacterState
+{
+	NORMAL,
+	TRAPPED,
+	DIE,
+	DEAD
+};
+
+//잠깐추가
+//trapped상태 모션
+enum TrappedMotion
+{
+	BAZZI_TRAPPED,
+	DIZNI_TRAPPED
+};
+
+//death상태 모션
+enum DeathMotion
+{
+	RED_BAZZI_DEATH,
+	BLUE_BAZZI_DEATH,
+	RED_DIZNI_DEATH,
+	BLUE_DIZNI_DEATH
+};

@@ -11,11 +11,15 @@ Character::Character(const int name, const ObjectData::POSITION pos, const Objec
 
 Character::~Character()
 {
-
+	waterBallonPos.clear();
 }
 
 void Character::Init()
 {
+	color = CharacterColor::RED;			//색깔 초기화
+	characterName = CharacterName::BAZZI;	//캐릭터명초기화
+	state = CharacterState::NORMAL;			//상태초기화
+
 	switch (name)
 	{
 	case EnumObj::RedBazzi:
@@ -36,14 +40,60 @@ void Character::Init()
 		break;
 	}
 
-	dir = Direction::TOP;		//이동방향
+	printPos = { 0, 0 };		//여러개 이미지중에서 출력할 위치변수
+	dir = Direction:: TOP;		//이동방향
 	prevDir = Direction::TOP;	//이전이동방향
-	state = State::NORMAL;		//현재상태
 	isAttackPossible = true;	//공격가능여부
 	isMoveable = true;			//이동가능여부
 	isOneClick = true;			//공격키 한번만 누르는지 체크
 	waterBallonNumber = 0;		//현재 놓은 물풍선 개수
-	charAnimationTick = GetTickCount64();	//애니메이션출력시간변수
+	charAnimationTick = GetTickCount64();	//움직임애니메이션출력시간변수
+	deathTime = 0;				//trapped, die상태 애니메이션 출력 시간변수
+	attack = { false, CharacterColor::NONE, 0, 0 };	//공격관련정보를 가진 변수들 초기화
+	attackArea = { {-1, -1}, -1, -1, -1, -1 };		//공격받은 범위 관련 변수 초기화
+}
+
+void Character::LoadDefaultImage(const pImageData trappedImage, const pImageData dieImage)
+{
+	//trapped이미지 저장
+	BITMAP bmp;
+	GetObject(trappedImage->hBitmap, sizeof(BITMAP), &bmp);
+	this->trappedImage.name = trappedImage->name;							//이름
+	this->trappedImage.hBitmap = trappedImage->hBitmap;						//비트맵
+	this->trappedImage.hNumber = trappedImage->hNumber;						//가로이미지수
+	this->trappedImage.vNumber = trappedImage->vNumber;						//세로이미지
+	this->trappedImage.imageWidth = bmp.bmWidth / trappedImage->hNumber;	//이미지크기/가로이미지수
+	this->trappedImage.imageHeight = bmp.bmHeight / trappedImage->vNumber;	//이미지크기/세로이미지수
+
+	//die이미지 저장
+	GetObject(dieImage->hBitmap, sizeof(BITMAP), &bmp);
+	this->dieImage.name = dieImage->name;
+	this->dieImage.hBitmap = dieImage->hBitmap;
+	this->dieImage.hNumber = dieImage->hNumber;
+	this->dieImage.vNumber = dieImage->vNumber;
+	this->dieImage.imageWidth = bmp.bmWidth / dieImage->hNumber;
+	this->dieImage.imageHeight = bmp.bmHeight / dieImage->vNumber;
+
+	//캐릭터마다 출력될 위치값 지정
+	this->trappedImage.printHorizontalNumber = 0;			//trapped 가로 출력될 이미지 번호
+	this->dieImage.printHorizontalNumber = 0;				//die 가로 출력될 이미지 번호
+	switch (characterName)
+	{
+	case CharacterName::BAZZI:
+		this->trappedImage.printVerticalNumber = BAZZI_TRAPPED;			//trapped 세로 출력될 이미지 번호
+		if (CharacterColor::RED == color)
+			this->dieImage.printVerticalNumber = RED_BAZZI_DEATH;			//die 세로 출력될 이미지 번호
+		else if (CharacterColor::BLUE == color)
+			this->dieImage.printVerticalNumber = BLUE_BAZZI_DEATH;			//die 세로 출력될 이미지 번호
+		break;
+	case CharacterName::DIZNI:
+		this->trappedImage.printVerticalNumber = DIZNI_TRAPPED;
+		if (CharacterColor::RED == color)
+			this->dieImage.printVerticalNumber = RED_DIZNI_DEATH;			//die 세로 출력될 이미지 번호
+		else if (CharacterColor::BLUE == color)
+			this->dieImage.printVerticalNumber = BLUE_DIZNI_DEATH;			//die 세로 출력될 이미지 번호
+		break;
+	}
 }
 
 void Character::Input()
@@ -60,26 +110,18 @@ void Character::Input()
 		{
 			prevPos = pos;
 			if (GetAsyncKeyState(VK_UP))
-			{
 				dir = Direction::TOP;
-			}
 			if (GetAsyncKeyState(VK_DOWN))
-			{
 				dir = Direction::BOTTOM;
-			}
 			if (GetAsyncKeyState(VK_LEFT))
-			{
 				dir = Direction::LEFT;
-			}
 			if (GetAsyncKeyState(VK_RIGHT))
-			{
 				dir = Direction::RIGHT;
-			}
 			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
 			{
 				if ((GetAsyncKeyState(VK_RSHIFT) & 0x0001) && isOneClick)		//공격
 				{
-					attack.isColor = CharacterColor::RED;
+					attack.color = CharacterColor::RED;
 					attack.pos.x = pos.x;
 					attack.pos.y = pos.y + imageHeight / 2;
 					SettingAttackPos();		//물풍선 놓는위치 지정
@@ -100,26 +142,18 @@ void Character::Input()
 		{
 			prevPos = pos;
 			if (GetAsyncKeyState('W'))
-			{
 				dir = Direction::TOP;
-			}
 			if (GetAsyncKeyState('S'))
-			{
 				dir = Direction::BOTTOM;
-			}
 			if (GetAsyncKeyState('A'))
-			{
 				dir = Direction::LEFT;
-			}
 			if (GetAsyncKeyState('D'))
-			{
 				dir = Direction::RIGHT;
-			}
 			if (isAttackPossible && (this->stats.bNum > waterBallonNumber))
 			{
 				if ((GetAsyncKeyState(VK_LSHIFT) & 0x0001) && isOneClick)		//공격
 				{
-					attack.isColor = CharacterColor::BLUE;
+					attack.color = CharacterColor::BLUE;
 					attack.pos.x = pos.x;
 					attack.pos.y = pos.y + imageHeight / 2;
 					SettingAttackPos();		//물풍선 놓는위치 지정
@@ -196,21 +230,22 @@ void Character::Update()
 		break;
 	}
 	order = pos.y;
-	
-	if(test)	//if문 테스트 완료후 삭제
-		CheckBombArea();		//폭발시 캐릭터존재하는지 체크
 
-	//갇힌상태라면 실행
-	if (state == State::TRAPPED)
-		TrappedAnimation();
-
-	//죽을상태라면
-	if (state == State::DIE)
-		DieAnimation();
 }
 
 void Character::LateUpdate(const list<Obj*>& inGameObjects)
 {
+	if (test)				//if문 테스트 완료후 삭제
+		CheckExplosionArea();	//폭발시 캐릭터존재하는지 체크
+
+	//갇힌상태라면 실행
+	if (state == CharacterState::TRAPPED)
+		TrappedAnimation();
+
+	//죽을상태라면
+	if (state == CharacterState::DIE)
+		DeathAnimation();
+
 	//이동제한
 	MapImmovableArea();
 	StaticObjectmmovableArea(inGameObjects);
@@ -222,7 +257,7 @@ void Character::Render(HDC hDC, HDC memDc)
 {
 	switch (state)
 	{
-	case State::NORMAL:
+	case CharacterState::NORMAL:
 		SelectObject(memDc, hBitmap);
 		TransparentBlt(hDC,
 			pos.x, pos.y,				//출력될 이미지 시작좌표
@@ -233,7 +268,7 @@ void Character::Render(HDC hDC, HDC memDc)
 			RGB(255, 0, 255));
 		break;
 
-	case State::TRAPPED:
+	case CharacterState::TRAPPED:
 		SelectObject(memDc, trappedImage.hBitmap);
 		TransparentBlt(hDC,
 			pos.x, pos.y,				//출력될 이미지 시작좌표
@@ -244,7 +279,7 @@ void Character::Render(HDC hDC, HDC memDc)
 			RGB(255, 0, 255));
 		break;
 
-	case State::DIE:
+	case CharacterState::DIE:
 		SelectObject(memDc, dieImage.hBitmap);
 		TransparentBlt(hDC,
 			pos.x, pos.y - 20,				//출력될 이미지 시작좌표
@@ -270,49 +305,6 @@ void Character::Render(HDC hDC, HDC memDc)
 	}
 }
 
-void Character::GetDefaultImage(const pImageData trappedImage, const pImageData dieImage)
-{
-	//trapped이미지 저장
-	BITMAP bmp;
-	GetObject(trappedImage->hBitmap, sizeof(BITMAP), &bmp);
-	this->trappedImage.name = trappedImage->name;							//이름
-	this->trappedImage.hBitmap = trappedImage->hBitmap;						//비트맵
-	this->trappedImage.hNumber = trappedImage->hNumber;						//가로이미지수
-	this->trappedImage.vNumber = trappedImage->vNumber;						//세로이미지
-	this->trappedImage.imageWidth = bmp.bmWidth / trappedImage->hNumber;	//이미지크기/가로이미지수
-	this->trappedImage.imageHeight = bmp.bmHeight / trappedImage->vNumber;	//이미지크기/세로이미지수
-
-	//die이미지 저장
-	GetObject(dieImage->hBitmap, sizeof(BITMAP), &bmp);
-	this->dieImage.name = dieImage->name;
-	this->dieImage.hBitmap = dieImage->hBitmap;
-	this->dieImage.hNumber = dieImage->hNumber;
-	this->dieImage.vNumber = dieImage->vNumber;
-	this->dieImage.imageWidth = bmp.bmWidth / dieImage->hNumber;
-	this->dieImage.imageHeight = bmp.bmHeight / dieImage->vNumber;
-
-	//캐릭터마다 출력될 위치값 지정
-	this->trappedImage.printHorizontalNumber = 0;			//trapped 가로 출력될 이미지 번호
-	this->dieImage.printHorizontalNumber = 0;				//die 가로 출력될 이미지 번호
-	switch (characterName)
-	{
-	case CharacterName::BAZZI:
-		this->trappedImage.printVerticalNumber = 0;		//trapped 세로 출력될 이미지 번호
-		if(CharacterColor::RED == color)
-			this->dieImage.printVerticalNumber = 0;			//die 세로 출력될 이미지 번호
-		else if (CharacterColor::BLUE == color)
-			this->dieImage.printVerticalNumber = 1;			//die 세로 출력될 이미지 번호
-		break;
-	case CharacterName::DIZNI:
-		this->trappedImage.printVerticalNumber = 1;
-		if (CharacterColor::RED == color)
-			this->dieImage.printVerticalNumber = 2;			//die 세로 출력될 이미지 번호
-		else if (CharacterColor::BLUE == color)
-			this->dieImage.printVerticalNumber = 3;			//die 세로 출력될 이미지 번호
-		break;
-	}
-}
-
 void Character::SettingAttackPos()
 {
 	//+20해주는 이유는 맵의 시작위치가 (20,47)이라 +20을 해줘야 값이맞음
@@ -331,7 +323,7 @@ void Character::SettingAttackPos()
 		if (interval >= BLOCK_Y / 2)
 			attack.pos.y = attack.pos.y + (BLOCK_Y - interval) - 2;
 		else
-			attack.pos.y = attack.pos.y - interval - 2;		//이거 물풍선과 블럭사이의 y좌표에 2만큼오차가 생겨서 빼주는건데 원인찾아서 고치기
+			attack.pos.y = attack.pos.y - interval - 2;
 	}
 }
 
@@ -351,7 +343,7 @@ void Character::SetWaterBallonPos(list<ObjectData::Position> waterBallonPos)
 	this->waterBallonPos = waterBallonPos;
 }
 
-Attack& Character::GetAttack()
+AttackValue& Character::GetAttack()
 {
 	return this->attack;
 }
@@ -396,23 +388,23 @@ void Character::CheckTrappedCollision(Character* character)
 	RECT temp;
 	RECT character1{ this->pos.x, this->pos.y, this->pos.x + BLOCK_X, this->pos.y + BLOCK_Y };
 	RECT character2{ character->pos.x, character->pos.y, character->pos.x + BLOCK_X, character->pos.y + BLOCK_Y };
-	if (IntersectRect(&temp, &character1, &character2) && this->state == State::TRAPPED)
-		this->SetState(State::DIE);
-	else if (IntersectRect(&temp, &character1, &character2) && character->state == State::TRAPPED)
-		character->SetState(State::DIE);
+	if (IntersectRect(&temp, &character1, &character2) && this->state == CharacterState::TRAPPED)
+		this->SetState(CharacterState::DIE);
+	else if (IntersectRect(&temp, &character1, &character2) && character->state == CharacterState::TRAPPED)
+		character->SetState(CharacterState::DIE);
 }
 
-const int Character::GetState()
+CharacterState Character::GetState() const
 {
 	return state;
 }
 
-void Character::SetState(int state)
+void Character::SetState(CharacterState state)
 {
 	this->state = state;
 }
 
-int Character::GetColor()
+CharacterColor Character::GetColor() const
 {
 	return this->color;
 }
@@ -534,7 +526,8 @@ void Character::WaterBallonImmovableArea()
 		objRect.top = lastWaterBallonPos.y - SIZE_TUNING;
 		objRect.right = lastWaterBallonPos.x + BLOCK_X;
 		objRect.bottom = lastWaterBallonPos.y + BLOCK_Y - SIZE_TUNING;
-
+		
+		//캐릭터가 놓은 물풍선범위밖에 나갔는지 체크
 		if (isRevisit)
 		{
 			if (!(characterRect.left < objRect.right && characterRect.right > objRect.left
@@ -543,7 +536,20 @@ void Character::WaterBallonImmovableArea()
 				isRevisit = false;
 			}
 			else
-				continue;
+			{
+				//범위밖으로 안나갔어도 다른물풍선은 무시못하게 검사
+				objRect.left = wbPos.x;
+				objRect.top = wbPos.y - SIZE_TUNING;
+				objRect.right = wbPos.x + BLOCK_X;
+				objRect.bottom = wbPos.y + BLOCK_Y - SIZE_TUNING;
+
+				if (prevPos.x < objRect.right && prevPos.x + BLOCK_X > objRect.left
+					&& prevPos.y < objRect.bottom && prevPos.y + BLOCK_Y > objRect.top)
+				{
+					continue;
+				}
+			}
+				
 		}
 
 		objRect.left = wbPos.x;
@@ -602,16 +608,16 @@ void Character::WaterBallonImmovableArea()
 void Character::Trapped()
 {
 	deathTime = GetTickCount64();	//갇히는 시작시간
-	state = State::TRAPPED;			//상태바꾸기
+	state = CharacterState::TRAPPED;//상태바꾸기
 	isAttackPossible = false;		//공격불가능
 }
 
-void Character::CheckBombArea()
+void Character::CheckExplosionArea()
 {
 	POINT boomPosition{ -1, -1 };	//터지는물풍선의 위치
 	POINT boomPoint{ -1, -1 };		//터지는 물풍선 캐릭터와 조건검사할 좌표
 
-	//물풍선 폭팔범위에 캐릭터가 존재하는지 체크
+	//물풍선 폭팔범위에 캐릭터가 존재하는지 체크..
 	if (attackArea.pos.x != -1)
 	{
 		boomPosition.x = attackArea.pos.x * BLOCK_X + 20;
@@ -625,7 +631,7 @@ void Character::CheckBombArea()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				state = State::TRAPPED;
+				state = CharacterState::TRAPPED;
 				stats.speed = 1;
 				isAttackPossible = false;
 			}
@@ -638,7 +644,7 @@ void Character::CheckBombArea()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				state = State::TRAPPED;
+				state = CharacterState::TRAPPED;
 				stats.speed = 1;
 				isAttackPossible = false;
 			}
@@ -651,7 +657,7 @@ void Character::CheckBombArea()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				state = State::TRAPPED;
+				state = CharacterState::TRAPPED;
 				stats.speed = 1;
 				isAttackPossible = false;
 			}
@@ -664,7 +670,7 @@ void Character::CheckBombArea()
 			if (pos.y <= boomPoint.y && pos.y + BLOCK_Y >= boomPoint.y
 				&& pos.x <= boomPoint.x && pos.x + BLOCK_X >= boomPoint.x)
 			{
-				state = State::TRAPPED;
+				state = CharacterState::TRAPPED;
 				stats.speed = 1;
 				isAttackPossible = false;
 			}
@@ -676,30 +682,25 @@ void Character::CheckBombArea()
 
 void Character::TrappedAnimation()
 {
-	//if(바늘사용하면)
-	//{
-	//	redValue.state = State::NORMAL;
-	//	redValue.trappedPrinthNumber = 0;
-	//}
 	if (CheckmDelay(deathTime, 150))
 	{
 		trappedImage.printHorizontalNumber++;
 		if (trappedImage.printHorizontalNumber > trappedImage.hNumber)
 		{
-			state = State::DIE;
+			state = CharacterState::DIE;
 			isMoveable = false;
 		}
 	}
 }
 
-void Character::DieAnimation()
+void Character::DeathAnimation()
 {
 	if (CheckmDelay(deathTime, 150))
 	{
 		dieImage.printHorizontalNumber++;
 		if (dieImage.printHorizontalNumber > dieImage.hNumber)
 		{
-			state = State::DEAD;
+			state = CharacterState::DEAD;
 		}
 	}
 }

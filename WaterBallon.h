@@ -5,7 +5,7 @@ class WaterBallon : public DynamicObject
 {
 private:
 	int waterLength { 1 };	//물줄기
-	int color{ -1 };
+	CharacterColor color;
 
 	ULONGLONG charAnimationTick;		//풍선 애니메이션 교체용 변수
 
@@ -42,8 +42,8 @@ public:
 	vector<ObjectData::POSITION> GetHitObjectPos();
 	vector<ObjectData::POSITION> GetHitWaterBallonsPos();
 
-	void SetColor(int color);
-	const int& GetColor() const;
+	void SetColor(CharacterColor color);
+	CharacterColor GetColor() const;
 
 	const AttackArea& GetAttackArea() const;
 private:

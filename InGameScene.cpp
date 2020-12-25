@@ -98,7 +98,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	//1명이 죽었을 때 게임오버 처리
 	for (const auto& character : characterList)
 	{
-		if (character->GetState() == State::DEAD)
+		if (character->GetState() == CharacterState::DEAD)
 			GameOver(character->GetColor());
 	}
 
@@ -108,7 +108,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 	//제한시간 3분 경과 시 DRAW 처리
 	if(GetTickCount64() > inGamePlayTime + 180000)
-		GameOver(-1);
+		GameOver(CharacterColor::NONE);
 }
 
 void InGameScene::LoadData(const vector<pImageData>& inGameData)
@@ -188,7 +188,7 @@ void InGameScene::LoadCharacterData(const pImageData characterImage, const pImag
 	totalInGameObjects.emplace_back(characterList.back());
 
 	//die, trapped추가
-	characterList.back()->GetDefaultImage(trappedImage, dieImage);
+	characterList.back()->LoadDefaultImage(trappedImage, dieImage);
 }
 
 void InGameScene::LoadItemImage(const pImageData itemImage)
@@ -293,7 +293,7 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 						ramdomNumber
 					));
 					totalInGameObjects.emplace_back(inGameObjectList.back());
-					itemPos.emplace_back(ItemData{ inGameObjectList.back()->GetName(), (*blocks)->GetPosition() });
+					itemPos.emplace_back(ItemValue{ inGameObjectList.back()->GetName(), (*blocks)->GetPosition() });
 				}
 
 				//inGameObjectList의 블럭 삭제
@@ -309,7 +309,7 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 
 void InGameScene::CreateWaterBallon(Character* character)
 {
-	Attack& attack = character->GetAttack();
+	AttackValue& attack = character->GetAttack();
 
 	if (attack.isAttack)		//물풍선생성
 	{
@@ -322,7 +322,7 @@ void InGameScene::CreateWaterBallon(Character* character)
 			objectsData[2]->hBitmap,
 			character->GetWaterBallonLength()
 		));
-		waterBallon.back()->SetColor(attack.isColor);
+		waterBallon.back()->SetColor(attack.color);
 
 		//풍선에 맵정보 제공
 		waterBallon.back()->GetMapData(&mapData);
@@ -381,13 +381,13 @@ void InGameScene::CheckCharacterItem()
 {
 	for (const auto& character : characterList)
 	{
-		if (character->GetState() != State::NORMAL)
+		if (character->GetState() != CharacterState::NORMAL)
 			return;
 
 		RECT characterRect{ character->GetPosition().x, character->GetPosition().y, character->GetPosition().x + BLOCK_X, character->GetPosition().y + BLOCK_Y };
 		for (const auto& item : itemPos)
 		{
-			RECT itemRect{ item.pos.x + 20, item.pos.y + 20, item.pos.x + BLOCK_X - 20, item.pos.y + BLOCK_Y - 20 };
+			RECT itemRect{ item.pos.x + 10, item.pos.y, item.pos.x + BLOCK_X - 10, item.pos.y + BLOCK_Y - 20 };
 			if(characterRect.right > itemRect.left && characterRect.left < itemRect.right
 				&& characterRect.bottom > itemRect.top && characterRect.top < itemRect.bottom)
 			{
@@ -514,7 +514,7 @@ bool InGameScene::RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon)
 	return false;
 }
 
-void InGameScene::GameOver(const int playerColor)
+void InGameScene::GameOver(CharacterColor playerColor)
 {
 	ObjectData::POSITION winUIPos{0,0};
 	ObjectData::POSITION loseUIPos{0,0};
@@ -580,7 +580,7 @@ bool InGameScene::RemoveItemData(Obj* itemPosition)
 	return false;
 }
 
-bool InGameScene::RemoveItemData1(ItemData itemPosition)
+bool InGameScene::RemoveItemData1(ItemValue itemPosition)
 {
 	if (removeItemPos == itemPosition.pos)
 		return true;
