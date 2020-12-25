@@ -97,7 +97,7 @@ void ImageManager::LoadTextStatsData(const string path, vector<CharacterStatsDat
 			stoi(str[3]),	//초기풍선길이
 			stoi(str[4]),	//최대풍선길이
 			stoi(str[5]),	//초기이동속도
-			stoi(str[6]),	//최대이동속도
+			stoi(str[6])	//최대이동속도
 			});
 	}
 	fin.close();
@@ -115,9 +115,6 @@ const vector<pImageData>& ImageManager::GetInGameImage() const
 
 const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectData)
 {
-	srand((unsigned int)time(NULL));
-	int idx = rand() % 2;
-
 	switch (selectData.redCharacterNumber)
 	{
 	case CharacterSelect::BAZZI:
@@ -129,7 +126,7 @@ const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectDa
 		break;
 
 	default:
-		character[0] = characterImageData[idx];
+		character[0] = characterImageData[redIndex];
 		break;
 	}
 
@@ -144,9 +141,7 @@ const pImageData* ImageManager::GetCharacterImageData(const SelectData& selectDa
 		break;
 
 	default:
-		idx = rand() % 2;
-
-		character[1] = characterImageData[idx + 2];		//수정필요.. 랜덤일때 난수발생..
+		character[1] = characterImageData[blueIndex + 2];		//수정필요.. 랜덤일때 난수발생..
 		break;
 	}
 
@@ -163,27 +158,39 @@ const pImageData ImageManager::GetItemImageData()
 
 const CharacterStatsData* ImageManager::GetCharacterStatsData(const SelectData& selectData)
 {
+	srand((unsigned int)time(NULL));
+
 	switch (selectData.redCharacterNumber)
 	{
 	case CharacterSelect::BAZZI:
-		temp[0] = characterStatsData[0];
+		selectChraracterStat[0] = characterStatsData[0];
 		break;
 
 	case CharacterSelect::DIZNI:
-		temp[0] = characterStatsData[1];
+		selectChraracterStat[0] = characterStatsData[1];
+		break;
+		
+	case CharacterSelect::RANDOM:
+		redIndex = rand() % 2;
+		selectChraracterStat[0] = characterStatsData[redIndex];
 		break;
 	}
 
 	switch (selectData.blueCharacterNumber)
 	{
 	case CharacterSelect::BAZZI:
-		temp[1] = characterStatsData[0];
+		selectChraracterStat[1] = characterStatsData[0];
 		break;
 
 	case CharacterSelect::DIZNI:
-		temp[1] = characterStatsData[1];
+		selectChraracterStat[1] = characterStatsData[1];
+		break;
+
+	case CharacterSelect::RANDOM:
+		blueIndex = rand() % 2;
+		selectChraracterStat[1] = characterStatsData[blueIndex];
 		break;
 	}
 
-	return temp;
+	return selectChraracterStat;
 }
