@@ -85,7 +85,7 @@ void WaterBallon::Update()
 		return;
 	if (WaterBallonState::EXPLOSION == state)
 	{
-		if (!CheckmDelay(80, charAnimationTick))
+		if (!CheckmDelay(50, charAnimationTick))
 			return;
 		printhNumber++;
 

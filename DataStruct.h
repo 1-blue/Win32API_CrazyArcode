@@ -205,6 +205,23 @@ namespace WaterBallonKinds
 	};
 }
 
+
+	enum class BGM
+	{
+		ROOM,
+		PATRIT,
+	};
+
+	enum class EFFECTSOUND
+	{
+		INSTALL,
+		EXPLOSION,
+		OVERLAP_BUTTON,
+		PICKUP_ITEM,
+		EXPLODECHARACTER
+	};
+
+
 typedef struct
 {
 	bool isAttack;

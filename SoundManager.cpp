@@ -14,6 +14,9 @@ SoundManager* SoundManager::GetInstance()
 
 		mciSendString("open Sound/installationBallon.wav alias installationBallon", 0, 0, 0);
 		mciSendString("open Sound/mouseOverlap.wav alias mouseOverlap", 0, 0, 0);
+		mciSendString("open Sound/explosionBallon.wav alias explosionBallon", 0, 0, 0);
+		mciSendString("open Sound/pickupItem.mp3 alias pickupItem", 0, 0, 0);
+		mciSendString("open Sound/explodeCharacter.mp3 alias explodeCharacter", 0, 0, 0);
 	}
 
 	return instance;
@@ -24,28 +27,37 @@ void SoundManager::ReleaseInstance()
 	delete instance;
 }
 
-void SoundManager::PlaySoundTrack(const int number)
+void SoundManager::PlaySoundTrack(BGM bgm)
 {
-	switch (number)
+	switch (bgm)
 	{
-	case 1:
+	case BGM::ROOM:
 		PlaySound("Sound/Crazy-Arcade-BGM-Room.wav", NULL, SND_ASYNC | SND_LOOP);
 		break;
-	case 2:
+	case BGM::PATRIT:
 		PlaySound("Sound/Crazy-Arcade-BGM-Patrit.wav", NULL, SND_ASYNC | SND_LOOP);
 		break;
 	}
 }
 
-void SoundManager::PlayEffectSound(const int number)
+void SoundManager::PlayEffectSound(EFFECTSOUND effectSound)
 {
-	switch (number)
+	switch (effectSound)
 	{
-	case 1:
+	case EFFECTSOUND::INSTALL:
 		mciSendString("play installationBallon from 0", 0, 0, 0);
 		break;
-	case 2:
+	case EFFECTSOUND::OVERLAP_BUTTON:
 		mciSendString("play mouseOverlap from 0", 0, 0, 0);
+		break;
+	case EFFECTSOUND::EXPLOSION:
+		mciSendString("play explosionBallon from 0", 0, 0, 0);
+		break;
+	case EFFECTSOUND::PICKUP_ITEM:
+		mciSendString("play pickupItem from 0", 0, 0, 0);
+		break;
+	case EFFECTSOUND::EXPLODECHARACTER:
+		mciSendString("play explodeCharacter from 0", 0, 0, 0);
 		break;
 	}
 }

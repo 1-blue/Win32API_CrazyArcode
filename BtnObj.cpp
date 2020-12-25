@@ -29,7 +29,7 @@ void BtnObj::Input()
 
 		if (!playingSound)
 		{
-			SoundManager::GetInstance()->PlayEffectSound(2);
+			SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::OVERLAP_BUTTON);
 			playingSound = true;
 		}
 	}

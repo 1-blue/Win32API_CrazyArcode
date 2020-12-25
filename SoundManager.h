@@ -1,4 +1,6 @@
 #pragma once
+enum class BGM : int;
+enum class EFFECTSOUND : int;
 class SoundManager
 {
 private:
@@ -10,7 +12,6 @@ public:
 	static SoundManager* GetInstance();
 	static void ReleaseInstance();
 
-	void PlaySoundTrack(const int number);
-	void PlayEffectSound(const int number);
+	void PlaySoundTrack(BGM bgm);
+	void PlayEffectSound(EFFECTSOUND effectSound);
 };
-

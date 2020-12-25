@@ -12,7 +12,7 @@ GameMananger::GameMananger(HWND hWnd)
 	mapManager = new MapManager();
 	soundManager = SoundManager::GetInstance();
 
-	soundManager->PlaySoundTrack(1);
+	//soundManager->PlaySoundTrack(BGM::ROOM);
 }
 
 GameMananger::~GameMananger()
@@ -33,12 +33,12 @@ void GameMananger::Run()
 		LoadInGameData();
 		sceneManager->SetSceneState(GameStage::INGAME);
 		sceneManager->InitInGamePlayTime();
-		soundManager->PlaySoundTrack(2);
+		//soundManager->PlaySoundTrack(BGM::PATRIT);
 		break;
 	case GameStage::INGAME_EXITING: 
 		sceneManager->InitInGameData();
 		sceneManager->SetSceneState(GameStage::LOBBY);
-		soundManager->PlaySoundTrack(1);
+		//soundManager->PlaySoundTrack(BGM::ROOM);
 		break;	
 	}
 }

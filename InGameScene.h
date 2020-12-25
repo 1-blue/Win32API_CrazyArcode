@@ -33,6 +33,7 @@ private:
 	list<ItemValue> itemPos;								//아이템 포지션.. 캐릭터한테 전달함
 	static ObjectData::POSITION removeItemPos;			//삭제한아이템좌표 전체 업데이트해주는데 사용
 
+	bool isExplosionBallon{ false };
 	bool isEndGame{ false };
 
 public:

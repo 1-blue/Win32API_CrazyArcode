@@ -23,6 +23,7 @@ void InGameScene::Init()
 	waterBallonPos.clear();
 
 	isEndGame = false;
+	isExplosionBallon = false;
 }
 
 InGameScene::~InGameScene()
@@ -48,8 +49,9 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		inGameObj->Update();
 	}
 
-	//위에서 설정한 값으로 물풍선 삭제처리
 	DeleteWaterBallons();
+
+	isExplosionBallon = false;
 
 	for (const auto& waterBallons : waterBallon)
 	{
@@ -57,6 +59,11 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 		if (WaterBallonState::EXPLOSION == waterBallons->GetState())
 		{
+			if (!isExplosionBallon)	//폭발 효과음 처리
+			{
+				SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::EXPLOSION);
+				isExplosionBallon = true;
+			}		
 			//물풍선 폭발 시점에 주변 물풍선 폭발 처리
 			DeleteHitObject(waterBallons->GetHitWaterBallonsPos());
 			for (const auto& character : characterList)		//물풍선 터질때 공격범위 전송
@@ -70,7 +77,6 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 		if (WaterBallonState::DIE == waterBallons->GetState())
 			DeleteHitObject(waterBallons->GetHitObjectPos());
 	}
-
 	for (const auto& character : characterList)
 	{
 		character->Input();
@@ -82,6 +88,16 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 	CheckCharacterItem();
 
+	//1명이 죽었을 때 게임오버 처리
+	for (const auto& character : characterList)
+	{
+		if (character->GetState() == CharacterState::DEAD)
+		{
+			SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::EXPLODECHARACTER);
+			GameOver(character->GetColor());
+		}
+	}
+
 	//우선순위에 맞게 정렬후 출력.. 물풍선이랑 캐릭터 적용을 못함..
 	totalInGameObjects.sort(SortObject);
 	for (const auto& ts : totalInGameObjects)
@@ -89,25 +105,18 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 	if (isEndGame)
 	{	//게임 끝나면 2초 후 종료
-		if(GetTickCount64() > endGameTime + 2000)
+		if (GetTickCount64() > endGameTime + 2000)
 			MessageQueue::AddEventQueue({ EnumObj::exit, false });
 
 		return;
 	}
 
-	//1명이 죽었을 때 게임오버 처리
-	for (const auto& character : characterList)
-	{
-		if (character->GetState() == CharacterState::DEAD)
-			GameOver(character->GetColor());
-	}
-
 	//플레이 시간 출력
-	if (!(GetTickCount64() > inGamePlayTime + 180000))
+	if (!isEndGame)
 		PrintAndUpdateInGameTime(memDCBack);
 
 	//제한시간 3분 경과 시 DRAW 처리
-	if(GetTickCount64() > inGamePlayTime + 180000)
+	if (GetTickCount64() > inGamePlayTime + 180000)
 		GameOver(CharacterColor::NONE);
 }
 
@@ -238,11 +247,11 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 	{
 		switch (mapData.data[hitObjects.y][hitObjects.x])
 		{
-		case 1:		// 블럭
+		case Objects::BLOCK:		// 블럭
 			deleteObject = Objects::BLOCK;
 			mapData.data[hitObjects.y][hitObjects.x] = 0;		//맵에서 오브젝트 삭제
 			continue;
-		case 3:		//물풍선
+		case Objects::WATERBALLON:		//물풍선
 			deleteObject = Objects::WATERBALLON;
 			mapData.data[hitObjects.y][hitObjects.x] = 0;		//맵에서 오브젝트 삭제
 			continue;
@@ -334,7 +343,7 @@ void InGameScene::CreateWaterBallon(Character* character)
 
 		totalInGameObjects.emplace_back(waterBallon.back());
 
-		SoundManager::GetInstance()->PlayEffectSound(1);
+		SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::INSTALL);
 	}
 }
 
@@ -404,6 +413,7 @@ void InGameScene::CheckCharacterItem()
 
 	if (removeItemPos.x != -1)
 	{
+		SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::PICKUP_ITEM);
 		totalInGameObjects.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
 		itemPos.remove_if(RemoveItemData1);			//item포지션리스트에서 아이템삭제
 		removeItemPos.x = -1;
@@ -486,10 +496,13 @@ void InGameScene::PrintAndUpdateInGameTime(HDC hdc)
 	int minute = (second / 60);
 	int deletePrintCharSize = 0;
 
-	if (59 - (second % 60) < 10)
+	if ((59 - (second % 60)) < 10)
 		deletePrintCharSize = 2;
 	else
 		deletePrintCharSize = 1;
+
+	if (minute > 2)
+		minute = 2;
 
 	sprintf_s(printInGamePlayTimeChar, "%d:%d", 2-minute, 59-(second%60));
 	TextOut(hdc, 715, 74, printInGamePlayTimeChar, sizeof(printInGamePlayTimeChar) - deletePrintCharSize);
@@ -532,7 +545,7 @@ void InGameScene::GameOver(CharacterColor playerColor)
 		loseUIPos = { 15,100 };
 		break;
 	default:
-		winUIPos = { 170,100 };
+		winUIPos = { 165,100 };
 		isDraw = true;
 		break;
 	}
