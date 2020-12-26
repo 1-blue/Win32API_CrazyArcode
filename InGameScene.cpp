@@ -24,6 +24,7 @@ void InGameScene::Init()
 
 	isEndGame = false;
 	isExplosionBallon = false;
+	isExplosionCharacter = false;
 }
 
 InGameScene::~InGameScene()
@@ -51,8 +52,6 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 	DeleteWaterBallons();
 
-	isExplosionBallon = false;
-
 	for (const auto& waterBallons : waterBallon)
 	{
 		waterBallons->Update();
@@ -64,6 +63,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 				SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::EXPLOSION);
 				isExplosionBallon = true;
 			}		
+
 			//물풍선 폭발 시점에 주변 물풍선 폭발 처리
 			DeleteHitObject(waterBallons->GetHitWaterBallonsPos());
 			for (const auto& character : characterList)		//물풍선 터질때 공격범위 전송
@@ -93,8 +93,13 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 	{
 		if (character->GetState() == CharacterState::DEAD)
 		{
-			SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::EXPLODECHARACTER);
 			GameOver(character->GetColor());
+
+			if (!isExplosionCharacter)
+			{
+				SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::EXPLODECHARACTER);
+				isExplosionCharacter = true;
+			}
 		}
 	}
 
@@ -105,7 +110,7 @@ void InGameScene::Process(HDC memDCBack, HDC memDC)
 
 	if (isEndGame)
 	{	//게임 끝나면 2초 후 종료
-		if (GetTickCount64() > endGameTime + 2000)
+		if (GetTickCount64() > endGameTime + 3000)
 			MessageQueue::AddEventQueue({ EnumObj::exit, false });
 
 		return;
@@ -283,8 +288,9 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 			mapPos.x = (((*blocks)->GetPosition().x + 20) / BLOCK_X) - 1;
 			mapPos.y = (((*blocks)->GetPosition().y + 2) / BLOCK_Y) - 1;
 
+			//맵의 좌표와 오브젝트의 좌표 비교 + 이름까지 비교(예외사항 막을려고)
 			if ((mapPos.x == hitObjects.x) && (mapPos.y == hitObjects.y) && (*blocks)->GetName() == EnumObj::Block)
-			{	//allInGameScene에 있는 값 먼저 삭제하고
+			{	//totalInGameObjects의 값부터 제거
 				totalInGameObjects.remove_if([=](Obj* tempWaterBallon)->bool {
 					return ((tempWaterBallon->GetPosition().x == (*blocks)->GetPosition().x) && (tempWaterBallon->GetPosition().y == (*blocks)->GetPosition().y));
 					});
@@ -372,6 +378,7 @@ void InGameScene::DeleteWaterBallons()
 				break;
 			}
 
+			isExplosionBallon = false;
 			removeWaterBallonPos = (*iterator)->GetPosition();	//삭제할 물풍선 좌표 받아서 저장
 			totalInGameObjects.remove_if(RemoveWaterBallonData);	//allInGameScene에서 물풍선데이터삭제
 			waterBallonPos.remove_if(RemoveWaterBallonData1);	//waterBallonPos에서 물풍선데이터삭제
@@ -489,19 +496,19 @@ void InGameScene::CheckWaterBallonItem(const AttackArea& attackArea)
 
 void InGameScene::PrintAndUpdateInGameTime(HDC hdc)
 {
-	SetBkMode(hdc, TRANSPARENT);
-	SetTextColor(hdc, RGB(255, 255, 255));
+	SetBkMode(hdc, TRANSPARENT);		//textout 바탕색(흰색) 을 투명색으로 바꾸는 구문
+	SetTextColor(hdc, RGB(255, 255, 255));	//textout 글자색(검정) 을 흰색으로 바꾸는 구문
 
-	int second = ((GetTickCount64() - inGamePlayTime)/1000);
-	int minute = (second / 60);
+	int second = ((GetTickCount64() - inGamePlayTime)/1000);	//게임 시간 (초) 구하기
+	int minute = (second / 60);	//게임 시간 (분) 구하기
 	int deletePrintCharSize = 0;
 
-	if ((59 - (second % 60)) < 10)
-		deletePrintCharSize = 2;
+	if ((59 - (second % 60)) < 10)	//출력할 문자열 길이를 제한 하기 위한 구문
+		deletePrintCharSize = 2;	//초기값 10이상 일 경우 문자열 길이 2자리, 10미만이면 1자리가 되어 문자열 길이 설정
 	else
-		deletePrintCharSize = 1;
+		deletePrintCharSize = 1;	//10이상인 경우 위와 마찬가지
 
-	if (minute > 2)
+	if (minute > 2)	//minute가 3 이상이 되면 -1이 되어 문자열 길이값 1이 증가됨, -1은 원하지 않는 값이거니와 문자열 길이 +1이 되어 0분으로 고정
 		minute = 2;
 
 	sprintf_s(printInGamePlayTimeChar, "%d:%d", 2-minute, 59-(second%60));
@@ -529,16 +536,30 @@ bool InGameScene::RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon)
 
 void InGameScene::GameOver(CharacterColor playerColor)
 {
+	//처음 유저가 죽고, 그다음 유저가 죽으면 늦게 죽은 유저가 진걸로 판정됨, 따라서 해결하기 위해 추가
+	for (auto inGameObjects : inGameObjectList)
+	{
+		switch (inGameObjects->GetName())
+		{
+		case EnumObj::winUI:
+			if (inGameObjects->GetOrder() == 255)	return;
+		case EnumObj::loseUI:
+			if (inGameObjects->GetOrder() == 254)	return;
+		}
+	}
+
 	ObjectData::POSITION winUIPos{0,0};
 	ObjectData::POSITION loseUIPos{0,0};
 
 	bool isDraw = false;
 
+	//승자에 따라 winUI, loseUI 위치값 설정
 	switch (playerColor)
 	{
 	case CharacterColor::RED:
 		winUIPos = { 20,100 };
 		loseUIPos = { 300,100 };
+		isExplosionCharacter = true;
 		break;
 	case CharacterColor::BLUE:
 		winUIPos = { 370,100 };
@@ -582,8 +603,8 @@ void InGameScene::GameOver(CharacterColor playerColor)
 		}
 	}
 
-	isEndGame = true;
-	endGameTime = GetTickCount64();
+	isEndGame = true;			//게임 종료 상태 설정
+	endGameTime = GetTickCount64();		//게임 종료 시간 카운트
 }
 
 bool InGameScene::RemoveItemData(Obj* itemPosition)

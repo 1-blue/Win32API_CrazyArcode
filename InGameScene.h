@@ -33,8 +33,9 @@ private:
 	list<ItemValue> itemPos;								//아이템 포지션.. 캐릭터한테 전달함
 	static ObjectData::POSITION removeItemPos;			//삭제한아이템좌표 전체 업데이트해주는데 사용
 
-	bool isExplosionBallon{ false };
-	bool isEndGame{ false };
+	bool isExplosionBallon{ false };			//폭발 사운드 1번만 재생하기 위한 변수
+	bool isExplosionCharacter{ false };			//죽는 사운드 1번만 재생하기 위한 변수
+	bool isEndGame{ false };					//게임 종료를 위한 변수
 
 public:
 	void Init();

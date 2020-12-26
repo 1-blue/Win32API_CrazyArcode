@@ -292,7 +292,7 @@ void Character::Render(HDC hDC, HDC memDc)
 	}
 
 	//테스트용 현재 플레이어 위치좌표출력
-	static char c[255];
+	/*static char c[255];
 	if (CharacterColor::RED == color)
 	{
 		sprintf_s(c, "RED : %d, %d, n:%d, l:%d, s:%d", pos.x, pos.y, stats.bNum, stats.bLength, stats.speed);
@@ -302,7 +302,7 @@ void Character::Render(HDC hDC, HDC memDc)
 	{
 		sprintf_s(c, "BLUE : %d, %d, n:%d, l:%d, s:%d", pos.x, pos.y, stats.bNum, stats.bLength, stats.speed);
 		TextOut(hDC, 10, 50, c, sizeof(c));
-	}
+	}*/
 }
 
 void Character::SettingAttackPos()

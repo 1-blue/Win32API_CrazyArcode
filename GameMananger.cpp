@@ -12,7 +12,7 @@ GameMananger::GameMananger(HWND hWnd)
 	mapManager = new MapManager();
 	soundManager = SoundManager::GetInstance();
 
-	//soundManager->PlaySoundTrack(BGM::ROOM);
+	soundManager->PlaySoundTrack(BGM::ROOM);	//Room 사운드 출력
 }
 
 GameMananger::~GameMananger()
@@ -33,12 +33,12 @@ void GameMananger::Run()
 		LoadInGameData();
 		sceneManager->SetSceneState(GameStage::INGAME);
 		sceneManager->InitInGamePlayTime();
-		//soundManager->PlaySoundTrack(BGM::PATRIT);
+		soundManager->PlaySoundTrack(BGM::PATRIT);	//Patrit 사운드 출력
 		break;
 	case GameStage::INGAME_EXITING: 
 		sceneManager->InitInGameData();
 		sceneManager->SetSceneState(GameStage::LOBBY);
-		//soundManager->PlaySoundTrack(BGM::ROOM);
+		soundManager->PlaySoundTrack(BGM::ROOM);	//Room 사운드 출력
 		break;	
 	}
 }
