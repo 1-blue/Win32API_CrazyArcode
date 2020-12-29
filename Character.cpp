@@ -290,19 +290,6 @@ void Character::Render(HDC hDC, HDC memDc)
 			RGB(255, 0, 255));
 		break;
 	}
-
-	//테스트용 현재 플레이어 위치좌표출력
-	/*static char c[255];
-	if (CharacterColor::RED == color)
-	{
-		sprintf_s(c, "RED : %d, %d, n:%d, l:%d, s:%d", pos.x, pos.y, stats.bNum, stats.bLength, stats.speed);
-		TextOut(hDC, 10, 10, c, sizeof(c));
-	}
-	else if (CharacterColor::BLUE == color)
-	{
-		sprintf_s(c, "BLUE : %d, %d, n:%d, l:%d, s:%d", pos.x, pos.y, stats.bNum, stats.bLength, stats.speed);
-		TextOut(hDC, 10, 50, c, sizeof(c));
-	}*/
 }
 
 void Character::SettingAttackPos()
@@ -326,7 +313,6 @@ void Character::SettingAttackPos()
 			attack.pos.y = attack.pos.y - interval - 2;
 	}
 }
-
 
 bool Character::CheckmDelay(ULONGLONG& animationTick, const int delayTime)
 {
@@ -548,8 +534,7 @@ void Character::WaterBallonImmovableArea()
 				{
 					continue;
 				}
-			}
-				
+			}	
 		}
 
 		objRect.left = wbPos.x;
@@ -557,7 +542,6 @@ void Character::WaterBallonImmovableArea()
 		objRect.right = wbPos.x + BLOCK_X;
 		objRect.bottom = wbPos.y + BLOCK_Y - SIZE_TUNING;
 
-		//밑에 조건을 바꿔서 다른색의 마지막물풍선좌표가 필요하고 그 마지막물풍선만 무시하도록 만들어야함
 		//캐릭터위에 다른캐릭터가 물풍선을 놓은 경우 물풍선무시
 		if (prevPos.x < objRect.right && prevPos.x + BLOCK_X > objRect.left
 			&& prevPos.y < objRect.bottom && prevPos.y + BLOCK_Y > objRect.top)

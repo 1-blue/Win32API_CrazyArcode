@@ -47,7 +47,6 @@ void SceneManager::Process()
 		break;
 	}
 
-
 	BitBlt(hdc, 0, 0, WND_WIDTH, WND_HEIGHT, memDCBack, 0, 0, SRCCOPY);		
 }
 

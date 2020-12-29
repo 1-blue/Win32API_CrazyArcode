@@ -21,6 +21,7 @@ void InGameScene::Init()
 	characterList.clear();
 	waterBallon.clear();
 	waterBallonPos.clear();
+	itemPos.clear();
 
 	isEndGame = false;
 	isExplosionBallon = false;
@@ -522,16 +523,12 @@ bool InGameScene::SortObject(Obj* obj1, Obj* obj2)
 
 bool InGameScene::RemoveWaterBallonData(Obj* tempWaterBallon)
 {
-	if (tempWaterBallon->GetPosition().x == removeWaterBallonPos.x && tempWaterBallon->GetPosition().y == removeWaterBallonPos.y)
-		return true;
-	return false;
+	return (tempWaterBallon->GetPosition().x == removeWaterBallonPos.x && tempWaterBallon->GetPosition().y == removeWaterBallonPos.y);
 }
 
 bool InGameScene::RemoveWaterBallonData1(ObjectData::POSITION tempWaterBallon)
 {
-	if (tempWaterBallon == removeWaterBallonPos && tempWaterBallon == removeWaterBallonPos)
-		return true;
-	return false;
+	return (tempWaterBallon == removeWaterBallonPos && tempWaterBallon == removeWaterBallonPos);
 }
 
 void InGameScene::GameOver(CharacterColor playerColor)
@@ -609,14 +606,10 @@ void InGameScene::GameOver(CharacterColor playerColor)
 
 bool InGameScene::RemoveItemData(Obj* itemPosition)
 {
-	if (removeItemPos == itemPosition->GetPosition())
-		return true;
-	return false;
+	return (removeItemPos == itemPosition->GetPosition());
 }
 
 bool InGameScene::RemoveItemData1(ItemValue itemPosition)
 {
-	if (removeItemPos == itemPosition.pos)
-		return true;
-	return false;
+	return (removeItemPos == itemPosition.pos);
 }
