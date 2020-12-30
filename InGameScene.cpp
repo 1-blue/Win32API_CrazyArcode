@@ -255,11 +255,11 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 		{
 		case Objects::BLOCK:		// 블럭
 			deleteObject = Objects::BLOCK;
-			mapData.data[hitObjects.y][hitObjects.x] = 0;		//맵에서 오브젝트 삭제
+			mapData.data[hitObjects.y][hitObjects.x] = Objects::BLANK;		//맵에서 오브젝트 삭제
 			continue;
 		case Objects::WATERBALLON:		//물풍선
 			deleteObject = Objects::WATERBALLON;
-			mapData.data[hitObjects.y][hitObjects.x] = 0;		//맵에서 오브젝트 삭제
+			mapData.data[hitObjects.y][hitObjects.x] = Objects::BLANK;		//맵에서 오브젝트 삭제
 			continue;
 		}
 	}
@@ -292,7 +292,7 @@ void InGameScene::DeleteHitObject(vector<ObjectData::POSITION> hitObjectPos)
 			//맵의 좌표와 오브젝트의 좌표 비교 + 이름까지 비교(예외사항 막을려고)
 			if ((mapPos.x == hitObjects.x) && (mapPos.y == hitObjects.y) && (*blocks)->GetName() == EnumObj::Block)
 			{	//totalInGameObjects의 값부터 제거
-				totalInGameObjects.remove_if([=](Obj* tempWaterBallon)->bool {
+				totalInGameObjects.remove_if([&](const Obj* tempWaterBallon)->bool {
 					return ((tempWaterBallon->GetPosition().x == (*blocks)->GetPosition().x) && (tempWaterBallon->GetPosition().y == (*blocks)->GetPosition().y));
 					});
 
@@ -422,8 +422,12 @@ void InGameScene::CheckCharacterItem()
 	if (removeItemPos.x != -1)
 	{
 		SoundManager::GetInstance()->PlayEffectSound(EFFECTSOUND::PICKUP_ITEM);
-		totalInGameObjects.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
-		itemPos.remove_if(RemoveItemData1);			//item포지션리스트에서 아이템삭제
+		totalInGameObjects.remove_if([&](const Obj* itemPosition) {
+			return (removeItemPos == itemPosition->GetPosition()); 
+			});	//allInGameScene에서 아이템삭제
+		itemPos.remove_if([&](const ItemValue itemPosition) {
+			return (removeItemPos == itemPosition.pos); 
+			});			//item포지션리스트에서 아이템삭제
 		removeItemPos.x = -1;
 	}
 }
@@ -489,8 +493,12 @@ void InGameScene::CheckWaterBallonItem(const AttackArea& attackArea)
 
 	if (removeItemPos.x != -1)
 	{
-		totalInGameObjects.remove_if(RemoveItemData);	//allInGameScene에서 아이템삭제
-		itemPos.remove_if(RemoveItemData1);			//item포지션리스트에서 아이템삭제
+		totalInGameObjects.remove_if([&](const Obj* itemPosition) {
+			return (removeItemPos == itemPosition->GetPosition()); 
+			});	//allInGameScene에서 아이템삭제
+		itemPos.remove_if([&](const ItemValue itemPosition) {
+			return (removeItemPos == itemPosition.pos); 
+			});			//item포지션리스트에서 아이템삭제
 		removeItemPos.x = -1;
 	}
 }
@@ -602,14 +610,4 @@ void InGameScene::GameOver(CharacterColor playerColor)
 
 	isEndGame = true;			//게임 종료 상태 설정
 	endGameTime = GetTickCount64();		//게임 종료 시간 카운트
-}
-
-bool InGameScene::RemoveItemData(Obj* itemPosition)
-{
-	return (removeItemPos == itemPosition->GetPosition());
-}
-
-bool InGameScene::RemoveItemData1(ItemValue itemPosition)
-{
-	return (removeItemPos == itemPosition.pos);
 }
